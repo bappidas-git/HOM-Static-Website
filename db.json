@@ -1223,15 +1223,17 @@
       "id": 1,
       "name": "Admin User",
       "email": "admin@homadvisory.com",
-      "password": "$2b$10$placeholder_hashed_password_here",
-      "role": "super-admin"
+      "password": "admin123",
+      "role": "super-admin",
+      "avatar": null
     },
     {
       "id": 2,
       "name": "Content Manager",
       "email": "content@homadvisory.com",
-      "password": "$2b$10$placeholder_hashed_password_here",
-      "role": "editor"
+      "password": "content123",
+      "role": "editor",
+      "avatar": null
     }
   ]
 }
