@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import MainLayout from '../components/layout/MainLayout';
+import AdminLayout from '../components/layout/AdminLayout';
+import ProtectedRoute from '../components/admin/ProtectedRoute';
 
 // Loading fallback
 const PageLoader = () => (
@@ -93,17 +95,29 @@ const AppRoutes = () => {
         <Route path="/careers" element={<PublicRoute><Careers /></PublicRoute>} />
         <Route path="/partnership" element={<PublicRoute><Partnership /></PublicRoute>} />
 
-        {/* === Admin Routes (no public layout) === */}
+        {/* === Admin Routes === */}
+        {/* Login — no layout, no auth required */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/admin/properties" element={<AdminProperties />} />
-        <Route path="/admin/properties/add" element={<AddProperty />} />
-        <Route path="/admin/properties/edit/:id" element={<EditProperty />} />
-        <Route path="/admin/leads" element={<AdminLeads />} />
-        <Route path="/admin/leads/:id" element={<LeadDetail />} />
-        <Route path="/admin/seo" element={<AdminSeo />} />
-        <Route path="/admin/articles" element={<AdminArticles />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
+
+        {/* Protected admin routes — wrapped in AdminLayout */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="properties" element={<AdminProperties />} />
+          <Route path="properties/add" element={<AddProperty />} />
+          <Route path="properties/edit/:id" element={<EditProperty />} />
+          <Route path="leads" element={<AdminLeads />} />
+          <Route path="leads/:id" element={<LeadDetail />} />
+          <Route path="seo" element={<AdminSeo />} />
+          <Route path="articles" element={<AdminArticles />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
 
         {/* 404 Not Found */}
         <Route path="*" element={<PublicRoute><NotFound /></PublicRoute>} />
