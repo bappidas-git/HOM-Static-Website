@@ -1,12 +1,8 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import PropertyListing from './PropertyListing';
 
 const ReadyToMove = () => {
-  return (
-    <Box sx={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Typography variant="h2">Ready to Move Properties</Typography>
-    </Box>
-  );
+  return <PropertyListing routePath="/buy/ready-to-move" />;
 };
 
 export default ReadyToMove;
