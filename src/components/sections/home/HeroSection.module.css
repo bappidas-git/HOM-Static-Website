@@ -1,0 +1,147 @@
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bgImage {
+  position: absolute;
+  inset: 0;
+  background: url('https://placehold.co/1920x800/1B2A4A/white?text=Luxury+Property') center/cover no-repeat;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(27, 42, 74, 0.55);
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 80px 24px 64px;
+  max-width: 720px;
+  width: 100%;
+}
+
+.heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 3rem;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+
+.searchBar {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.searchInputWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+}
+
+.searchIcon {
+  font-size: 22px;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 14px 0;
+  color: var(--color-text-primary);
+  background: transparent;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-light);
+}
+
+.searchBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--color-secondary);
+  color: #fff;
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  white-space: nowrap;
+}
+
+.searchBtn:hover {
+  background: var(--color-secondary-dark);
+}
+
+.searchBtnIcon {
+  font-size: 20px;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: 400px;
+  }
+
+  .content {
+    padding: 60px 16px 48px;
+  }
+
+  .heading {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  .searchBar {
+    flex-direction: column;
+    border-radius: 12px;
+  }
+
+  .searchInputWrapper {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .searchBtn {
+    justify-content: center;
+    border-radius: 0 0 12px 12px;
+  }
+}
