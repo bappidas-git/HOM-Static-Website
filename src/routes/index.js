@@ -38,6 +38,7 @@ const About = lazy(() => import('../pages/public/About'));
 const SellLet = lazy(() => import('../pages/public/SellLet'));
 const Careers = lazy(() => import('../pages/public/Careers'));
 const Partnership = lazy(() => import('../pages/public/Partnership'));
+const NotFound = lazy(() => import('../pages/public/NotFound'));
 
 // === Admin Pages (lazy loaded) ===
 const AdminLogin = lazy(() => import('../pages/admin/AdminLogin'));
@@ -103,6 +104,9 @@ const AppRoutes = () => {
         <Route path="/admin/seo" element={<AdminSeo />} />
         <Route path="/admin/articles" element={<AdminArticles />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
+
+        {/* 404 Not Found */}
+        <Route path="*" element={<PublicRoute><NotFound /></PublicRoute>} />
       </Routes>
     </Suspense>
   );
