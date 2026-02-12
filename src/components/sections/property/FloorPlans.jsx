@@ -1,0 +1,92 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Icon } from '@iconify/react';
+import { useInView } from 'react-intersection-observer';
+import styles from './FloorPlans.module.css';
+
+const formatPrice = (price, unit) => {
+  if (unit === 'per month') return `₹${price.toLocaleString('en-IN')}/mo`;
+  if (price >= 10000000) return `₹${(price / 10000000).toFixed(2)} Cr`;
+  if (price >= 100000) return `₹${(price / 100000).toFixed(2)} L`;
+  return `₹${price.toLocaleString('en-IN')}`;
+};
+
+const FloorPlans = ({ floorPlans = [], priceUnit = 'onwards', onRequestDetails }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  if (floorPlans.length === 0) return null;
+
+  const activePlan = floorPlans[activeTab];
+
+  return (
+    <section className={styles.section} ref={ref} id="floor-plans">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className={styles.title}>Floor Plans & Pricing</h2>
+
+        <div className={styles.tabs}>
+          {floorPlans.map((plan, idx) => (
+            <button
+              key={idx}
+              className={`${styles.tab} ${idx === activeTab ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab(idx)}
+            >
+              {plan.config}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.content}>
+          <div className={styles.planImage}>
+            <img
+              src={activePlan.image || 'https://placehold.co/600x400/1B2A4A/white?text=Floor+Plan'}
+              alt={`${activePlan.config} floor plan`}
+              loading="lazy"
+            />
+          </div>
+
+          <div className={styles.planDetails}>
+            <h3 className={styles.planConfig}>{activePlan.config} Configuration</h3>
+
+            <div className={styles.planStats}>
+              <div className={styles.planStat}>
+                <Icon icon="mdi:ruler-square" className={styles.statIcon} />
+                <span className={styles.statLabel}>Area</span>
+                <span className={styles.statValue}>{activePlan.area}</span>
+              </div>
+              <div className={styles.planStat}>
+                <Icon icon="mdi:currency-inr" className={styles.statIcon} />
+                <span className={styles.statLabel}>Price</span>
+                <span className={styles.statValue}>
+                  {formatPrice(activePlan.price, priceUnit)}{' '}
+                  <small>{priceUnit}</small>
+                </span>
+              </div>
+              <div className={styles.planStat}>
+                <Icon icon="mdi:bed-king-outline" className={styles.statIcon} />
+                <span className={styles.statLabel}>Bedrooms</span>
+                <span className={styles.statValue}>{activePlan.bedrooms}</span>
+              </div>
+              <div className={styles.planStat}>
+                <Icon icon="mdi:shower" className={styles.statIcon} />
+                <span className={styles.statLabel}>Bathrooms</span>
+                <span className={styles.statValue}>{activePlan.bathrooms}</span>
+              </div>
+            </div>
+
+            <button className={styles.requestBtn} onClick={onRequestDetails}>
+              <Icon icon="mdi:file-document-outline" />
+              Request Floor Plan Details
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
+export default FloorPlans;

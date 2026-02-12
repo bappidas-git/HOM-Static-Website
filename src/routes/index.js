@@ -20,7 +20,7 @@ const PageLoader = () => (
 // === Public Pages (lazy loaded) ===
 const Home = lazy(() => import('../pages/public/Home'));
 const PropertyListing = lazy(() => import('../pages/public/PropertyListing'));
-const PropertyDetail = lazy(() => import('../pages/public/PropertyDetail'));
+const PropertyDetail = lazy(() => import('../pages/public/PropertyDetails'));
 const PreLaunch = lazy(() => import('../pages/public/PreLaunch'));
 const UnderConstruction = lazy(() => import('../pages/public/UnderConstruction'));
 const ReadyToMove = lazy(() => import('../pages/public/ReadyToMove'));

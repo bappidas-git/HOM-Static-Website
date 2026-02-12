@@ -1,0 +1,131 @@
+.section {
+  padding: var(--spacing-2xl) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 8px 16px;
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.statusIcon {
+  font-size: 1.25rem;
+  color: var(--color-secondary);
+}
+
+.timeline {
+  position: relative;
+  padding: var(--spacing-lg) 0;
+}
+
+.progressBar {
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  position: relative;
+  margin-bottom: var(--spacing-xl);
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--color-secondary);
+  border-radius: 2px;
+}
+
+.milestones {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+.milestone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+}
+
+.milestoneIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--color-text-light);
+  background: var(--color-bg-default);
+  transition: all var(--transition-base);
+}
+
+.completed .milestoneIcon {
+  border-color: var(--color-secondary);
+  background: var(--color-secondary);
+  color: #fff;
+}
+
+.current .milestoneIcon {
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+  box-shadow: 0 0 0 4px rgba(201, 168, 108, 0.2);
+}
+
+.milestoneLabel {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+}
+
+.completed .milestoneLabel {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.current .milestoneLabel {
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .milestones {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .milestoneIcon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .milestoneLabel {
+    font-size: 0.7rem;
+  }
+}
