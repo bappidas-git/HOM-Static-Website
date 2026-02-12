@@ -1,12 +1,8 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import PropertyListing from './PropertyListing';
 
 const RentVillas = () => {
-  return (
-    <Box sx={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Typography variant="h2">Villas for Rent</Typography>
-    </Box>
-  );
+  return <PropertyListing routePath="/rent/villas" />;
 };
 
 export default RentVillas;
