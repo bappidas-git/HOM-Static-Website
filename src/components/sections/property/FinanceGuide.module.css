@@ -1,0 +1,229 @@
+.section {
+  padding: var(--spacing-2xl) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.priceDisplay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+}
+
+.priceLabel {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.priceValue {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.inputValue {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.range {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  background: var(--color-border);
+  outline: none;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--color-secondary);
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--color-secondary);
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.emiBox {
+  background: var(--color-primary);
+  color: #fff;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emiLabel {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.emiValue {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.resultRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.resultValue {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.resultTotal {
+  border-bottom: none;
+  padding-top: var(--spacing-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.banks {
+  margin-bottom: var(--spacing-lg);
+}
+
+.banksTitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.bankGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.bankItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-sm);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.bankIcon {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  border-left: 3px solid var(--color-secondary);
+}
+
+.stepsIcon {
+  font-size: 1.25rem;
+  color: var(--color-secondary);
+  flex-shrink: 0;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bankGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .bankGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .emiValue {
+    font-size: 1.5rem;
+  }
+}
