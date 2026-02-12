@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
+import MainLayout from '../components/layout/MainLayout';
 
 // Loading fallback
 const PageLoader = () => (
@@ -50,43 +51,48 @@ const AdminSeo = lazy(() => import('../pages/admin/AdminSeo'));
 const AdminArticles = lazy(() => import('../pages/admin/AdminArticles'));
 const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
 
+// Public layout wrapper
+const PublicRoute = ({ children }) => (
+  <MainLayout>{children}</MainLayout>
+);
+
 const AppRoutes = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        {/* === Public Routes === */}
-        <Route path="/" element={<Home />} />
-        <Route path="/properties" element={<PropertyListing />} />
-        <Route path="/properties/:slug" element={<PropertyDetail />} />
+        {/* === Public Routes (wrapped in MainLayout) === */}
+        <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
+        <Route path="/properties" element={<PublicRoute><PropertyListing /></PublicRoute>} />
+        <Route path="/properties/:slug" element={<PublicRoute><PropertyDetail /></PublicRoute>} />
 
         {/* Buy sub-routes */}
-        <Route path="/buy/pre-launch" element={<PreLaunch />} />
-        <Route path="/buy/under-construction" element={<UnderConstruction />} />
-        <Route path="/buy/ready-to-move" element={<ReadyToMove />} />
+        <Route path="/buy/pre-launch" element={<PublicRoute><PreLaunch /></PublicRoute>} />
+        <Route path="/buy/under-construction" element={<PublicRoute><UnderConstruction /></PublicRoute>} />
+        <Route path="/buy/ready-to-move" element={<PublicRoute><ReadyToMove /></PublicRoute>} />
 
         {/* Rent sub-routes */}
-        <Route path="/rent/apartments" element={<RentApartments />} />
-        <Route path="/rent/villas" element={<RentVillas />} />
+        <Route path="/rent/apartments" element={<PublicRoute><RentApartments /></PublicRoute>} />
+        <Route path="/rent/villas" element={<PublicRoute><RentVillas /></PublicRoute>} />
 
         {/* Buyer Assistance sub-routes */}
-        <Route path="/buyer-assistance/home-loan" element={<HomeLoan />} />
-        <Route path="/buyer-assistance/legal-assistance" element={<LegalAssistance />} />
-        <Route path="/buyer-assistance/interior-designing" element={<InteriorDesigning />} />
+        <Route path="/buyer-assistance/home-loan" element={<PublicRoute><HomeLoan /></PublicRoute>} />
+        <Route path="/buyer-assistance/legal-assistance" element={<PublicRoute><LegalAssistance /></PublicRoute>} />
+        <Route path="/buyer-assistance/interior-designing" element={<PublicRoute><InteriorDesigning /></PublicRoute>} />
 
         {/* Insights sub-routes */}
-        <Route path="/insights/articles" element={<Articles />} />
-        <Route path="/insights/articles/:slug" element={<ArticleDetail />} />
-        <Route path="/insights/faqs" element={<FAQs />} />
-        <Route path="/insights/real-estate-awareness" element={<RealEstateAwareness />} />
+        <Route path="/insights/articles" element={<PublicRoute><Articles /></PublicRoute>} />
+        <Route path="/insights/articles/:slug" element={<PublicRoute><ArticleDetail /></PublicRoute>} />
+        <Route path="/insights/faqs" element={<PublicRoute><FAQs /></PublicRoute>} />
+        <Route path="/insights/real-estate-awareness" element={<PublicRoute><RealEstateAwareness /></PublicRoute>} />
 
         {/* Other public pages */}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sell-let" element={<SellLet />} />
-        <Route path="/careers" element={<Careers />} />
-        <Route path="/partnership" element={<Partnership />} />
+        <Route path="/contact" element={<PublicRoute><Contact /></PublicRoute>} />
+        <Route path="/about" element={<PublicRoute><About /></PublicRoute>} />
+        <Route path="/sell-let" element={<PublicRoute><SellLet /></PublicRoute>} />
+        <Route path="/careers" element={<PublicRoute><Careers /></PublicRoute>} />
+        <Route path="/partnership" element={<PublicRoute><Partnership /></PublicRoute>} />
 
-        {/* === Admin Routes === */}
+        {/* === Admin Routes (no public layout) === */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/properties" element={<AdminProperties />} />
