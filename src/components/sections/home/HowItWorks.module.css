@@ -35,8 +35,8 @@
 .connectingLine {
   position: absolute;
   top: 16px;
-  left: 10%;
-  right: 10%;
+  left: 12%;
+  right: 12%;
   height: 2px;
   background: var(--color-secondary);
   transform-origin: left center;
