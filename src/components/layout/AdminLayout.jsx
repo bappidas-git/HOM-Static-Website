@@ -74,9 +74,9 @@ const pageTitles = {
   '/admin/properties/add': 'Add Property',
   '/admin/leads': 'Leads',
   '/admin/articles': 'Articles',
-  '/admin/articles/add': 'Add Article',
+  '/admin/articles/add': 'New Article',
   '/admin/seo': 'SEO Manager',
-  '/admin/faqs': 'FAQs',
+  '/admin/faqs': 'FAQ Manager',
   '/admin/settings': 'Site Settings',
 };
 
@@ -168,6 +168,7 @@ const AdminLayout = () => {
     if (pageTitles[path]) return pageTitles[path];
     // Check for partial match (e.g., edit pages)
     if (path.includes('/admin/properties/edit')) return 'Edit Property';
+    if (path.includes('/admin/articles/edit')) return 'Edit Article';
     if (path.includes('/admin/leads/')) return 'Lead Detail';
     return 'Admin Panel';
   }, [location.pathname]);
