@@ -16,7 +16,12 @@
         "lat": 12.9058,
         "lng": 77.6854
       },
-      "configuration": ["2 BHK", "3 BHK", "4 BHK", "4.5 BHK"],
+      "configuration": [
+        "2 BHK",
+        "3 BHK",
+        "4 BHK",
+        "4.5 BHK"
+      ],
       "dimensionRange": {
         "min": 1245,
         "max": 2990,
@@ -43,16 +48,56 @@
         "constructionType": "RCC framed structure"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Swimming Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Gymnasium", "category": "fitness" },
-        { "icon": "mdi:basketball", "name": "Basketball Court", "category": "sports" },
-        { "icon": "mdi:tree", "name": "Landscaped Gardens", "category": "leisure" },
-        { "icon": "mdi:car-parking", "name": "Covered Parking", "category": "convenience" },
-        { "icon": "mdi:shield-check", "name": "24/7 Security", "category": "safety" },
-        { "icon": "mdi:baby-carriage", "name": "Kids Play Area", "category": "leisure" },
-        { "icon": "mdi:party-popper", "name": "Clubhouse", "category": "leisure" },
-        { "icon": "mdi:tennis", "name": "Tennis Court", "category": "sports" },
-        { "icon": "mdi:lightning-bolt", "name": "Power Backup", "category": "convenience" }
+        {
+          "icon": "mdi:swim",
+          "name": "Swimming Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Gymnasium",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:basketball",
+          "name": "Basketball Court",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:tree",
+          "name": "Landscaped Gardens",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:car-parking",
+          "name": "Covered Parking",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "24/7 Security",
+          "category": "safety"
+        },
+        {
+          "icon": "mdi:baby-carriage",
+          "name": "Kids Play Area",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:party-popper",
+          "name": "Clubhouse",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:tennis",
+          "name": "Tennis Court",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:lightning-bolt",
+          "name": "Power Backup",
+          "category": "convenience"
+        }
       ],
       "floorPlans": [
         {
@@ -96,16 +141,45 @@
         "https://placehold.co/800x600/goldenrod/white?text=Nambiar+Pool"
       ],
       "nearbyPlaces": [
-        { "name": "Wipro Corporate Office", "distance": "3 km", "type": "workplace" },
-        { "name": "Sarjapur Main Road", "distance": "1 km", "type": "transport" },
-        { "name": "Decathlon Sarjapur", "distance": "2 km", "type": "shopping" },
-        { "name": "Greenwood High School", "distance": "4 km", "type": "education" },
-        { "name": "Narayana Multispeciality Hospital", "distance": "5 km", "type": "healthcare" }
+        {
+          "name": "Wipro Corporate Office",
+          "distance": "3 km",
+          "type": "workplace"
+        },
+        {
+          "name": "Sarjapur Main Road",
+          "distance": "1 km",
+          "type": "transport"
+        },
+        {
+          "name": "Decathlon Sarjapur",
+          "distance": "2 km",
+          "type": "shopping"
+        },
+        {
+          "name": "Greenwood High School",
+          "distance": "4 km",
+          "type": "education"
+        },
+        {
+          "name": "Narayana Multispeciality Hospital",
+          "distance": "5 km",
+          "type": "healthcare"
+        }
       ],
-      "tags": ["featured", "ready-to-move", "premium"],
+      "tags": [
+        "featured",
+        "ready-to-move",
+        "premium"
+      ],
       "seoTitle": "Nambiar District 25 Phase 2 | 2, 3, 4 BHK Apartments in Sarjapur Road Bangalore",
       "seoDescription": "Explore Nambiar District 25 Phase 2 - Premium ready-to-move apartments on Sarjapur Road, Bangalore. 2, 3, 4 & 4.5 BHK from 1245-2990 sqft starting at Rs 1.24 Cr.",
-      "seoKeywords": ["nambiar district 25", "sarjapur road apartments", "ready to move flats bangalore", "3 bhk sarjapur road"],
+      "seoKeywords": [
+        "nambiar district 25",
+        "sarjapur road apartments",
+        "ready to move flats bangalore",
+        "3 bhk sarjapur road"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Nambiar District 25 Phase 2\"}",
       "isActive": true,
       "createdAt": "2024-01-15T10:00:00Z",
@@ -125,9 +199,14 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.9698,
-        "lng": 77.7500
+        "lng": 77.75
       },
-      "configuration": ["2 BHK", "3 BHK", "3.5 BHK", "4 BHK"],
+      "configuration": [
+        "2 BHK",
+        "3 BHK",
+        "3.5 BHK",
+        "4 BHK"
+      ],
       "dimensionRange": {
         "min": 1250,
         "max": 2450,
@@ -154,18 +233,66 @@
         "constructionType": "RCC framed structure with seismic design"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Swimming Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Gymnasium", "category": "fitness" },
-        { "icon": "mdi:yoga", "name": "Yoga Deck", "category": "fitness" },
-        { "icon": "mdi:tree", "name": "Landscaped Gardens", "category": "leisure" },
-        { "icon": "mdi:car-parking", "name": "Covered Parking", "category": "convenience" },
-        { "icon": "mdi:shield-check", "name": "24/7 Security", "category": "safety" },
-        { "icon": "mdi:dog", "name": "Pet Park", "category": "leisure" },
-        { "icon": "mdi:party-popper", "name": "Grand Clubhouse", "category": "leisure" },
-        { "icon": "mdi:badminton", "name": "Badminton Court", "category": "sports" },
-        { "icon": "mdi:walk", "name": "Jogging Track", "category": "fitness" },
-        { "icon": "mdi:water-pump", "name": "High Pressure Geysers", "category": "convenience" },
-        { "icon": "mdi:cctv", "name": "CCTV Surveillance", "category": "safety" }
+        {
+          "icon": "mdi:swim",
+          "name": "Swimming Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Gymnasium",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:yoga",
+          "name": "Yoga Deck",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:tree",
+          "name": "Landscaped Gardens",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:car-parking",
+          "name": "Covered Parking",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "24/7 Security",
+          "category": "safety"
+        },
+        {
+          "icon": "mdi:dog",
+          "name": "Pet Park",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:party-popper",
+          "name": "Grand Clubhouse",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:badminton",
+          "name": "Badminton Court",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:walk",
+          "name": "Jogging Track",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:water-pump",
+          "name": "High Pressure Geysers",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:cctv",
+          "name": "CCTV Surveillance",
+          "category": "safety"
+        }
       ],
       "floorPlans": [
         {
@@ -209,16 +336,45 @@
         "https://placehold.co/800x600/goldenrod/white?text=Mahindra+Amenities"
       ],
       "nearbyPlaces": [
-        { "name": "ITPL (International Tech Park)", "distance": "5 km", "type": "workplace" },
-        { "name": "Phoenix Marketcity", "distance": "4 km", "type": "shopping" },
-        { "name": "Whitefield Railway Station", "distance": "3 km", "type": "transport" },
-        { "name": "Vydehi Hospital", "distance": "6 km", "type": "healthcare" },
-        { "name": "Deens Academy", "distance": "4 km", "type": "education" }
+        {
+          "name": "ITPL (International Tech Park)",
+          "distance": "5 km",
+          "type": "workplace"
+        },
+        {
+          "name": "Phoenix Marketcity",
+          "distance": "4 km",
+          "type": "shopping"
+        },
+        {
+          "name": "Whitefield Railway Station",
+          "distance": "3 km",
+          "type": "transport"
+        },
+        {
+          "name": "Vydehi Hospital",
+          "distance": "6 km",
+          "type": "healthcare"
+        },
+        {
+          "name": "Deens Academy",
+          "distance": "4 km",
+          "type": "education"
+        }
       ],
-      "tags": ["featured", "trending", "under-construction"],
+      "tags": [
+        "featured",
+        "trending",
+        "under-construction"
+      ],
       "seoTitle": "Mahindra Blossom Whitefield | 2, 3, 4 BHK Apartments by Mahindra Lifespaces",
       "seoDescription": "Mahindra Blossom at Whitefield, Bangalore - Premium apartments by Mahindra Lifespaces. 2, 3, 3.5 & 4 BHK from 1250-2450 sqft starting Rs 1.95 Cr.",
-      "seoKeywords": ["mahindra blossom", "whitefield apartments", "mahindra lifespaces bangalore", "premium flats whitefield"],
+      "seoKeywords": [
+        "mahindra blossom",
+        "whitefield apartments",
+        "mahindra lifespaces bangalore",
+        "premium flats whitefield"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Mahindra Blossom\"}",
       "isActive": true,
       "createdAt": "2024-03-10T08:00:00Z",
@@ -238,9 +394,12 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.9416,
-        "lng": 77.7460
+        "lng": 77.746
       },
-      "configuration": ["3 BHK Villa", "4 BHK Villa"],
+      "configuration": [
+        "3 BHK Villa",
+        "4 BHK Villa"
+      ],
       "dimensionRange": {
         "min": 2800,
         "max": 4500,
@@ -267,14 +426,46 @@
         "constructionType": "Independent villas with RCC structure"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Olympic Swimming Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Fitness Centre", "category": "fitness" },
-        { "icon": "mdi:golf", "name": "Mini Golf Course", "category": "sports" },
-        { "icon": "mdi:tree", "name": "Central Park", "category": "leisure" },
-        { "icon": "mdi:cart", "name": "Retail Avenue", "category": "convenience" },
-        { "icon": "mdi:school", "name": "International School", "category": "education" },
-        { "icon": "mdi:hospital", "name": "Healthcare Centre", "category": "healthcare" },
-        { "icon": "mdi:party-popper", "name": "Grand Clubhouse", "category": "leisure" }
+        {
+          "icon": "mdi:swim",
+          "name": "Olympic Swimming Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Fitness Centre",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:golf",
+          "name": "Mini Golf Course",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:tree",
+          "name": "Central Park",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:cart",
+          "name": "Retail Avenue",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:school",
+          "name": "International School",
+          "category": "education"
+        },
+        {
+          "icon": "mdi:hospital",
+          "name": "Healthcare Centre",
+          "category": "healthcare"
+        },
+        {
+          "icon": "mdi:party-popper",
+          "name": "Grand Clubhouse",
+          "category": "leisure"
+        }
       ],
       "floorPlans": [
         {
@@ -301,15 +492,40 @@
         "https://placehold.co/800x600/goldenrod/white?text=Prestige+Lake+View"
       ],
       "nearbyPlaces": [
-        { "name": "ITPL", "distance": "7 km", "type": "workplace" },
-        { "name": "Varthur Lake", "distance": "0.5 km", "type": "landmark" },
-        { "name": "Forum Shantiniketan Mall", "distance": "6 km", "type": "shopping" },
-        { "name": "Columbia Asia Hospital", "distance": "5 km", "type": "healthcare" }
+        {
+          "name": "ITPL",
+          "distance": "7 km",
+          "type": "workplace"
+        },
+        {
+          "name": "Varthur Lake",
+          "distance": "0.5 km",
+          "type": "landmark"
+        },
+        {
+          "name": "Forum Shantiniketan Mall",
+          "distance": "6 km",
+          "type": "shopping"
+        },
+        {
+          "name": "Columbia Asia Hospital",
+          "distance": "5 km",
+          "type": "healthcare"
+        }
       ],
-      "tags": ["premium", "villa", "ready-to-move"],
+      "tags": [
+        "premium",
+        "villa",
+        "ready-to-move"
+      ],
       "seoTitle": "Prestige Lakeside Habitat Varthur | Luxury Villas in Whitefield Bangalore",
       "seoDescription": "Prestige Lakeside Habitat — Premium villas in Varthur, Whitefield, Bangalore. 3 & 4 BHK villas from 2800-4500 sqft in a 102-acre township.",
-      "seoKeywords": ["prestige lakeside habitat", "villas whitefield bangalore", "luxury villas bangalore", "prestige group villas"],
+      "seoKeywords": [
+        "prestige lakeside habitat",
+        "villas whitefield bangalore",
+        "luxury villas bangalore",
+        "prestige group villas"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Prestige Lakeside Habitat\"}",
       "isActive": true,
       "createdAt": "2024-02-01T09:00:00Z",
@@ -331,7 +547,11 @@
         "lat": 13.1186,
         "lng": 77.6358
       },
-      "configuration": ["1 BHK", "2 BHK", "3 BHK"],
+      "configuration": [
+        "1 BHK",
+        "2 BHK",
+        "3 BHK"
+      ],
       "dimensionRange": {
         "min": 650,
         "max": 1450,
@@ -358,12 +578,36 @@
         "constructionType": "RCC framed structure"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Infinity Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Modern Gym", "category": "fitness" },
-        { "icon": "mdi:movie-open", "name": "Mini Theatre", "category": "leisure" },
-        { "icon": "mdi:soccer", "name": "Football Ground", "category": "sports" },
-        { "icon": "mdi:office-building", "name": "Co-Working Space", "category": "convenience" },
-        { "icon": "mdi:ev-station", "name": "EV Charging", "category": "convenience" }
+        {
+          "icon": "mdi:swim",
+          "name": "Infinity Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Modern Gym",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:movie-open",
+          "name": "Mini Theatre",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:soccer",
+          "name": "Football Ground",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:office-building",
+          "name": "Co-Working Space",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:ev-station",
+          "name": "EV Charging",
+          "category": "convenience"
+        }
       ],
       "floorPlans": [
         {
@@ -397,15 +641,40 @@
         "https://placehold.co/800x600/goldenrod/white?text=Brigade+Amenities"
       ],
       "nearbyPlaces": [
-        { "name": "Kempegowda Intl Airport", "distance": "12 km", "type": "transport" },
-        { "name": "Aerospace SEZ", "distance": "3 km", "type": "workplace" },
-        { "name": "ITC Factory Outlet", "distance": "8 km", "type": "shopping" },
-        { "name": "Akash Hospital", "distance": "5 km", "type": "healthcare" }
+        {
+          "name": "Kempegowda Intl Airport",
+          "distance": "12 km",
+          "type": "transport"
+        },
+        {
+          "name": "Aerospace SEZ",
+          "distance": "3 km",
+          "type": "workplace"
+        },
+        {
+          "name": "ITC Factory Outlet",
+          "distance": "8 km",
+          "type": "shopping"
+        },
+        {
+          "name": "Akash Hospital",
+          "distance": "5 km",
+          "type": "healthcare"
+        }
       ],
-      "tags": ["pre-launch", "trending", "investment"],
+      "tags": [
+        "pre-launch",
+        "trending",
+        "investment"
+      ],
       "seoTitle": "Brigade El Dorado Bagalur | Pre-Launch Apartments Near KIA Bangalore",
       "seoDescription": "Brigade El Dorado — Pre-launch apartments in Bagalur, North Bangalore. 1, 2, 3 BHK near airport starting Rs 89 Lakhs by Brigade Group.",
-      "seoKeywords": ["brigade el dorado", "bagalur apartments", "north bangalore flats", "pre-launch bangalore"],
+      "seoKeywords": [
+        "brigade el dorado",
+        "bagalur apartments",
+        "north bangalore flats",
+        "pre-launch bangalore"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Brigade El Dorado\"}",
       "isActive": true,
       "createdAt": "2025-01-10T10:00:00Z",
@@ -427,7 +696,10 @@
         "lat": 12.9352,
         "lng": 77.7248
       },
-      "configuration": ["3 BHK", "4 BHK"],
+      "configuration": [
+        "3 BHK",
+        "4 BHK"
+      ],
       "dimensionRange": {
         "min": 1800,
         "max": 3200,
@@ -454,14 +726,46 @@
         "constructionType": "Mivan technology with RCC structure"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Temperature Controlled Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "CrossFit Zone", "category": "fitness" },
-        { "icon": "mdi:spa", "name": "Spa & Sauna", "category": "leisure" },
-        { "icon": "mdi:billiards-rack", "name": "Billiards Room", "category": "leisure" },
-        { "icon": "mdi:book-open-variant", "name": "Library", "category": "leisure" },
-        { "icon": "mdi:cricket", "name": "Cricket Nets", "category": "sports" },
-        { "icon": "mdi:movie-open", "name": "Private Theatre", "category": "leisure" },
-        { "icon": "mdi:table-tennis", "name": "Table Tennis", "category": "sports" }
+        {
+          "icon": "mdi:swim",
+          "name": "Temperature Controlled Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "CrossFit Zone",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:spa",
+          "name": "Spa & Sauna",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:billiards-rack",
+          "name": "Billiards Room",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:book-open-variant",
+          "name": "Library",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:cricket",
+          "name": "Cricket Nets",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:movie-open",
+          "name": "Private Theatre",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:table-tennis",
+          "name": "Table Tennis",
+          "category": "sports"
+        }
       ],
       "floorPlans": [
         {
@@ -488,15 +792,40 @@
         "https://placehold.co/800x600/goldenrod/white?text=Sobha+Amenities"
       ],
       "nearbyPlaces": [
-        { "name": "RMZ Ecoworld", "distance": "2 km", "type": "workplace" },
-        { "name": "Outer Ring Road", "distance": "0.5 km", "type": "transport" },
-        { "name": "Total Mall", "distance": "3 km", "type": "shopping" },
-        { "name": "Motherhood Hospital", "distance": "4 km", "type": "healthcare" }
+        {
+          "name": "RMZ Ecoworld",
+          "distance": "2 km",
+          "type": "workplace"
+        },
+        {
+          "name": "Outer Ring Road",
+          "distance": "0.5 km",
+          "type": "transport"
+        },
+        {
+          "name": "Total Mall",
+          "distance": "3 km",
+          "type": "shopping"
+        },
+        {
+          "name": "Motherhood Hospital",
+          "distance": "4 km",
+          "type": "healthcare"
+        }
       ],
-      "tags": ["featured", "premium", "under-construction"],
+      "tags": [
+        "featured",
+        "premium",
+        "under-construction"
+      ],
       "seoTitle": "Sobha Neopolis Panathur | Luxury 3, 4 BHK Apartments Off ORR Bangalore",
       "seoDescription": "Sobha Neopolis — Ultra-luxury apartments in Panathur, off Outer Ring Road. 3 & 4 BHK from Rs 2.2 Cr by Sobha Limited.",
-      "seoKeywords": ["sobha neopolis", "panathur apartments", "luxury flats orr bangalore", "sobha limited bangalore"],
+      "seoKeywords": [
+        "sobha neopolis",
+        "panathur apartments",
+        "luxury flats orr bangalore",
+        "sobha limited bangalore"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Sobha Neopolis\"}",
       "isActive": true,
       "createdAt": "2024-09-20T10:00:00Z",
@@ -518,7 +847,10 @@
         "lat": 12.8452,
         "lng": 77.6602
       },
-      "configuration": ["2 BHK", "3 BHK"],
+      "configuration": [
+        "2 BHK",
+        "3 BHK"
+      ],
       "dimensionRange": {
         "min": 1100,
         "max": 1650,
@@ -545,12 +877,36 @@
         "constructionType": "RCC framed structure"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Swimming Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Gymnasium", "category": "fitness" },
-        { "icon": "mdi:shield-check", "name": "24/7 Security", "category": "safety" },
-        { "icon": "mdi:car-parking", "name": "Covered Parking", "category": "convenience" },
-        { "icon": "mdi:baby-carriage", "name": "Kids Play Area", "category": "leisure" },
-        { "icon": "mdi:tree", "name": "Landscaped Gardens", "category": "leisure" }
+        {
+          "icon": "mdi:swim",
+          "name": "Swimming Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Gymnasium",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "24/7 Security",
+          "category": "safety"
+        },
+        {
+          "icon": "mdi:car-parking",
+          "name": "Covered Parking",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:baby-carriage",
+          "name": "Kids Play Area",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:tree",
+          "name": "Landscaped Gardens",
+          "category": "leisure"
+        }
       ],
       "floorPlans": [
         {
@@ -576,15 +932,39 @@
         "https://placehold.co/800x600/goldenrod/white?text=Godrej+Bedroom"
       ],
       "nearbyPlaces": [
-        { "name": "Infosys Campus", "distance": "1 km", "type": "workplace" },
-        { "name": "Wipro Campus", "distance": "2 km", "type": "workplace" },
-        { "name": "Electronic City Metro Station", "distance": "1.5 km", "type": "transport" },
-        { "name": "Narayana Health", "distance": "3 km", "type": "healthcare" }
+        {
+          "name": "Infosys Campus",
+          "distance": "1 km",
+          "type": "workplace"
+        },
+        {
+          "name": "Wipro Campus",
+          "distance": "2 km",
+          "type": "workplace"
+        },
+        {
+          "name": "Electronic City Metro Station",
+          "distance": "1.5 km",
+          "type": "transport"
+        },
+        {
+          "name": "Narayana Health",
+          "distance": "3 km",
+          "type": "healthcare"
+        }
       ],
-      "tags": ["rent", "electronic-city", "it-hub"],
+      "tags": [
+        "rent",
+        "electronic-city",
+        "it-hub"
+      ],
       "seoTitle": "Godrej Splendour for Rent | 2, 3 BHK Apartments Electronic City Bangalore",
       "seoDescription": "Rent at Godrej Splendour, Electronic City. Semi-furnished 2 & 3 BHK apartments from Rs 35,000/month near IT hubs.",
-      "seoKeywords": ["godrej splendour rent", "electronic city apartments rent", "2 bhk rent electronic city"],
+      "seoKeywords": [
+        "godrej splendour rent",
+        "electronic city apartments rent",
+        "2 bhk rent electronic city"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Godrej Splendour\"}",
       "isActive": true,
       "createdAt": "2024-06-01T10:00:00Z",
@@ -606,7 +986,11 @@
         "lat": 12.8726,
         "lng": 77.5468
       },
-      "configuration": ["2 BHK", "3 BHK", "3.5 BHK"],
+      "configuration": [
+        "2 BHK",
+        "3 BHK",
+        "3.5 BHK"
+      ],
       "dimensionRange": {
         "min": 1100,
         "max": 2100,
@@ -633,14 +1017,46 @@
         "constructionType": "RCC framed with aluminium formwork"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Lap Pool", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Open Air Gym", "category": "fitness" },
-        { "icon": "mdi:run", "name": "Running Track", "category": "fitness" },
-        { "icon": "mdi:meditation", "name": "Meditation Zone", "category": "leisure" },
-        { "icon": "mdi:bicycle", "name": "Cycling Track", "category": "fitness" },
-        { "icon": "mdi:fire", "name": "BBQ Area", "category": "leisure" },
-        { "icon": "mdi:music", "name": "Amphitheatre", "category": "leisure" },
-        { "icon": "mdi:shield-check", "name": "Gated Security", "category": "safety" }
+        {
+          "icon": "mdi:swim",
+          "name": "Lap Pool",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Open Air Gym",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:run",
+          "name": "Running Track",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:meditation",
+          "name": "Meditation Zone",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:bicycle",
+          "name": "Cycling Track",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:fire",
+          "name": "BBQ Area",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:music",
+          "name": "Amphitheatre",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "Gated Security",
+          "category": "safety"
+        }
       ],
       "floorPlans": [
         {
@@ -674,15 +1090,40 @@
         "https://placehold.co/800x600/goldenrod/white?text=Puravankara+Garden"
       ],
       "nearbyPlaces": [
-        { "name": "NICE Road Junction", "distance": "2 km", "type": "transport" },
-        { "name": "BGS Health City", "distance": "5 km", "type": "healthcare" },
-        { "name": "Art of Living Ashram", "distance": "8 km", "type": "landmark" },
-        { "name": "Fun World Amusement Park", "distance": "10 km", "type": "entertainment" }
+        {
+          "name": "NICE Road Junction",
+          "distance": "2 km",
+          "type": "transport"
+        },
+        {
+          "name": "BGS Health City",
+          "distance": "5 km",
+          "type": "healthcare"
+        },
+        {
+          "name": "Art of Living Ashram",
+          "distance": "8 km",
+          "type": "landmark"
+        },
+        {
+          "name": "Fun World Amusement Park",
+          "distance": "10 km",
+          "type": "entertainment"
+        }
       ],
-      "tags": ["under-construction", "investment", "south-bangalore"],
+      "tags": [
+        "under-construction",
+        "investment",
+        "south-bangalore"
+      ],
       "seoTitle": "Puravankara Zenium Kanakapura Road | 2, 3 BHK Apartments South Bangalore",
       "seoDescription": "Puravankara Zenium — Modern apartments off Kanakapura Road, South Bangalore. 2, 3 & 3.5 BHK from Rs 1.55 Cr.",
-      "seoKeywords": ["puravankara zenium", "kanakapura road apartments", "south bangalore flats", "puravankara bangalore"],
+      "seoKeywords": [
+        "puravankara zenium",
+        "kanakapura road apartments",
+        "south bangalore flats",
+        "puravankara bangalore"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Puravankara Zenium\"}",
       "isActive": true,
       "createdAt": "2024-07-01T10:00:00Z",
@@ -701,10 +1142,12 @@
         "area": "Yeshwanthpur, North Bangalore",
         "city": "Bangalore",
         "state": "Karnataka",
-        "lat": 13.0220,
+        "lat": 13.022,
         "lng": 77.5437
       },
-      "configuration": ["4 BHK Villa"],
+      "configuration": [
+        "4 BHK Villa"
+      ],
       "dimensionRange": {
         "min": 3500,
         "max": 3500,
@@ -731,12 +1174,36 @@
         "constructionType": "Independent villa structure"
       },
       "amenities": [
-        { "icon": "mdi:swim", "name": "Private Pool Access", "category": "leisure" },
-        { "icon": "mdi:dumbbell", "name": "Gymnasium", "category": "fitness" },
-        { "icon": "mdi:tennis", "name": "Tennis Court", "category": "sports" },
-        { "icon": "mdi:shield-check", "name": "24/7 Security", "category": "safety" },
-        { "icon": "mdi:home-assistant", "name": "Concierge Service", "category": "convenience" },
-        { "icon": "mdi:car-parking", "name": "2-Car Garage", "category": "convenience" }
+        {
+          "icon": "mdi:swim",
+          "name": "Private Pool Access",
+          "category": "leisure"
+        },
+        {
+          "icon": "mdi:dumbbell",
+          "name": "Gymnasium",
+          "category": "fitness"
+        },
+        {
+          "icon": "mdi:tennis",
+          "name": "Tennis Court",
+          "category": "sports"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "24/7 Security",
+          "category": "safety"
+        },
+        {
+          "icon": "mdi:home-assistant",
+          "name": "Concierge Service",
+          "category": "convenience"
+        },
+        {
+          "icon": "mdi:car-parking",
+          "name": "2-Car Garage",
+          "category": "convenience"
+        }
       ],
       "floorPlans": [
         {
@@ -754,15 +1221,41 @@
         "https://placehold.co/800x600/goldenrod/white?text=Sattva+Villa+Garden"
       ],
       "nearbyPlaces": [
-        { "name": "Orion Mall", "distance": "2 km", "type": "shopping" },
-        { "name": "Yeshwanthpur Metro", "distance": "1 km", "type": "transport" },
-        { "name": "World Trade Center", "distance": "3 km", "type": "workplace" },
-        { "name": "MS Ramaiah Hospital", "distance": "4 km", "type": "healthcare" }
+        {
+          "name": "Orion Mall",
+          "distance": "2 km",
+          "type": "shopping"
+        },
+        {
+          "name": "Yeshwanthpur Metro",
+          "distance": "1 km",
+          "type": "transport"
+        },
+        {
+          "name": "World Trade Center",
+          "distance": "3 km",
+          "type": "workplace"
+        },
+        {
+          "name": "MS Ramaiah Hospital",
+          "distance": "4 km",
+          "type": "healthcare"
+        }
       ],
-      "tags": ["rent", "villa", "premium", "furnished"],
+      "tags": [
+        "rent",
+        "villa",
+        "premium",
+        "furnished"
+      ],
       "seoTitle": "Luxury Villa for Rent in Yeshwanthpur | Salarpuria Sattva Opus Bangalore",
       "seoDescription": "Rent a luxury 4 BHK villa at Salarpuria Sattva Opus, Yeshwanthpur, Bangalore. Fully furnished, Rs 85,000/month.",
-      "seoKeywords": ["villa rent bangalore", "yeshwanthpur villa", "luxury villa rent bangalore", "salarpuria sattva opus"],
+      "seoKeywords": [
+        "villa rent bangalore",
+        "yeshwanthpur villa",
+        "luxury villa rent bangalore",
+        "salarpuria sattva opus"
+      ],
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Salarpuria Sattva Opus\"}",
       "isActive": true,
       "createdAt": "2024-08-15T10:00:00Z",
@@ -780,7 +1273,10 @@
       "message": "Interested in 3 BHK at Nambiar District 25. Please share pricing details and availability for site visit.",
       "status": "contacted",
       "notes": [
-        { "text": "Called back, interested in 3BHK. Site visit scheduled for Saturday.", "addedAt": "2025-12-18T10:30:00Z" }
+        {
+          "text": "Called back, interested in 3BHK. Site visit scheduled for Saturday.",
+          "addedAt": "2025-12-18T10:30:00Z"
+        }
       ],
       "createdAt": "2025-12-15T14:00:00Z",
       "updatedAt": "2025-12-18T10:30:00Z"
@@ -795,8 +1291,14 @@
       "message": "Looking for a 2BHK apartment in Whitefield area, budget 80L-1.2Cr. Please help.",
       "status": "qualified",
       "notes": [
-        { "text": "Budget confirmed at 1Cr. Shared 3 property options.", "addedAt": "2025-12-10T09:00:00Z" },
-        { "text": "Shortlisted Mahindra Blossom. Arranging site visit.", "addedAt": "2025-12-12T15:00:00Z" }
+        {
+          "text": "Budget confirmed at 1Cr. Shared 3 property options.",
+          "addedAt": "2025-12-10T09:00:00Z"
+        },
+        {
+          "text": "Shortlisted Mahindra Blossom. Arranging site visit.",
+          "addedAt": "2025-12-12T15:00:00Z"
+        }
       ],
       "createdAt": "2025-12-08T11:00:00Z",
       "updatedAt": "2025-12-12T15:00:00Z"
@@ -813,6 +1315,19 @@
       "notes": [],
       "createdAt": "2025-12-20T16:00:00Z",
       "updatedAt": "2025-12-20T16:00:00Z"
+    },
+    {
+      "id": "2194",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "+919707112233",
+      "subject": "general",
+      "message": "Test Enquiryregarding publishing ads in your website.",
+      "source": "contact",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-13T05:00:07.836Z",
+      "updatedAt": "2026-02-13T05:00:07.842Z"
     }
   ],
   "neighborhoods": [
@@ -1054,7 +1569,12 @@
       "content": "Mumbai has always been the epicenter of luxury real estate in India. From the iconic Marine Drive to the bustling Bandra-Worli Sea Link corridor, the city offers some of the most prestigious addresses in the country.\n\n## 1. World One, Lower Parel\nStanding at 442 meters, World One is one of the tallest residential towers in the world. It offers 3, 4, and 5 BHK apartments with breathtaking views of the Mumbai skyline.\n\n## 2. Palais Royale, Worli\nThis ultra-luxury tower features private elevators, Italian marble throughout, and an infinity pool on the 35th floor.\n\n## 3. Lodha Altamount, South Mumbai\nLocated in one of the most expensive zip codes in the world, Altamount Road, this tower offers 4 and 5 BHK residences with floor-to-ceiling windows and panoramic sea views.\n\n## 4. Oberoi Three Sixty West, Worli\nDesigned by Kohn Pedersen Fox Associates, this twin-tower project offers world-class amenities including a sky lounge, cigar room, and private cinema.\n\n## 5. Rustomjee Crown, Prabhadevi\nThis Bandra-Worli Sea Link facing tower features 3 and 4 BHK apartments with imported fittings, smart home automation, and concierge services.\n\n## Key Takeaways\n- Mumbai's luxury market continues to grow at 8-10% annually\n- Sea-facing properties command a 40-60% premium\n- New-age luxury includes smart home features and sustainability\n- Average price per sqft in premium areas ranges from Rs 50,000 to Rs 1,50,000",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Mumbai+Luxury+Towers",
       "category": "market-trends",
-      "tags": ["mumbai", "luxury", "apartments", "investment"],
+      "tags": [
+        "mumbai",
+        "luxury",
+        "apartments",
+        "investment"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 6,
       "publishedAt": "2025-12-01T10:00:00Z",
@@ -1070,7 +1590,12 @@
       "content": "Bangalore's villa market has seen tremendous growth, driven by remote work flexibility and the desire for spacious living. Here's our curated guide to the finest villa communities.\n\n## Why Villas in Bangalore?\n- Work-from-home has made space a priority\n- Bangalore's pleasant climate is perfect for villa living\n- Appreciation rates of 12-15% in premium locations\n- Growing infrastructure with metro and road expansions\n\n## Top Villa Communities\n\n### 1. Prestige Lakeside Habitat, Varthur\nSpread across 102 acres, this mega township offers villas and villaments with lake views. The community includes retail, healthcare, and educational facilities within the premises.\n\n### 2. Total Environment, JP Nagar\nKnown for their boutique approach to villa design, Total Environment creates nature-integrated homes with extensive landscaping and unique architectural styles.\n\n### 3. Embassy Pristine, Devanahalli\nLocated near the international airport, these luxury villas offer spacious plots with world-class amenities and excellent connectivity to North Bangalore's growth corridor.\n\n## Investment Outlook\nVillas in Bangalore have shown consistent appreciation, especially in the north and east corridors near the airport and IT hubs. The average appreciation rate has been 12-15% per annum in premium villa communities.\n\n## Buyer Checklist\n- Verify RERA registration\n- Check land title and zoning permissions\n- Assess water and electricity availability\n- Review the builder's track record\n- Understand maintenance charges and community rules",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Bangalore+Villas",
       "category": "buying-guide",
-      "tags": ["bangalore", "villas", "luxury", "investment"],
+      "tags": [
+        "bangalore",
+        "villas",
+        "luxury",
+        "investment"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 7,
       "publishedAt": "2025-11-15T10:00:00Z",
@@ -1086,7 +1611,12 @@
       "content": "Penthouses represent the ultimate in urban luxury. These homes in the sky offer unparalleled views, exclusive amenities, and the kind of privacy that ground-level homes simply cannot match.\n\n## What Makes a Penthouse Special?\n- Private terraces with panoramic views\n- Double-height living areas\n- Personal pools and sky lounges\n- Dedicated elevator access\n\n## Top Penthouses in India\n\n### 1. The Imperial, Delhi\n12,000 sqft penthouse with private helipad, offering views of the Lutyens' Delhi skyline. Features include a private elevator, temperature-controlled wine cellar, and Italian marble throughout.\n\n### 2. World One, Mumbai\nSky villa at 400m height with wraparound balconies offering 360-degree views of the Arabian Sea and the city skyline.\n\n### 3. Embassy One, Bangalore\nPenthouse with 360-degree views of the city, private terrace garden, and access to an exclusive residents-only sky lounge.\n\n### 4. DLF Camellias, Gurgaon\nUltra-luxury penthouse with butler service, private cinema, temperature-controlled pool, and smart home automation throughout.\n\n## Price Range\nPenthouses in India's top cities range from Rs 10 Cr to Rs 100+ Cr, depending on location and amenities.\n\n## Things to Consider\n- Higher maintenance costs compared to regular apartments\n- Wind and weather exposure on upper floors\n- Structural limitations for customization\n- Resale market may be limited to ultra-HNI buyers",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Luxury+Penthouses",
       "category": "investment",
-      "tags": ["penthouses", "luxury", "sky-lounge", "premium"],
+      "tags": [
+        "penthouses",
+        "luxury",
+        "sky-lounge",
+        "premium"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 5,
       "publishedAt": "2025-10-20T10:00:00Z",
@@ -1102,7 +1632,12 @@
       "content": "The Real Estate (Regulation and Development) Act, commonly known as RERA, was enacted in 2016 and has fundamentally changed how real estate transactions work in India.\n\n## What is RERA?\nRERA is a regulatory framework established by the Government of India to bring transparency, accountability, and efficiency to the real estate sector. Each state has its own RERA authority that oversees compliance.\n\n## Key Protections for Homebuyers\n\n### 1. Mandatory Project Registration\nEvery residential project with more than 8 units or land exceeding 500 sqm must be registered with RERA before any advertisement or sale. This ensures all project details are publicly available.\n\n### 2. Escrow Account Requirement\nDevelopers must deposit 70% of the project funds in a dedicated escrow account. This prevents diversion of funds to other projects and ensures your money is used for your project.\n\n### 3. Carpet Area Standardisation\nRERA mandates that pricing must be based on carpet area (usable area), not super built-up area. This eliminates ambiguity in what you're paying for.\n\n### 4. Timely Delivery\nDevelopers must commit to a delivery timeline. Delays attract penalties, and buyers can claim compensation or even withdraw with full refund plus interest.\n\n### 5. Defect Liability Period\nBuilders are liable for structural defects for 5 years after possession. Any defects must be rectified within 30 days at the builder's expense.\n\n## How to Verify RERA Registration\n1. Visit your state's RERA website (e.g., rera.karnataka.gov.in for Karnataka)\n2. Search by project name, developer name, or RERA number\n3. Verify project details match what the developer claims\n4. Check for any complaints or violations against the project\n\n## State-wise RERA Websites\n- Karnataka: rera.karnataka.gov.in\n- Maharashtra: maharera.mahaonline.gov.in\n- Tamil Nadu: rera.tn.gov.in\n- Telangana: rera.telangana.gov.in\n\n## Important Tips\n- Never invest in a project without valid RERA registration\n- Keep copies of all RERA-related documents\n- Report any violations to the RERA authority\n- Understand that RERA covers both residential and commercial projects",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=RERA+Guide",
       "category": "legal",
-      "tags": ["rera", "legal", "homebuyer-guide", "regulation"],
+      "tags": [
+        "rera",
+        "legal",
+        "homebuyer-guide",
+        "regulation"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 8,
       "publishedAt": "2025-12-10T10:00:00Z",
@@ -1118,7 +1653,12 @@
       "content": "Bangalore has cemented its position as India's most dynamic real estate market, driven by a robust IT sector, growing infrastructure, and increasing demand from young professionals and families.\n\n## Market Overview\nThe Bangalore residential market recorded over 65,000 unit launches in 2024, with a healthy absorption rate of 72%. The average price appreciation was 8-12% across key corridors.\n\n## Top Investment Corridors\n\n### 1. North Bangalore (Devanahalli-Bagalur)\nWith the airport as the anchor, this corridor is witnessing massive infrastructure development including the upcoming Aerospace SEZ, metro connectivity, and peripheral ring road. Property prices have appreciated 15-20% in the last year.\n\n### 2. Sarjapur Road\nThe IT corridor connecting Electronic City to Whitefield continues to attract buyers. New developments offer competitive pricing with excellent future appreciation potential.\n\n### 3. Whitefield-ITPL Corridor\nMature market with established social infrastructure. The upcoming metro line will further boost connectivity and property values.\n\n### 4. Kanakapura Road (South Bangalore)\nEmerging as the new affordable luxury corridor with large township projects by top developers. NICE Road connectivity is a major advantage.\n\n## Price Trends\n| Corridor | Avg Price/sqft 2024 | Avg Price/sqft 2025 | Growth |\n|----------|-------------------|-------------------|--------|\n| North Bangalore | Rs 5,200 | Rs 6,000 | 15% |\n| Sarjapur Road | Rs 6,800 | Rs 7,500 | 10% |\n| Whitefield | Rs 7,500 | Rs 8,200 | 9% |\n| Kanakapura Road | Rs 5,500 | Rs 6,100 | 11% |\n\n## What's Driving Growth?\n- IT sector expansion with 5 lakh+ new hires projected\n- Metro Phase 2 and 3 progress\n- Peripheral Ring Road development\n- Growing startup ecosystem\n- Remote work driving demand for larger homes\n\n## Investment Tips for 2025\n1. Focus on pre-launch projects near upcoming metro stations\n2. Look at integrated townships for long-term appreciation\n3. Verify RERA compliance before investing\n4. Consider rental yield potential — Bangalore offers 3-4% yields\n5. Track infrastructure announcements for emerging corridors",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Bangalore+Market+2025",
       "category": "market-trends",
-      "tags": ["bangalore", "market-trends", "investment", "2025"],
+      "tags": [
+        "bangalore",
+        "market-trends",
+        "investment",
+        "2025"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 9,
       "publishedAt": "2025-12-15T10:00:00Z",
@@ -1134,7 +1674,12 @@
       "content": "Buying your first home is one of the most significant financial decisions you'll ever make. This comprehensive guide walks you through every step of the process.\n\n## Step 1: Assess Your Budget\nBefore you start browsing properties, understand your true budget. Factor in:\n- Down payment (typically 10-25% of property value)\n- Home loan EMI (should not exceed 40% of monthly income)\n- Registration and stamp duty (6-8% of property value)\n- GST (5% for under-construction, nil for ready-to-move)\n- Interior and furnishing costs\n- Moving expenses\n\n## Step 2: Check Your Loan Eligibility\nGet pre-approved for a home loan before property hunting. This gives you:\n- A clear budget range\n- Stronger negotiating position\n- Faster closing when you find the right property\n\n## Step 3: Research Locations\nConsider these factors when choosing a location:\n- Proximity to workplace\n- Social infrastructure (schools, hospitals, shopping)\n- Future development plans\n- Public transport connectivity\n- Safety and neighbourhood vibe\n\n## Step 4: Shortlist Properties\nVisit at least 5-8 properties before making a decision. Compare them on:\n- Price per sqft (carpet area)\n- Builder reputation and track record\n- Construction quality\n- Amenities and maintenance charges\n- Possession timeline\n\n## Step 5: Verify Documents\nNever skip legal due diligence:\n- Title deed and ownership chain\n- RERA registration\n- Encumbrance Certificate\n- Building plan approval\n- Land use and zoning compliance\n\n## Step 6: Negotiate the Price\nDon't accept the first price. Research comparable properties and negotiate based on:\n- Market rates in the area\n- Payment plan flexibility\n- Freebies (parking, club membership)\n- Floor and view premium\n\n## Step 7: Book and Sign Agreement\nOnce finalized:\n- Pay the booking amount (usually 5-10%)\n- Review the sale agreement carefully\n- Ensure all promises are in writing\n- Keep copies of all receipts\n\n## Step 8: Process Home Loan\nSubmit your loan application with:\n- Property documents\n- Income proof and bank statements\n- KYC documents\n- Property valuation report\n\n## Step 9: Registration\nAfter loan approval:\n- Pay stamp duty and registration charges\n- Both buyer and seller must be present\n- Get the registered sale deed\n- Apply for property mutation in municipal records\n\n## Step 10: Possession and Move-in\nBefore taking possession:\n- Conduct a thorough inspection\n- Check all fixtures and fittings\n- Verify electricity and water connections\n- Get all original documents from the builder\n- Update address in all official records",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Homebuyer+Checklist",
       "category": "buying-guide",
-      "tags": ["first-time-buyer", "checklist", "buying-guide", "tips"],
+      "tags": [
+        "first-time-buyer",
+        "checklist",
+        "buying-guide",
+        "tips"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 10,
       "publishedAt": "2025-11-28T10:00:00Z",
@@ -1150,7 +1695,12 @@
       "content": "Living in a compact apartment doesn't mean compromising on style or functionality. With smart design choices, you can create a home that feels spacious, organized, and beautiful.\n\n## 1. Embrace Multifunctional Furniture\nInvest in pieces that serve multiple purposes:\n- Sofa-cum-beds for guest rooms\n- Ottoman storage for living rooms\n- Extendable dining tables\n- Murphy beds for studio apartments\n- Coffee tables with hidden storage\n\n## 2. Use Vertical Space Wisely\nDon't let your walls go to waste:\n- Floor-to-ceiling bookshelves\n- Floating shelves in kitchens and bathrooms\n- Tall, narrow storage units\n- Hanging planters and wall gardens\n- Over-door organizers\n\n## 3. Light and Color Strategy\nMake spaces feel larger with:\n- Light, neutral wall colors (whites, creams, pastels)\n- Mirrors to reflect light and create depth\n- Sheer curtains to maximize natural light\n- Strategic task lighting instead of single overhead lights\n- Light-colored flooring\n\n## 4. Kitchen Optimization\nMaximize your kitchen efficiency:\n- Modular kitchen with pull-out drawers\n- Magnetic knife strips and hanging utensil racks\n- Corner units with lazy Susan\n- Under-cabinet lighting\n- Compact appliances designed for Indian cooking\n\n## 5. Bathroom Solutions\n- Wall-mounted vanities to free floor space\n- Glass shower enclosures instead of curtains\n- Recessed medicine cabinets\n- Over-toilet storage units\n\n## 6. Indian-Specific Tips\n- Pooja room integrated into wall niches\n- Shoe rack designs for Indian entryways\n- Separate wet and dry kitchen zones\n- Mosquito-proof window solutions that don't block light\n- Vastu-compliant layout adjustments\n\n## Budget-Friendly Ideas\nYou don't need a massive budget to transform your space:\n- DIY accent walls with paint or wallpaper\n- Repurpose old furniture with a fresh coat of paint\n- Use plants as natural decor elements\n- Switch to curtain dividers instead of walls\n- Invest in good lighting — it transforms any space",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Interior+Design+Tips",
       "category": "interior",
-      "tags": ["interior-design", "apartment", "space-saving", "tips"],
+      "tags": [
+        "interior-design",
+        "apartment",
+        "space-saving",
+        "tips"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 7,
       "publishedAt": "2025-11-05T10:00:00Z",
@@ -1166,7 +1716,13 @@
       "content": "Understanding stamp duty and registration charges is crucial for budgeting your property purchase in Karnataka. Here's the complete breakdown for 2025.\n\n## Current Stamp Duty Rates in Karnataka\n\n### For Properties within BBMP Limits (Bangalore)\n- Properties above Rs 45 lakhs: 5% stamp duty\n- Properties between Rs 21-45 lakhs: 3% stamp duty\n- Properties up to Rs 20 lakhs: 2% stamp duty\n\n### For Properties outside BBMP Limits\n- Properties above Rs 35 lakhs: 5% stamp duty\n- Properties between Rs 10-35 lakhs: 3% stamp duty\n- Properties up to Rs 10 lakhs: 2% stamp duty\n\n## Registration Charges\nRegistration charge is standard at 1% of the property value across Karnataka.\n\n## Surcharge and Cess\n- Surcharge: 2% on stamp duty amount\n- Cess: 10% on stamp duty amount\n\n## Example Calculation\nFor a property valued at Rs 1 Crore in Bangalore:\n- Stamp Duty (5%): Rs 5,00,000\n- Registration (1%): Rs 1,00,000\n- Surcharge (2% of stamp duty): Rs 10,000\n- Cess (10% of stamp duty): Rs 50,000\n- **Total: Rs 6,60,000**\n\n## How to Pay\n1. E-Stamping through Stock Holding Corporation of India (SHCIL)\n2. Online payment through the Kaveri portal (kaveri.karnataka.gov.in)\n3. At authorized bank branches\n\n## Important Points\n- Stamp duty is calculated on the higher of agreement value or guidance value\n- Guidance values are updated annually by the government\n- Joint registration with a female co-owner may get concessions in some cases\n- NRI buyers pay the same stamp duty rates\n- Agricultural land has different stamp duty rates\n\n## Documents Required for Registration\n- Sale deed (original and copies)\n- Previous title documents\n- Encumbrance Certificate\n- Khata Certificate and Extract\n- PAN cards of buyer and seller\n- Passport photos\n- Property tax receipts",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Stamp+Duty+Guide",
       "category": "legal",
-      "tags": ["stamp-duty", "registration", "karnataka", "legal", "costs"],
+      "tags": [
+        "stamp-duty",
+        "registration",
+        "karnataka",
+        "legal",
+        "costs"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 6,
       "publishedAt": "2025-12-18T10:00:00Z",
@@ -1182,7 +1738,12 @@
       "content": "North Bangalore has emerged as the most promising real estate corridor in the city, attracting both end-users and investors with its rapid infrastructure development and growth potential.\n\n## Why North Bangalore?\n\n### Airport Advantage\nThe Kempegowda International Airport serves as the growth anchor for the entire corridor. With passenger traffic exceeding 35 million annually and the new Terminal 2 operational, the airport ecosystem continues to expand.\n\n### Aerospace SEZ\nThe upcoming Aerospace Special Economic Zone near Devanahalli is expected to create over 50,000 direct jobs, dramatically increasing housing demand in the region.\n\n### Infrastructure Development\n- Six-lane Bellary Road widening\n- Metro Phase 3 (Airport Line) approved\n- Peripheral Ring Road connecting to all parts of Bangalore\n- BIAL IT Investment Region spanning 12,000 acres\n\n## Key Micro-Markets\n\n### Devanahalli\nThe original growth hub near the airport. Mature market with established projects by Brigade, Prestige, and Godrej.\n\n### Bagalur\nEmerging as the value-for-money destination with prices starting from Rs 5,000/sqft. Major projects by Brigade, Provident, and Shriram.\n\n### Yelahanka\nConnects old Bangalore to the new growth corridor. Benefits from metro connectivity and established social infrastructure.\n\n### Hebbal\nThe gateway to North Bangalore. Premium pricing but excellent connectivity to the city center and IT hubs.\n\n## Price Appreciation Potential\nNorth Bangalore has consistently delivered 12-18% annual appreciation over the past 5 years. With the metro line expected by 2028, prices are projected to see another 20-30% jump.\n\n## Risks to Consider\n- Water availability can be a concern in some areas\n- Social infrastructure still developing in newer pockets\n- Traffic congestion on Bellary Road during peak hours\n- Some projects may face delays due to land acquisition issues",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=North+Bangalore",
       "category": "market-trends",
-      "tags": ["north-bangalore", "investment", "airport", "growth"],
+      "tags": [
+        "north-bangalore",
+        "investment",
+        "airport",
+        "growth"
+      ],
       "author": "H.O.M Advisory Team",
       "readTime": 8,
       "publishedAt": "2025-10-05T10:00:00Z",
@@ -1213,9 +1774,21 @@
     "companySubtitle": "HOME OFFICE MARKET",
     "companyDescription": "Your connection to the finest homes and experiences no matter the destination or lifestyle.",
     "footerLinks": {
-      "homes": ["Buy", "Rent", "Sell/Let"],
-      "offices": ["Flexible Workspace", "Direct Lease", "Retails"],
-      "market": ["Home Loans", "Legal", "Home Interiors"]
+      "homes": [
+        "Buy",
+        "Rent",
+        "Sell/Let"
+      ],
+      "offices": [
+        "Flexible Workspace",
+        "Direct Lease",
+        "Retails"
+      ],
+      "market": [
+        "Home Loans",
+        "Legal",
+        "Home Interiors"
+      ]
     }
   },
   "adminUsers": [
