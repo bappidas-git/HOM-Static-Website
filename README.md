@@ -1,70 +1,237 @@
-# Getting Started with Create React App
+# H.O.M Advisory — Real Estate Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-featured real estate advisory platform for **H.O.M Advisory** (Home Office Market), built with React. Includes a public-facing website for property browsing, articles, and lead capture, along with a complete admin dashboard for managing properties, leads, content, and site settings.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Tech Stack
 
-### `npm start`
+| Layer | Technology |
+|---|---|
+| **Framework** | React 18 (Create React App) |
+| **Routing** | React Router v6 (code-split with `React.lazy`) |
+| **UI Library** | Material-UI (MUI) v7 |
+| **Styling** | MUI theme + CSS Modules + Global CSS variables |
+| **HTTP Client** | Axios with interceptors |
+| **Animations** | Framer Motion |
+| **Icons** | MUI Icons + Iconify (MDI set) |
+| **SEO** | React Helmet Async |
+| **Mock API** | JSON Server |
+| **Dev Tooling** | Concurrently (parallel dev servers) |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Getting Started
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js 16+ and npm
 
-### `npm run build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+git clone <repository-url>
+cd HOM-Static-Website
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Development
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Run both the React dev server and JSON Server mock API simultaneously:
 
-### `npm run eject`
+```bash
+npm run dev
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This starts:
+- React app at **http://localhost:3000**
+- JSON Server API at **http://localhost:3001**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Individual Commands
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm start        # React dev server only
+npm run server   # JSON Server only
+npm run build    # Production build
+npm test         # Run tests
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## Environment Variables
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Copy `.env.example` to `.env.local` and update as needed:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+cp .env.example .env.local
+```
 
-### Code Splitting
+| Variable | Default | Description |
+|---|---|---|
+| `REACT_APP_API_URL` | `http://localhost:3001` | API base URL |
+| `REACT_APP_SITE_NAME` | `H.O.M Advisory` | Site display name |
+| `REACT_APP_GOOGLE_MAPS_KEY` | — | Google Maps API key |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+src/
+├── assets/               # Static assets (images, global CSS)
+│   ├── images/
+│   └── styles/
+│       └── global.css    # CSS variables, reset, utilities
+├── components/
+│   ├── admin/            # Admin-specific components (ProtectedRoute)
+│   ├── common/           # Shared components (PropertyCard, LeadForm, etc.)
+│   ├── layout/           # Layout wrappers (Header, Footer, AdminLayout)
+│   └── sections/         # Page section components
+│       ├── home/         # Homepage sections (Hero, Featured, FAQ, etc.)
+│       └── property/     # Property detail sections (Gallery, Amenities, etc.)
+├── contexts/             # React Context providers (AdminAuth)
+├── hooks/                # Custom hooks (useDebounce, useThrottledScroll)
+├── pages/
+│   ├── admin/            # Admin dashboard pages (13 pages)
+│   └── public/           # Public-facing pages (23 pages)
+├── routes/               # Route configuration
+│   └── index.js          # All route definitions
+├── services/
+│   └── api.js            # Axios API client with all service methods
+├── App.js                # Root component with providers
+├── index.js              # Entry point
+└── theme.js              # MUI theme (colors, typography)
+```
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Key Features
 
-### Advanced Configuration
+### Public Website
+- Property listings with advanced filtering (type, status, price, BHK, location)
+- Property detail pages with gallery, floor plans, amenities, nearby places
+- Blog/articles section with category filtering
+- FAQ section organized by category
+- Lead capture forms (contact, property enquiry, sell/let)
+- Neighborhood exploration
+- Partner/developer showcase
+- Fully responsive (mobile bottom nav, hamburger menu)
+- SEO metadata via React Helmet
+- Scroll animations via Framer Motion
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Admin Dashboard
+- JWT-based authentication (login/logout)
+- Dashboard with stats overview
+- Property CRUD with rich form (specs, amenities, floor plans, SEO)
+- Lead management with status pipeline and notes
+- Article/blog management
+- FAQ management
+- SEO settings
+- Site settings (contact info, social links, hero text)
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Switching to Laravel Backend
 
-### `npm run build` fails to minify
+The frontend is designed to work with any REST API backend. To switch from JSON Server to a Laravel backend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Update `REACT_APP_API_URL` in `.env.local`:
+   ```
+   REACT_APP_API_URL=https://your-laravel-api.com/api/v1
+   ```
+
+2. Ensure the Laravel API implements the endpoints documented in [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md).
+
+3. Implement JWT authentication — the frontend sends `Authorization: Bearer <token>` on all admin routes.
+
+4. Use Laravel API Resources to return camelCase JSON matching the frontend's expected format.
+
+No frontend code changes are required — only the base URL needs to change.
+
+---
+
+## API Documentation
+
+See [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) for the complete API specification, including:
+- All endpoint definitions with request/response examples
+- Database schema (tables, columns, types, indexes)
+- ER diagram
+- Authentication flow
+- Laravel migration notes
+
+---
+
+## Deployment
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The output in `build/` is a static site that can be served by any web server (Nginx, Apache, Vercel, Netlify, etc.).
+
+### Notes
+- Set `REACT_APP_API_URL` to your production API before building
+- The app uses client-side routing — configure your web server to serve `index.html` for all routes
+- Nginx example:
+  ```nginx
+  location / {
+    try_files $uri /index.html;
+  }
+  ```
+
+---
+
+## End-to-End Test Checklist
+
+### Public Website
+- [ ] Homepage loads — hero, featured properties, neighborhoods, FAQ, partners sections
+- [ ] Property listing page — filters work (type, status, price range, BHK, search)
+- [ ] Property detail page — gallery, specs, amenities, floor plans, nearby places, enquiry form
+- [ ] Category pages — Pre-launch, Under Construction, Ready to Move, Rent Apartments, Rent Villas
+- [ ] Buyer Assistance pages — Home Loan, Legal Assistance, Interior Designing
+- [ ] Articles listing and detail pages
+- [ ] FAQ page with category tabs
+- [ ] Contact, About, Sell/Let, Careers, Partnership pages
+- [ ] Lead forms submit successfully (contact form, property enquiry, sell/let)
+- [ ] Navigation — desktop header, mobile hamburger menu, bottom nav
+- [ ] Scroll animations and transitions
+- [ ] 404 page for invalid routes
+- [ ] SEO meta tags present on all pages
+
+### Admin Panel
+- [ ] Login with valid credentials
+- [ ] Dashboard shows stats and recent data
+- [ ] Properties — list, add, edit, toggle active, delete
+- [ ] Leads — list, view detail, change status, add notes, delete, CSV export
+- [ ] Articles — list, add, edit, delete
+- [ ] FAQs — list, add, edit, delete
+- [ ] SEO settings — view and update
+- [ ] Site settings — update contact info, social links
+- [ ] Logout clears session
+
+### Responsive / Mobile
+- [ ] All pages render correctly on mobile (375px width)
+- [ ] Bottom navigation visible and functional on mobile
+- [ ] Drawer menus open and close properly
+- [ ] Forms are usable on mobile (no overflow, proper spacing)
+- [ ] Property cards stack vertically on small screens
+
+### Cross-Browser
+- [ ] Chrome (latest)
+- [ ] Firefox (latest)
+- [ ] Safari (latest)
+- [ ] Edge (latest)
+
+---
+
+## Screenshots
+
+*Screenshots will be added here.*
+
+---
+
+## License
+
+Private — H.O.M Advisory. All rights reserved.

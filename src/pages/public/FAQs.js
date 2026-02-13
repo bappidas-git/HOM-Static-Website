@@ -90,7 +90,7 @@ const FAQs = () => {
         const data = await faqService.getAll({ isActive: true });
         setFaqs(data);
       } catch (err) {
-        console.error('Failed to fetch FAQs:', err);
+        // FAQs fetch failed — UI shows empty state
       } finally {
         setLoading(false);
       }

@@ -281,7 +281,7 @@ const Dashboard = () => {
       );
       setProperties(allProperties);
     } catch (err) {
-      console.error('Failed to fetch dashboard data:', err);
+      // Dashboard data load failed — empty state shown
     } finally {
       setLoading(false);
     }
