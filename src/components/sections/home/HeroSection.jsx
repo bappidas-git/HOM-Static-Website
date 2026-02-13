@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import styles from './HeroSection.module.css';
 
@@ -8,16 +8,20 @@ const HeroSection = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleSearch = (e) => {
+  // Subtle parallax on hero background
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 600], [0, 150]);
+
+  const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/properties?q=${encodeURIComponent(searchQuery.trim())}`);
     }
-  };
+  }, [searchQuery, navigate]);
 
   return (
     <section className={styles.hero}>
-      <div className={styles.bgImage} />
+      <motion.div className={styles.bgImage} style={{ y: bgY }} />
       <div className={styles.overlay} />
 
       <div className={styles.content}>

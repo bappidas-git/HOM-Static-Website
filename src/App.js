@@ -6,6 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import theme from './theme';
 import AppRoutes from './routes';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import ToastProvider from './components/common/ToastProvider';
 import './assets/styles/global.css';
 
 const App = () => {
@@ -14,9 +15,11 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <AdminAuthProvider>
-            <AppRoutes />
-          </AdminAuthProvider>
+          <ToastProvider>
+            <AdminAuthProvider>
+              <AppRoutes />
+            </AdminAuthProvider>
+          </ToastProvider>
         </BrowserRouter>
       </ThemeProvider>
     </HelmetProvider>

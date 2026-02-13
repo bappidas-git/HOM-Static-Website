@@ -169,8 +169,19 @@ const theme = createTheme({
           padding: '10px 24px',
           fontWeight: 500,
           boxShadow: 'none',
+          transition: 'background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease',
           '&:hover': {
             boxShadow: 'none',
+          },
+          '&:active': {
+            transform: 'scale(0.97)',
+          },
+          '&:focus-visible': {
+            outline: '2px solid #C9A86C',
+            outlineOffset: 2,
+          },
+          '@media (max-width: 960px)': {
+            minHeight: 44,
           },
         },
         containedPrimary: {
@@ -250,11 +261,42 @@ const theme = createTheme({
           borderRadius: '8px !important',
           boxShadow: 'none',
           border: '1px solid #E5E7EB',
+          overflow: 'hidden',
+          transition: 'border-color 0.2s ease, margin 0.2s ease',
           '&:before': {
             display: 'none',
           },
           '&.Mui-expanded': {
             margin: '8px 0',
+            borderColor: '#C9A86C',
+          },
+        },
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          '&:focus-visible': {
+            outline: '2px solid #C9A86C',
+            outlineOffset: -2,
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          transition: 'transform 0.15s ease, background 0.2s ease',
+          '&:active': {
+            transform: 'scale(0.9)',
+          },
+          '&:focus-visible': {
+            outline: '2px solid #C9A86C',
+            outlineOffset: 2,
+          },
+          '@media (max-width: 960px)': {
+            minWidth: 44,
+            minHeight: 44,
           },
         },
       },

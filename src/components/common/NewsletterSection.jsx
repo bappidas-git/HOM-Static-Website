@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Snackbar, Alert } from '@mui/material';
 import { leadService } from '../../services/api';
+import { useToast } from './ToastProvider';
 import styles from './NewsletterSection.module.css';
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,17 +23,9 @@ const NewsletterSection = () => {
         message: 'Newsletter subscription',
       });
       setEmail('');
-      setSnackbar({
-        open: true,
-        message: 'Successfully subscribed to our newsletter!',
-        severity: 'success',
-      });
+      toast.success('Successfully subscribed to our newsletter!');
     } catch {
-      setSnackbar({
-        open: true,
-        message: 'Something went wrong. Please try again.',
-        severity: 'error',
-      });
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -53,6 +45,8 @@ const NewsletterSection = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              inputMode="email"
+              autoComplete="email"
               aria-label="Email address"
             />
           </div>
@@ -73,22 +67,6 @@ const NewsletterSection = () => {
           apply.
         </p>
       </div>
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-          severity={snackbar.severity}
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </section>
   );
 };

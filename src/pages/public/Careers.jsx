@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../services/api';
+import { useToast } from '../../components/common/ToastProvider';
 import styles from './Careers.module.css';
 
 /* ── Animated section wrapper ──────────────────── */
@@ -75,6 +76,7 @@ const perks = [
 
 /* ── Component ─────────────────────────────────── */
 const Careers = () => {
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState('');
   const [formData, setFormData] = useState({
@@ -135,8 +137,10 @@ const Careers = () => {
       setSubmitting(true);
       await leadService.create({ ...formData, source: 'careers' });
       setSubmitted(true);
+      toast.success('Application submitted successfully!');
     } catch {
       setSubmitError('Something went wrong. Please try again.');
+      toast.error('Failed to submit application. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -285,10 +289,10 @@ const Careers = () => {
             >
               <motion.div
                 className={styles.modal}
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                initial={{ opacity: 0, scale: 0.92, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <button className={styles.modalClose} onClick={closeModal} aria-label="Close">
@@ -329,6 +333,8 @@ const Careers = () => {
                           placeholder="Email Address *"
                           value={formData.email}
                           onChange={handleChange}
+                          inputMode="email"
+                          autoComplete="email"
                           className={`${styles.modalInput} ${errors.email ? styles.inputError : ''}`}
                         />
                         {errors.email && <span className={styles.errorText}>{errors.email}</span>}
@@ -340,6 +346,8 @@ const Careers = () => {
                           placeholder="Phone Number *"
                           value={formData.phone}
                           onChange={handleChange}
+                          inputMode="tel"
+                          autoComplete="tel"
                           className={`${styles.modalInput} ${errors.phone ? styles.inputError : ''}`}
                         />
                         {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}

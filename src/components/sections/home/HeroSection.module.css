@@ -10,9 +10,11 @@
 
 .bgImage {
   position: absolute;
-  inset: 0;
+  inset: -80px 0 0 0;
+  bottom: 0;
   background: url('https://placehold.co/1920x800/1B2A4A/white?text=Luxury+Property') center/cover no-repeat;
   z-index: 0;
+  will-change: transform;
 }
 
 .overlay {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../services/api';
+import { useToast } from './ToastProvider';
 import styles from './LeadForm.module.css';
 
 const LeadForm = ({
@@ -25,6 +26,7 @@ const LeadForm = ({
     initialValues[f.name] = '';
   });
 
+  const toast = useToast();
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -82,8 +84,10 @@ const LeadForm = ({
         ...(propertyId ? { propertyId } : {}),
       });
       setSubmitted(true);
+      toast.success('Request submitted successfully!');
     } catch {
       setSubmitError('Something went wrong. Please try again.');
+      toast.error('Failed to submit. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -159,6 +163,8 @@ const LeadForm = ({
                       placeholder={field.placeholder || field.label}
                       value={formData[field.name] || ''}
                       onChange={handleChange}
+                      inputMode={field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : undefined}
+                      autoComplete={field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : field.name === 'name' ? 'name' : undefined}
                       className={`${styles.input} ${errors[field.name] ? styles.inputError : ''}`}
                     />
                   )}

@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
-import { Skeleton } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import { Icon } from '@iconify/react';
 import { propertyService } from '../../services/api';
 import PropertyCard from '../../components/common/PropertyCard';
 import PropertyFilters from '../../components/common/PropertyFilters';
+import { PropertyGridSkeleton } from '../../components/common/SkeletonLoaders';
 import styles from './PropertyListing.module.css';
 
 const ITEMS_PER_PAGE = 9;
@@ -266,31 +267,7 @@ const PropertyListing = ({ routePath }) => {
     setPage(1);
   };
 
-  // Skeleton loading cards
-  const renderSkeletons = () => (
-    <div className={styles.skeletonGrid}>
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className={styles.skeletonCard}>
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            sx={{ aspectRatio: '4/3' }}
-          />
-          <div style={{ padding: 16 }}>
-            <Skeleton variant="text" width="70%" height={24} />
-            <Skeleton variant="text" width="40%" height={28} />
-            <Skeleton variant="text" width="60%" height={20} />
-            <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
-              <Skeleton variant="text" width="45%" height={36} />
-              <Skeleton variant="text" width="45%" height={36} />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-  // Animation variants for grid items
+  // Animation variants for staggered grid items
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -308,13 +285,18 @@ const PropertyListing = ({ routePath }) => {
       </Helmet>
 
       {/* Page Header */}
-      <div className={styles.pageHeader}>
+      <motion.div
+        className={styles.pageHeader}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+      >
         <div className={styles.headerContainer}>
           <h1 className={styles.pageTitle}>{config.title}</h1>
           <p className={styles.pageSubtitle}>{config.subtitle}</p>
           <div className={styles.divider} />
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content */}
       <section className={styles.section}>
@@ -330,8 +312,8 @@ const PropertyListing = ({ routePath }) => {
             preFilters={config.preFilters}
           />
 
-          {/* Loading State */}
-          {loading && renderSkeletons()}
+          {/* Loading State — branded shimmer skeletons */}
+          {loading && <PropertyGridSkeleton count={6} />}
 
           {/* Error State */}
           {error && !loading && (

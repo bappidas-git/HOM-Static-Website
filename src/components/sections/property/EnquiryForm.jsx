@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../../services/api';
+import { useToast } from '../../common/ToastProvider';
 import styles from './EnquiryForm.module.css';
 
 const EnquiryForm = ({ property, isMobile = false }) => {
@@ -11,6 +12,7 @@ const EnquiryForm = ({ property, isMobile = false }) => {
     phone: '',
     message: property ? `I'm interested in ${property.title}` : '',
   });
+  const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -38,8 +40,10 @@ const EnquiryForm = ({ property, isMobile = false }) => {
         source: 'property_enquiry',
       });
       setSubmitted(true);
+      toast.success('Enquiry submitted! Our team will contact you soon.');
     } catch {
       setError('Something went wrong. Please try again.');
+      toast.error('Failed to submit enquiry. Please try again.');
     } finally {
       setSubmitting(false);
     }
