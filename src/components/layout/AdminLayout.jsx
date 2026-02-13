@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -12,6 +12,9 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Typography,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
@@ -77,6 +80,24 @@ const pageTitles = {
   '/admin/settings': 'Site Settings',
 };
 
+// Format source for display
+const formatSource = (source) => {
+  if (!source) return 'Unknown';
+  const sourceMap = {
+    'property-detail-page': 'Property Enquiry',
+    'homepage-contact-form': 'Contact Form',
+    'newsletter': 'Newsletter',
+    'home-loan': 'Home Loan',
+    'legal-assistance': 'Legal',
+    'interior-designing': 'Interior Design',
+    'sell-let': 'Sell/Let',
+    'careers': 'Careers',
+    'partnership': 'Partnership',
+    'property-listing-page': 'Property Listing',
+  };
+  return sourceMap[source] || source.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 const AdminLayout = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -90,18 +111,55 @@ const AdminLayout = () => {
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [newLeadCount, setNewLeadCount] = useState(0);
 
-  // Fetch new lead count
-  React.useEffect(() => {
-    const fetchLeadCount = async () => {
-      try {
-        const leads = await leadService.getAll({ status: 'new' });
-        setNewLeadCount(Array.isArray(leads) ? leads.length : 0);
-      } catch {
-        setNewLeadCount(0);
+  // Notification state
+  const [notifAnchor, setNotifAnchor] = useState(null);
+  const [recentLeads, setRecentLeads] = useState([]);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const lastLeadCountRef = useRef(0);
+  const isInitialFetchRef = useRef(true);
+
+  // Fetch leads and update counts
+  const fetchLeads = useCallback(async () => {
+    try {
+      const leads = await leadService.getAll();
+      const allLeads = Array.isArray(leads) ? leads : [];
+      const newCount = allLeads.filter((l) => l.status === 'new').length;
+      setNewLeadCount(newCount);
+
+      // Store recent leads (newest 5) for notification dropdown
+      const sorted = [...allLeads]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+      setRecentLeads(sorted);
+
+      // Detect new leads (not on initial fetch)
+      if (!isInitialFetchRef.current && allLeads.length > lastLeadCountRef.current) {
+        const newestLead = sorted[0];
+        if (newestLead) {
+          setToastMessage(
+            `New lead from ${formatSource(newestLead.source)}: ${newestLead.name}`
+          );
+          setToastOpen(true);
+        }
       }
-    };
-    fetchLeadCount();
+      lastLeadCountRef.current = allLeads.length;
+      isInitialFetchRef.current = false;
+    } catch {
+      setNewLeadCount(0);
+    }
   }, []);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);
+
+  // Poll every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(fetchLeads, 30000);
+    return () => clearInterval(interval);
+  }, [fetchLeads]);
 
   // Current page title
   const pageTitle = useMemo(() => {
@@ -329,10 +387,150 @@ const AdminLayout = () => {
         </div>
 
         <div className={styles.topBarRight}>
-          <button className={styles.topBarIconBtn} type="button" aria-label="Notifications">
+          {/* Notification Bell */}
+          <button
+            className={styles.topBarIconBtn}
+            type="button"
+            aria-label="Notifications"
+            onClick={(e) => setNotifAnchor(e.currentTarget)}
+          >
             <Icon icon="mdi:bell-outline" style={{ fontSize: 22 }} />
-            {newLeadCount > 0 && <span className={styles.notificationDot} />}
+            {newLeadCount > 0 && (
+              <span className={styles.notificationBadge}>
+                {newLeadCount > 9 ? '9+' : newLeadCount}
+              </span>
+            )}
           </button>
+
+          {/* Notification Dropdown */}
+          <Menu
+            anchorEl={notifAnchor}
+            open={Boolean(notifAnchor)}
+            onClose={() => setNotifAnchor(null)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            PaperProps={{
+              sx: { width: 340, mt: 1, borderRadius: 2, maxHeight: 420 },
+            }}
+          >
+            <Box sx={{ px: 2, py: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A' }}>
+                Notifications
+              </Typography>
+              {newLeadCount > 0 && (
+                <Box
+                  sx={{
+                    bgcolor: '#EFF6FF',
+                    color: '#3B82F6',
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: 1,
+                  }}
+                >
+                  {newLeadCount} new
+                </Box>
+              )}
+            </Box>
+            <Divider />
+            {recentLeads.length === 0 ? (
+              <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
+                <Icon icon="mdi:bell-off-outline" style={{ fontSize: 32, color: '#D1D5DB' }} />
+                <Typography sx={{ fontSize: '0.8125rem', color: '#9CA3AF', mt: 1 }}>
+                  No recent leads
+                </Typography>
+              </Box>
+            ) : (
+              recentLeads.map((lead) => {
+                const isNew = lead.status === 'new';
+                return (
+                  <MenuItem
+                    key={lead.id}
+                    onClick={() => {
+                      setNotifAnchor(null);
+                      navigate(`/admin/leads/${lead.id}`);
+                    }}
+                    sx={{
+                      py: 1.5,
+                      px: 2,
+                      bgcolor: isNew ? 'rgba(59,130,246,0.04)' : 'transparent',
+                      '&:hover': { bgcolor: isNew ? 'rgba(59,130,246,0.08)' : undefined },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1.5, width: '100%', alignItems: 'flex-start' }}>
+                      <Box
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: '50%',
+                          bgcolor: isNew ? '#EFF6FF' : '#F3F4F6',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Icon
+                          icon="mdi:account-outline"
+                          style={{ fontSize: 18, color: isNew ? '#3B82F6' : '#9CA3AF' }}
+                        />
+                      </Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography
+                          sx={{
+                            fontSize: '0.8125rem',
+                            fontWeight: isNew ? 600 : 400,
+                            color: '#1B2A4A',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {lead.name}
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.6875rem', color: '#6B7280' }}>
+                          {formatSource(lead.source)}
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.625rem', color: '#9CA3AF', mt: 0.25 }}>
+                          {new Date(lead.createdAt).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </Typography>
+                      </Box>
+                      {isNew && (
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            bgcolor: '#3B82F6',
+                            flexShrink: 0,
+                            mt: 0.5,
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </MenuItem>
+                );
+              })
+            )}
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                setNotifAnchor(null);
+                navigate('/admin/leads');
+              }}
+              sx={{ justifyContent: 'center', py: 1.5 }}
+            >
+              <Typography sx={{ fontSize: '0.8125rem', fontWeight: 500, color: '#3B82F6' }}>
+                View All Leads
+              </Typography>
+            </MenuItem>
+          </Menu>
 
           <button
             className={styles.profileDropdown}
@@ -401,6 +599,35 @@ const AdminLayout = () => {
       >
         <Outlet />
       </main>
+
+      {/* Toast notification for new leads */}
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={5000}
+        onClose={() => setToastOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        sx={{ mt: 8 }}
+      >
+        <Alert
+          onClose={() => setToastOpen(false)}
+          severity="info"
+          icon={<Icon icon="mdi:account-plus-outline" style={{ fontSize: 20 }} />}
+          sx={{
+            borderRadius: 2,
+            bgcolor: '#EFF6FF',
+            color: '#1B2A4A',
+            border: '1px solid #BFDBFE',
+            '& .MuiAlert-icon': { color: '#3B82F6' },
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            setToastOpen(false);
+            navigate('/admin/leads');
+          }}
+        >
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
