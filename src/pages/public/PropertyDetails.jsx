@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
-import { Skeleton } from '@mui/material';
+import { SwipeableDrawer, useMediaQuery, useTheme } from '@mui/material';
 import { propertyService } from '../../services/api';
+import { PropertyDetailSkeleton } from '../../components/common/SkeletonLoaders';
+import { useToast } from '../../components/common/ToastProvider';
 import PropertyGallery from '../../components/sections/property/PropertyGallery';
 import PropertyOverview from '../../components/sections/property/PropertyOverview';
 import PropertySpecs from '../../components/sections/property/PropertySpecs';
@@ -26,13 +28,27 @@ const formatPrice = (price, unit) => {
   return `₹${price.toLocaleString('en-IN')}`;
 };
 
+const modalVariants = {
+  hidden: { opacity: 0, scale: 0.92, y: 20 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 350, damping: 30 },
+  },
+  exit: { opacity: 0, scale: 0.95, y: 10, transition: { duration: 0.2 } },
+};
+
 const PropertyDetails = () => {
   const { slug } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const toast = useToast();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  const [shareSheetOpen, setShareSheetOpen] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -56,58 +72,59 @@ const PropertyDetails = () => {
   }, [slug]);
 
   const handleShare = useCallback(() => {
+    if (isMobile && navigator.share) {
+      navigator.share({
+        title: property?.title,
+        url: window.location.href,
+      }).catch(() => {});
+    } else if (isMobile) {
+      setShareSheetOpen(true);
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        toast.success('Link copied to clipboard!');
+      });
+    }
+  }, [isMobile, property?.title, toast]);
+
+  const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      toast.success('Link copied to clipboard!');
+      setShareSheetOpen(false);
     });
-  }, []);
+  }, [toast]);
 
   const handleOpenLeadForm = useCallback(() => {
     setShowLeadForm(true);
-    // On desktop, scroll to the sidebar form
     const sidebar = document.getElementById('enquiry-sidebar');
     if (sidebar && window.innerWidth > 960) {
       sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, []);
 
-  // Loading skeleton
+  // Loading skeleton with shimmer
   if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.container}>
-          <div className={styles.skeletonBreadcrumb}>
-            <Skeleton variant="text" width={200} height={20} />
-          </div>
-          <Skeleton variant="rectangular" width="100%" sx={{ aspectRatio: '16/9', borderRadius: '12px' }} />
-          <div style={{ marginTop: 24 }}>
-            <Skeleton variant="text" width="60%" height={40} />
-            <Skeleton variant="text" width="30%" height={28} />
-            <Skeleton variant="text" width="40%" height={24} />
-          </div>
-          <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} variant="rectangular" height={80} sx={{ borderRadius: '8px' }} />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <PropertyDetailSkeleton />;
   }
 
-  // 404 state
+  // 404 / Error state
   if (error || !property) {
     return (
       <div className={styles.errorPage}>
-        <Icon icon="mdi:home-search" className={styles.errorIcon} />
-        <h1 className={styles.errorTitle}>Property Not Found</h1>
-        <p className={styles.errorText}>
-          The property you're looking for doesn't exist or has been removed.
-        </p>
-        <Link to="/properties" className={styles.errorBtn}>
-          <Icon icon="mdi:arrow-left" />
-          Browse All Properties
-        </Link>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Icon icon="mdi:home-search" className={styles.errorIcon} />
+          <h1 className={styles.errorTitle}>Property Not Found</h1>
+          <p className={styles.errorText}>
+            The property you're looking for doesn't exist or has been removed.
+          </p>
+          <Link to="/properties" className={styles.errorBtn}>
+            <Icon icon="mdi:arrow-left" />
+            Browse All Properties
+          </Link>
+        </motion.div>
       </div>
     );
   }
@@ -128,27 +145,92 @@ const PropertyDetails = () => {
         )}
       </Helmet>
 
-      {/* Lead capture modal overlay */}
-      {showLeadForm && (
-        <div className={styles.modalOverlay} onClick={() => setShowLeadForm(false)}>
+      {/* Lead capture modal overlay — spring animation */}
+      <AnimatePresence>
+        {showLeadForm && (
           <motion.div
-            className={styles.modalContent}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => e.stopPropagation()}
+            className={styles.modalOverlay}
+            onClick={() => setShowLeadForm(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <button className={styles.modalClose} onClick={() => setShowLeadForm(false)}>
-              <Icon icon="mdi:close" />
-            </button>
-            <EnquiryForm property={property} />
+            <motion.div
+              className={styles.modalContent}
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.modalClose}
+                onClick={() => setShowLeadForm(false)}
+                aria-label="Close enquiry form"
+              >
+                <Icon icon="mdi:close" />
+              </button>
+              <EnquiryForm property={property} />
+            </motion.div>
           </motion.div>
-        </div>
+        )}
+      </AnimatePresence>
+
+      {/* Share Bottom Sheet (mobile) */}
+      {isMobile && (
+        <SwipeableDrawer
+          anchor="bottom"
+          open={shareSheetOpen}
+          onClose={() => setShareSheetOpen(false)}
+          onOpen={() => setShareSheetOpen(true)}
+          disableSwipeToOpen
+          PaperProps={{
+            sx: {
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              p: 2,
+            },
+          }}
+        >
+          <div style={{ textAlign: 'center', padding: '8px 0 16px' }}>
+            <div style={{ width: 40, height: 4, background: '#D1D5DB', borderRadius: 2, margin: '0 auto 16px' }} />
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', marginBottom: 16 }}>
+              Share this Property
+            </h3>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+              <button onClick={handleCopyLink} style={shareOptionStyle} aria-label="Copy link">
+                <Icon icon="mdi:content-copy" style={{ fontSize: 24 }} />
+                <span>Copy Link</span>
+              </button>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(property.title + ' ' + window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={shareOptionStyle}
+                aria-label="Share on WhatsApp"
+                onClick={() => setShareSheetOpen(false)}
+              >
+                <Icon icon="mdi:whatsapp" style={{ fontSize: 24, color: '#25D366' }} />
+                <span>WhatsApp</span>
+              </a>
+              <a
+                href={`mailto:?subject=${encodeURIComponent(property.title)}&body=${encodeURIComponent(window.location.href)}`}
+                style={shareOptionStyle}
+                aria-label="Share via Email"
+                onClick={() => setShareSheetOpen(false)}
+              >
+                <Icon icon="mdi:email-outline" style={{ fontSize: 24 }} />
+                <span>Email</span>
+              </a>
+            </div>
+          </div>
+        </SwipeableDrawer>
       )}
 
       <div className={styles.page}>
         <div className={styles.container}>
           {/* Breadcrumb */}
-          <nav className={styles.breadcrumb}>
+          <nav className={styles.breadcrumb} aria-label="Breadcrumb">
             <Link to="/" className={styles.breadcrumbLink}>Home</Link>
             <Icon icon="mdi:chevron-right" className={styles.breadcrumbSep} />
             <Link to="/properties" className={styles.breadcrumbLink}>Properties</Link>
@@ -163,7 +245,12 @@ const PropertyDetails = () => {
           <div className={styles.layout}>
             <div className={styles.mainContent}>
               {/* Property Header */}
-              <div className={styles.propertyHeader}>
+              <motion.div
+                className={styles.propertyHeader}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              >
                 <div className={styles.headerTop}>
                   <div>
                     <h1 className={styles.propertyName}>{property.title}</h1>
@@ -206,12 +293,12 @@ const PropertyDetails = () => {
                   <button className={styles.ctaSecondary} onClick={() => setShowLeadForm(true)}>
                     <Icon icon="mdi:phone-outline" /> Contact For Price
                   </button>
-                  <button className={styles.shareBtn} onClick={handleShare}>
-                    <Icon icon={copied ? 'mdi:check' : 'mdi:share-variant'} />
-                    {copied ? 'Copied!' : 'Share'}
+                  <button className={styles.shareBtn} onClick={handleShare} aria-label="Share property">
+                    <Icon icon="mdi:share-variant" />
+                    Share
                   </button>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Sections */}
               <PropertyOverview property={property} />
@@ -244,6 +331,23 @@ const PropertyDetails = () => {
       <EnquiryForm property={property} isMobile />
     </>
   );
+};
+
+const shareOptionStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 6,
+  padding: '12px 16px',
+  border: '1px solid #E5E7EB',
+  borderRadius: 12,
+  background: '#fff',
+  cursor: 'pointer',
+  fontFamily: '"DM Sans", sans-serif',
+  fontSize: '0.75rem',
+  color: '#1B2A4A',
+  textDecoration: 'none',
+  minWidth: 80,
 };
 
 export default PropertyDetails;

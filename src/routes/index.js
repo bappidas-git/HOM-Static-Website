@@ -1,23 +1,9 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
 import MainLayout from '../components/layout/MainLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import ProtectedRoute from '../components/admin/ProtectedRoute';
-
-// Loading fallback
-const PageLoader = () => (
-  <Box
-    sx={{
-      minHeight: '60vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
-    <CircularProgress sx={{ color: 'secondary.main' }} />
-  </Box>
-);
+import { PageLoader } from '../components/common/SkeletonLoaders';
 
 // === Public Pages (lazy loaded) ===
 const Home = lazy(() => import('../pages/public/Home'));

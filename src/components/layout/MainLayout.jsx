@@ -7,6 +7,8 @@ import MobileHeader from './MobileHeader';
 import Footer from './Footer';
 import BottomNav from './BottomNav';
 import NewsletterSection from '../common/NewsletterSection';
+import ScrollToTop from '../common/ScrollToTop';
+import BackToTop from '../common/BackToTop';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -21,15 +23,29 @@ const MainLayout = ({ children }) => {
 
   return (
     <>
+      {/* Scroll to top on route change */}
+      <ScrollToTop />
+
+      {/* Skip to main content — accessibility */}
+      <a
+        href="#main-content"
+        className="skip-to-main"
+      >
+        Skip to main content
+      </a>
+
       {/* Header */}
       {isMobile ? <MobileHeader /> : <Header />}
 
       {/* Main Content */}
       <main
+        id="main-content"
+        role="main"
         style={{
           paddingTop: isMobile ? 60 : 72,
           paddingBottom: isMobile ? 56 : 0,
           minHeight: '100vh',
+          overflowX: 'hidden',
         }}
       >
         <AnimatePresence mode="wait">
@@ -48,6 +64,9 @@ const MainLayout = ({ children }) => {
       {/* Newsletter + Footer */}
       <NewsletterSection />
       <Footer />
+
+      {/* Back to Top button */}
+      <BackToTop />
 
       {/* Mobile Bottom Nav */}
       {isMobile && <BottomNav />}

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../services/api';
+import { useToast } from '../../components/common/ToastProvider';
 import styles from './Contact.module.css';
 
 /* ── Animated section wrapper ──────────────────── */
@@ -58,6 +59,7 @@ const workingHours = [
 
 /* ── Component ─────────────────────────────────── */
 const Contact = () => {
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -103,8 +105,10 @@ const Contact = () => {
       setSubmitting(true);
       await leadService.create({ ...formData, source: 'contact' });
       setSubmitted(true);
+      toast.success('Message sent successfully! We\'ll get back to you soon.');
     } catch {
       setSubmitError('Something went wrong. Please try again.');
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -170,6 +174,7 @@ const Contact = () => {
                           placeholder="Full Name *"
                           value={formData.name}
                           onChange={handleChange}
+                          autoComplete="name"
                           className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
                         />
                         {errors.name && <span className={styles.errorText}>{errors.name}</span>}
@@ -181,6 +186,8 @@ const Contact = () => {
                           placeholder="Email Address *"
                           value={formData.email}
                           onChange={handleChange}
+                          inputMode="email"
+                          autoComplete="email"
                           className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
                         />
                         {errors.email && <span className={styles.errorText}>{errors.email}</span>}
@@ -195,6 +202,8 @@ const Contact = () => {
                           placeholder="Phone Number *"
                           value={formData.phone}
                           onChange={handleChange}
+                          inputMode="tel"
+                          autoComplete="tel"
                           className={`${styles.input} ${errors.phone ? styles.inputError : ''}`}
                         />
                         {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
