@@ -1,12 +1,10 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import PropertyForm from './PropertyForm';
 
 const EditProperty = () => {
-  return (
-    <Box sx={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Typography variant="h2">Edit Property</Typography>
-    </Box>
-  );
+  const { id } = useParams();
+  return <PropertyForm propertyId={id} />;
 };
 
 export default EditProperty;
