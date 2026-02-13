@@ -129,7 +129,6 @@ const LeadDetail = () => {
       }
       setError(null);
     } catch (err) {
-      console.error('Failed to fetch lead:', err);
       setError('Failed to load lead details. Please try again.');
     } finally {
       setLoading(false);
@@ -153,7 +152,6 @@ const LeadDetail = () => {
         severity: 'success',
       });
     } catch (err) {
-      console.error('Failed to update status:', err);
       setSnackbar({ open: true, message: 'Failed to update status', severity: 'error' });
     } finally {
       setUpdatingStatus(false);
@@ -170,7 +168,6 @@ const LeadDetail = () => {
       setNoteText('');
       setSnackbar({ open: true, message: 'Note added successfully', severity: 'success' });
     } catch (err) {
-      console.error('Failed to add note:', err);
       setSnackbar({ open: true, message: 'Failed to add note', severity: 'error' });
     } finally {
       setAddingNote(false);

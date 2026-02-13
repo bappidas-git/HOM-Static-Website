@@ -131,7 +131,6 @@ const PropertyListing = ({ routePath }) => {
       setAllProperties(data);
     } catch (err) {
       setError('Failed to load properties. Please try again.');
-      console.error('Error fetching properties:', err);
     } finally {
       setLoading(false);
     }

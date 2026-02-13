@@ -236,7 +236,7 @@ const ArticleDetail = () => {
           setRelatedArticles(related);
         }
       } catch (err) {
-        console.error('Failed to fetch article:', err);
+        // Article fetch failed — UI shows error state
       } finally {
         setLoading(false);
       }
