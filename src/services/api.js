@@ -36,10 +36,8 @@ apiClient.interceptors.response.use(
           window.location.href = '/admin/login';
           break;
         case 404:
-          console.error('Resource not found:', error.config.url);
           break;
         case 500:
-          console.error('Server error:', error.message);
           break;
         default:
           break;

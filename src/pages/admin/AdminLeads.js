@@ -127,7 +127,6 @@ const AdminLeads = () => {
       lastLeadCountRef.current = sorted.length;
       setError(null);
     } catch (err) {
-      console.error('Failed to fetch leads:', err);
       setError('Failed to load leads. Please try again.');
     } finally {
       setLoading(false);
@@ -221,7 +220,6 @@ const AdminLeads = () => {
         severity: 'success',
       });
     } catch (err) {
-      console.error('Failed to update status:', err);
       setSnackbar({ open: true, message: 'Failed to update status', severity: 'error' });
     }
     setStatusAnchor(null);
@@ -235,7 +233,6 @@ const AdminLeads = () => {
       setLeads((prev) => prev.filter((l) => l.id !== deleteDialog.id));
       setSnackbar({ open: true, message: 'Lead deleted successfully', severity: 'success' });
     } catch (err) {
-      console.error('Failed to delete lead:', err);
       setSnackbar({ open: true, message: 'Failed to delete lead', severity: 'error' });
     } finally {
       setDeleteDialog({ open: false, id: null, name: '' });

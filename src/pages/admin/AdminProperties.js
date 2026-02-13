@@ -104,7 +104,6 @@ const AdminProperties = () => {
       setProperties(data);
       setError(null);
     } catch (err) {
-      console.error('Failed to fetch properties:', err);
       setError('Failed to load properties. Please try again.');
     } finally {
       setLoading(false);
@@ -174,7 +173,6 @@ const AdminProperties = () => {
         severity: 'success',
       });
     } catch (err) {
-      console.error('Failed to toggle status:', err);
       setSnackbar({ open: true, message: 'Failed to update status', severity: 'error' });
     }
   };
@@ -198,7 +196,6 @@ const AdminProperties = () => {
         setSnackbar({ open: true, message: 'Property deleted successfully', severity: 'success' });
       }
     } catch (err) {
-      console.error('Failed to delete:', err);
       setSnackbar({ open: true, message: 'Failed to delete property', severity: 'error' });
     } finally {
       setDeleteDialog({ open: false, id: null, title: '', bulk: false });

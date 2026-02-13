@@ -263,7 +263,6 @@ const PropertyForm = ({ propertyId = null }) => {
         });
         setSlugManuallyEdited(true);
       } catch (err) {
-        console.error('Failed to load property:', err);
         setSnackbar({ open: true, message: 'Failed to load property data', severity: 'error' });
       } finally {
         setLoading(false);
@@ -421,7 +420,6 @@ const PropertyForm = ({ propertyId = null }) => {
 
       setTimeout(() => navigate('/admin/properties'), 1200);
     } catch (err) {
-      console.error('Failed to save property:', err);
       setSnackbar({ open: true, message: 'Failed to save property. Please try again.', severity: 'error' });
     } finally {
       setSaving(false);
