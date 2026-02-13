@@ -52,6 +52,8 @@ const AdminLeads = lazy(() => import('../pages/admin/AdminLeads'));
 const LeadDetail = lazy(() => import('../pages/admin/LeadDetail'));
 const AdminSeo = lazy(() => import('../pages/admin/AdminSeo'));
 const AdminArticles = lazy(() => import('../pages/admin/AdminArticles'));
+const ArticleForm = lazy(() => import('../pages/admin/ArticleForm'));
+const FaqManager = lazy(() => import('../pages/admin/FaqManager'));
 const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
 
 // Public layout wrapper
@@ -116,6 +118,9 @@ const AppRoutes = () => {
           <Route path="leads/:id" element={<LeadDetail />} />
           <Route path="seo" element={<AdminSeo />} />
           <Route path="articles" element={<AdminArticles />} />
+          <Route path="articles/add" element={<ArticleForm />} />
+          <Route path="articles/edit/:id" element={<ArticleForm />} />
+          <Route path="faqs" element={<FaqManager />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 
