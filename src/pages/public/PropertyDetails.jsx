@@ -68,6 +68,13 @@ const PropertyDetails = () => {
   const [docSubmitted, setDocSubmitted] = useState(false);
   const [docError, setDocError] = useState('');
 
+  // Pricing modal state
+  const [pricingModal, setPricingModal] = useState({ open: false, config: '' });
+  const [pricingFormData, setPricingFormData] = useState({ name: '', email: '', phone: '' });
+  const [pricingSubmitting, setPricingSubmitting] = useState(false);
+  const [pricingSubmitted, setPricingSubmitted] = useState(false);
+  const [pricingError, setPricingError] = useState('');
+
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -207,6 +214,51 @@ const PropertyDetails = () => {
       setDocSubmitting(false);
     }
   }, [docFormData, docModal.docName, property?.id, toast]);
+
+  // Pricing modal handlers
+  const openPricingModal = useCallback((config) => {
+    setPricingModal({ open: true, config });
+    setPricingSubmitted(false);
+    setPricingError('');
+    setPricingFormData({ name: '', email: '', phone: '' });
+  }, []);
+
+  const closePricingModal = useCallback(() => {
+    setPricingModal({ open: false, config: '' });
+    setPricingSubmitted(false);
+    setPricingError('');
+  }, []);
+
+  const handlePricingFormChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setPricingFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handlePricingSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setPricingError('');
+
+    if (!pricingFormData.name.trim() || !pricingFormData.phone.trim()) {
+      setPricingError('Name and phone are required');
+      return;
+    }
+
+    try {
+      setPricingSubmitting(true);
+      await leadService.create({
+        ...pricingFormData,
+        propertyId: property?.id || null,
+        source: 'detailed_pricing',
+        message: `Requested detailed pricing for ${pricingModal.config} — ${property?.title || ''}`,
+      });
+      setPricingSubmitted(true);
+      toast.success('Pricing request submitted successfully!');
+    } catch {
+      setPricingError('Something went wrong. Please try again.');
+    } finally {
+      setPricingSubmitting(false);
+    }
+  }, [pricingFormData, pricingModal.config, property?.id, property?.title, toast]);
 
   // Loading skeleton
   if (loading) {
@@ -510,6 +562,127 @@ const PropertyDetails = () => {
         )}
       </AnimatePresence>
 
+      {/* Pricing Lead Capture Modal */}
+      <AnimatePresence>
+        {pricingModal.open && (
+          <motion.div
+            className={styles.modalOverlay}
+            onClick={closePricingModal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={styles.modalContent}
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.modalClose}
+                onClick={closePricingModal}
+                aria-label="Close pricing form"
+              >
+                <Icon icon="mdi:close" />
+              </button>
+
+              {pricingSubmitted ? (
+                <div className={styles.thankYou}>
+                  <Icon icon="mdi:check-circle" className={styles.thankYouIcon} />
+                  <h3 className={styles.thankYouTitle}>Thank You!</h3>
+                  <p className={styles.thankYouText}>
+                    Your request for {pricingModal.config} detailed pricing has been received. Our team will share the pricing details with you shortly.
+                  </p>
+                  <button className={styles.thankYouClose} onClick={closePricingModal}>
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.pricingModalHeader}>
+                    <Icon icon="mdi:currency-inr" className={styles.pricingModalIcon} />
+                    <div>
+                      <h3 className={styles.modalTitle} style={{ marginBottom: 0 }}>
+                        Get {pricingModal.config} Detailed Pricing
+                      </h3>
+                      <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '0.8rem', color: '#6B7280', margin: '4px 0 0', lineHeight: 1.5 }}>
+                        {property?.title}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '0.8rem', color: '#6B7280', marginBottom: '16px', lineHeight: 1.5 }}>
+                    Please share your details to receive the complete pricing breakdown including all charges and payment plans.
+                  </p>
+                  <form onSubmit={handlePricingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Your Name *"
+                      value={pricingFormData.name}
+                      onChange={handlePricingFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={pricingFormData.email}
+                      onChange={handlePricingFormChange}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="Phone Number *"
+                      value={pricingFormData.phone}
+                      onChange={handlePricingFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    {pricingError && (
+                      <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
+                        {pricingError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={pricingSubmitting}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%',
+                        padding: '12px',
+                        background: '#1B2A4A',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        cursor: pricingSubmitting ? 'not-allowed' : 'pointer',
+                        opacity: pricingSubmitting ? 0.7 : 1,
+                      }}
+                    >
+                      {pricingSubmitting ? 'Submitting...' : (
+                        <>
+                          <Icon icon="mdi:currency-inr" />
+                          Get Detailed Pricing
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Share Bottom Sheet (mobile) */}
       {isMobile && (
         <SwipeableDrawer
@@ -662,6 +835,7 @@ const PropertyDetails = () => {
                 floorPlans={property.floorPlans}
                 priceUnit={property.priceUnit}
                 onRequestDetails={() => setShowLeadForm(true)}
+                onGetPricing={openPricingModal}
               />
               <FinanceGuide price={property.price} property={property} />
               <NearbyPlaces nearbyPlaces={property.nearbyPlaces} />

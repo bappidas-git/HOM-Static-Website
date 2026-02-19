@@ -11,7 +11,7 @@ const formatPrice = (price, unit) => {
   return `₹${price.toLocaleString('en-IN')}`;
 };
 
-const FloorPlans = ({ floorPlans = [], priceUnit = 'onwards', onRequestDetails }) => {
+const FloorPlans = ({ floorPlans = [], priceUnit = 'onwards', onRequestDetails, onGetPricing }) => {
   const [activeTab, setActiveTab] = useState(0);
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
@@ -41,12 +41,21 @@ const FloorPlans = ({ floorPlans = [], priceUnit = 'onwards', onRequestDetails }
         </div>
 
         <div className={styles.content}>
-          <div className={styles.planImage}>
-            <img
-              src={activePlan.image || 'https://placehold.co/600x400/1B2A4A/white?text=Floor+Plan'}
-              alt={`${activePlan.config} floor plan`}
-              loading="lazy"
-            />
+          <div className={styles.planImageCol}>
+            <div className={styles.planImage}>
+              <img
+                src={activePlan.image || 'https://placehold.co/600x400/1B2A4A/white?text=Floor+Plan'}
+                alt={`${activePlan.config} floor plan`}
+                loading="lazy"
+              />
+            </div>
+            <button
+              className={styles.getPricingBtn}
+              onClick={() => onGetPricing && onGetPricing(activePlan.config)}
+            >
+              <Icon icon="mdi:currency-inr" />
+              Get Detailed Pricing
+            </button>
           </div>
 
           <div className={styles.planDetails}>
