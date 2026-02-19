@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { useInView } from 'react-intersection-observer';
@@ -11,8 +11,11 @@ const formatPrice = (price, unit) => {
   return `₹${price.toLocaleString('en-IN')}`;
 };
 
+const INITIAL_VISIBLE_COUNT = 2;
+
 const PropertyOverview = ({ property }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [showAllHighlights, setShowAllHighlights] = useState(false);
 
   const details = [
     {
@@ -41,6 +44,13 @@ const PropertyOverview = ({ property }) => {
     },
   ];
 
+  const highlights = property.highlights || [];
+  const totalHighlights = highlights.length;
+  const visibleHighlights = showAllHighlights
+    ? highlights
+    : highlights.slice(0, INITIAL_VISIBLE_COUNT);
+  const remainingCount = totalHighlights - INITIAL_VISIBLE_COUNT;
+
   return (
     <section className={styles.section} ref={ref} id="overview">
       <motion.div
@@ -51,23 +61,6 @@ const PropertyOverview = ({ property }) => {
         <h2 className={styles.title}>Project Overview</h2>
 
         <p className={styles.description}>{property.description}</p>
-
-        {property.highlights?.length > 0 && (
-          <div className={styles.highlights}>
-            <h3 className={styles.highlightsTitle}>
-              <Icon icon="mdi:star-four-points" className={styles.highlightIcon} />
-              Key Reasons This Project Stands Out
-            </h3>
-            <ul className={styles.highlightsList}>
-              {property.highlights.map((item, idx) => (
-                <li key={idx} className={styles.highlightItem}>
-                  <Icon icon="mdi:check-circle" className={styles.checkIcon} />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         <div className={styles.detailsGrid}>
           {details.map((detail, idx) => (
@@ -84,6 +77,41 @@ const PropertyOverview = ({ property }) => {
           <span className={styles.devLabel}>Developer:</span>
           <span className={styles.devName}>{property.developer}</span>
         </div>
+
+        {totalHighlights > 0 && (
+          <div className={styles.highlights}>
+            <h3 className={styles.highlightsTitle}>
+              <Icon icon="mdi:star-four-points" className={styles.highlightIcon} />
+              {totalHighlights} Big Reasons This Project Stands Out
+            </h3>
+            <ul className={styles.highlightsList}>
+              {visibleHighlights.map((item, idx) => (
+                <li key={idx} className={styles.highlightItem}>
+                  <span className={styles.highlightNumber}>{idx + 1}</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            {remainingCount > 0 && !showAllHighlights && (
+              <button
+                className={styles.viewMoreBtn}
+                onClick={() => setShowAllHighlights(true)}
+              >
+                <Icon icon="mdi:chevron-down" className={styles.viewMoreIcon} />
+                View {remainingCount} More Reason{remainingCount > 1 ? 's' : ''}
+              </button>
+            )}
+            {showAllHighlights && totalHighlights > INITIAL_VISIBLE_COUNT && (
+              <button
+                className={styles.viewMoreBtn}
+                onClick={() => setShowAllHighlights(false)}
+              >
+                <Icon icon="mdi:chevron-up" className={styles.viewMoreIcon} />
+                Show Less
+              </button>
+            )}
+          </div>
+        )}
       </motion.div>
     </section>
   );
