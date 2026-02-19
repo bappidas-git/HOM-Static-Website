@@ -1315,6 +1315,24 @@
       "notes": [],
       "createdAt": "2025-12-20T16:00:00Z",
       "updatedAt": "2025-12-20T16:00:00Z"
+    },
+    {
+      "id": "7590",
+      "name": "Bappi Das",
+      "email": "bappi@assamdigital.com",
+      "phone": "8638959503",
+      "message": "I'm interested in Brigade El Dorado",
+      "propertyId": 4,
+      "source": "property_enquiry",
+      "status": "qualified",
+      "notes": [
+        {
+          "text": "Test",
+          "addedAt": "2026-02-13T12:33:26.281Z"
+        }
+      ],
+      "createdAt": "2026-02-13T12:16:10.426Z",
+      "updatedAt": "2026-02-13T12:33:46.591Z"
     }
   ],
   "neighborhoods": [
@@ -1753,7 +1771,7 @@
     },
     "newsletterText": "Get latest real estate updates in your inbox",
     "heroText": {
-      "title": "Find Your Dream Home",
+      "title": "Find Your Dream Home with Us!",
       "subtitle": "Discover the perfect property from our exclusive collection!!!"
     },
     "tagline": "ELEVATING EVERY EXPERIENCE IN REAL ESTATE",
