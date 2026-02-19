@@ -39,12 +39,59 @@
   font-weight: 500;
 }
 
+/* Download Buttons below gallery */
+.downloadButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  flex: 1;
+  justify-content: center;
+}
+
+.downloadBtn svg {
+  font-size: 1.1rem;
+}
+
+.downloadBrochure {
+  background: var(--color-secondary);
+  color: #fff;
+}
+
+.downloadBrochure:hover {
+  background: var(--color-secondary-dark);
+}
+
+.downloadFloorPlan {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.downloadFloorPlan:hover {
+  background: var(--color-primary-dark);
+}
+
 /* Layout */
 .layout {
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: var(--spacing-xl);
   margin-top: var(--spacing-lg);
+  align-items: start;
 }
 
 .mainContent {
@@ -52,7 +99,15 @@
 }
 
 .sidebarCol {
-  position: relative;
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sidebarCol::-webkit-scrollbar {
+  display: none;
 }
 
 /* Property Header */
@@ -317,6 +372,61 @@
   padding: 4px;
 }
 
+/* Modal Title */
+.modalTitle {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+  padding-right: var(--spacing-xl);
+}
+
+/* Thank you state in modal */
+.thankYou {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.thankYouIcon {
+  font-size: 3.5rem;
+  color: #059669;
+  margin-bottom: var(--spacing-md);
+}
+
+.thankYouTitle {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.thankYouText {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-lg);
+}
+
+.thankYouClose {
+  padding: 10px 24px;
+  background: var(--color-secondary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.thankYouClose:hover {
+  background: var(--color-secondary-dark);
+}
+
 /* Responsive */
 @media (max-width: 960px) {
   .layout {
@@ -333,6 +443,10 @@
 
   .price {
     font-size: 1.35rem;
+  }
+
+  .downloadButtons {
+    flex-direction: row;
   }
 }
 
@@ -369,6 +483,14 @@
 
   .shareBtn {
     justify-content: center;
+    width: 100%;
+  }
+
+  .downloadButtons {
+    flex-direction: column;
+  }
+
+  .downloadBtn {
     width: 100%;
   }
 }

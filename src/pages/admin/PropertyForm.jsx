@@ -52,6 +52,8 @@ const TAB_LABELS = [
   { label: 'Floor Plans', icon: 'mdi:layers-outline' },
   { label: 'Gallery', icon: 'mdi:image-multiple-outline' },
   { label: 'Nearby Places', icon: 'mdi:map-marker-radius-outline' },
+  { label: 'Specialities & Docs', icon: 'mdi:star-circle-outline' },
+  { label: 'Construction Specs', icon: 'mdi:crane' },
   { label: 'SEO & Tags', icon: 'mdi:search-web' },
 ];
 
@@ -138,6 +140,8 @@ const DRAFT_STORAGE_KEY = 'hom_property_draft';
 
 // ============ DEFAULT FORM DATA ============
 
+const CONSTRUCTION_SPEC_CATEGORIES = ['flooring', 'doors', 'structure', 'electrical', 'plumbing', 'others'];
+
 const getDefaultFormData = () => ({
   title: '',
   slug: '',
@@ -159,6 +163,16 @@ const getDefaultFormData = () => ({
   floorPlans: [{ config: '', area: '', price: '', image: '', bedrooms: '', bathrooms: '' }],
   gallery: [''],
   nearbyPlaces: [{ name: '', distance: '', type: 'school' }],
+  brochureUrl: '',
+  floorPlanPdfUrl: '',
+  specialities: [{ icon: '', name: '', description: '' }],
+  documents: [{ name: '', icon: 'mdi:file-document' }],
+  constructionSpecs: {
+    flooring: [{ area: '', spec: '' }],
+    doors: [{ area: '', spec: '' }],
+    structure: [{ area: '', spec: '' }],
+    electrical: [{ area: '', spec: '' }],
+  },
   seoTitle: '',
   seoDescription: '',
   seoKeywords: [],
@@ -254,6 +268,28 @@ const PropertyForm = ({ propertyId = null }) => {
           nearbyPlaces: property.nearbyPlaces?.length
             ? property.nearbyPlaces
             : [{ name: '', distance: '', type: 'school' }],
+          brochureUrl: property.brochureUrl || '',
+          floorPlanPdfUrl: property.floorPlanPdfUrl || '',
+          specialities: property.specialities?.length
+            ? property.specialities
+            : [{ icon: '', name: '', description: '' }],
+          documents: property.documents?.length
+            ? property.documents
+            : [{ name: '', icon: 'mdi:file-document' }],
+          constructionSpecs: {
+            flooring: property.constructionSpecs?.flooring?.length
+              ? property.constructionSpecs.flooring
+              : [{ area: '', spec: '' }],
+            doors: property.constructionSpecs?.doors?.length
+              ? property.constructionSpecs.doors
+              : [{ area: '', spec: '' }],
+            structure: property.constructionSpecs?.structure?.length
+              ? property.constructionSpecs.structure
+              : [{ area: '', spec: '' }],
+            electrical: property.constructionSpecs?.electrical?.length
+              ? property.constructionSpecs.electrical
+              : [{ area: '', spec: '' }],
+          },
           seoTitle: property.seoTitle || '',
           seoDescription: property.seoDescription || '',
           seoKeywords: property.seoKeywords || [],
@@ -381,6 +417,15 @@ const PropertyForm = ({ propertyId = null }) => {
       floorPlans: formData.floorPlans.filter((fp) => fp.config.trim()),
       gallery: formData.gallery.filter((g) => g.trim()),
       nearbyPlaces: formData.nearbyPlaces.filter((np) => np.name.trim()),
+      brochureUrl: formData.brochureUrl?.trim() || '',
+      floorPlanPdfUrl: formData.floorPlanPdfUrl?.trim() || '',
+      specialities: formData.specialities.filter((s) => s.name.trim()),
+      documents: formData.documents.filter((d) => d.name.trim()),
+      constructionSpecs: Object.fromEntries(
+        Object.entries(formData.constructionSpecs).filter(
+          ([, items]) => Array.isArray(items) && items.some((item) => item.area.trim() && item.spec.trim())
+        ).map(([key, items]) => [key, items.filter((item) => item.area.trim() && item.spec.trim())])
+      ),
       seoTitle: formData.seoTitle.trim(),
       seoDescription: formData.seoDescription.trim(),
       seoKeywords: formData.seoKeywords,
@@ -1162,6 +1207,222 @@ const PropertyForm = ({ propertyId = null }) => {
     </Box>
   );
 
+  const renderSpecialitiesAndDocs = () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Brochure & Floor Plan URLs */}
+      <Box>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 1.5 }}>
+          Downloads
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <TextField
+            label="Brochure URL"
+            value={formData.brochureUrl}
+            onChange={(e) => updateField('brochureUrl', e.target.value)}
+            sx={{ flex: 1, minWidth: 200 }}
+            placeholder="https://example.com/brochure.pdf"
+            size="small"
+          />
+          <TextField
+            label="Floor Plan PDF URL"
+            value={formData.floorPlanPdfUrl}
+            onChange={(e) => updateField('floorPlanPdfUrl', e.target.value)}
+            sx={{ flex: 1, minWidth: 200 }}
+            placeholder="https://example.com/floorplans.pdf"
+            size="small"
+          />
+        </Box>
+      </Box>
+
+      {/* Specialities */}
+      <Box>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 1.5 }}>
+          Property Specialities
+        </Typography>
+        {formData.specialities.map((item, index) => (
+          <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
+            <TextField
+              size="small"
+              label="Icon"
+              value={item.icon}
+              onChange={(e) =>
+                updateListItem('specialities', index, { ...item, icon: e.target.value })
+              }
+              sx={{ width: 160 }}
+              placeholder="mdi:shield-star"
+            />
+            <TextField
+              size="small"
+              label="Name"
+              value={item.name}
+              onChange={(e) =>
+                updateListItem('specialities', index, { ...item, name: e.target.value })
+              }
+              sx={{ flex: '1 1 140px' }}
+              placeholder="e.g., RERA Approved"
+            />
+            <TextField
+              size="small"
+              label="Description"
+              value={item.description}
+              onChange={(e) =>
+                updateListItem('specialities', index, { ...item, description: e.target.value })
+              }
+              sx={{ flex: '1 1 200px' }}
+              placeholder="Short description"
+            />
+            {formData.specialities.length > 1 && (
+              <IconButton size="small" onClick={() => removeListItem('specialities', index)} sx={{ color: '#EF4444' }}>
+                <Icon icon="mdi:close-circle-outline" style={{ fontSize: 20 }} />
+              </IconButton>
+            )}
+          </Box>
+        ))}
+        <Button
+          size="small"
+          variant="text"
+          onClick={() => addListItem('specialities', { icon: '', name: '', description: '' })}
+          startIcon={<Icon icon="mdi:plus" />}
+          sx={{ color: '#6B7280', alignSelf: 'flex-start' }}
+        >
+          Add Speciality
+        </Button>
+      </Box>
+
+      {/* Documents */}
+      <Box>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 1.5 }}>
+          Property Documents
+        </Typography>
+        {formData.documents.map((doc, index) => (
+          <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1 }}>
+            <TextField
+              size="small"
+              label="Icon"
+              value={doc.icon}
+              onChange={(e) =>
+                updateListItem('documents', index, { ...doc, icon: e.target.value })
+              }
+              sx={{ width: 180 }}
+              placeholder="mdi:file-document"
+            />
+            <TextField
+              size="small"
+              label="Document Name"
+              value={doc.name}
+              onChange={(e) =>
+                updateListItem('documents', index, { ...doc, name: e.target.value })
+              }
+              sx={{ flex: 1 }}
+              placeholder="e.g., RERA Certificate"
+            />
+            {formData.documents.length > 1 && (
+              <IconButton size="small" onClick={() => removeListItem('documents', index)} sx={{ color: '#EF4444' }}>
+                <Icon icon="mdi:close-circle-outline" style={{ fontSize: 20 }} />
+              </IconButton>
+            )}
+          </Box>
+        ))}
+        <Button
+          size="small"
+          variant="text"
+          onClick={() => addListItem('documents', { name: '', icon: 'mdi:file-document' })}
+          startIcon={<Icon icon="mdi:plus" />}
+          sx={{ color: '#6B7280', alignSelf: 'flex-start' }}
+        >
+          Add Document
+        </Button>
+      </Box>
+    </Box>
+  );
+
+  const renderConstructionSpecs = () => {
+    const updateConstructionSpec = (category, index, field, value) => {
+      setFormData((prev) => {
+        const specs = { ...prev.constructionSpecs };
+        const catItems = [...(specs[category] || [])];
+        catItems[index] = { ...catItems[index], [field]: value };
+        specs[category] = catItems;
+        return { ...prev, constructionSpecs: specs };
+      });
+    };
+
+    const addConstructionSpec = (category) => {
+      setFormData((prev) => {
+        const specs = { ...prev.constructionSpecs };
+        specs[category] = [...(specs[category] || []), { area: '', spec: '' }];
+        return { ...prev, constructionSpecs: specs };
+      });
+    };
+
+    const removeConstructionSpec = (category, index) => {
+      setFormData((prev) => {
+        const specs = { ...prev.constructionSpecs };
+        specs[category] = specs[category].filter((_, i) => i !== index);
+        return { ...prev, constructionSpecs: specs };
+      });
+    };
+
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A' }}>
+          Construction Specifications
+        </Typography>
+        <Typography variant="caption" sx={{ color: '#9CA3AF', mt: -2 }}>
+          Add detailed construction specs by category (Flooring, Doors, Structure, Electrical, etc.)
+        </Typography>
+
+        {CONSTRUCTION_SPEC_CATEGORIES.map((category) => {
+          const items = formData.constructionSpecs[category] || [];
+          if (items.length === 0 && !['flooring', 'doors', 'structure', 'electrical'].includes(category)) return null;
+          return (
+            <Paper key={category} sx={{ p: 2, borderRadius: 2, border: '1px solid #E5E7EB' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', textTransform: 'capitalize' }}>
+                  {category}
+                </Typography>
+              </Box>
+              {items.map((item, index) => (
+                <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1 }}>
+                  <TextField
+                    size="small"
+                    label="Area / Component"
+                    value={item.area}
+                    onChange={(e) => updateConstructionSpec(category, index, 'area', e.target.value)}
+                    sx={{ flex: '1 1 150px' }}
+                    placeholder="e.g., Living Room"
+                  />
+                  <TextField
+                    size="small"
+                    label="Specification"
+                    value={item.spec}
+                    onChange={(e) => updateConstructionSpec(category, index, 'spec', e.target.value)}
+                    sx={{ flex: '2 1 250px' }}
+                    placeholder="e.g., Italian marble flooring"
+                  />
+                  {items.length > 1 && (
+                    <IconButton size="small" onClick={() => removeConstructionSpec(category, index)} sx={{ color: '#EF4444' }}>
+                      <Icon icon="mdi:close-circle-outline" style={{ fontSize: 20 }} />
+                    </IconButton>
+                  )}
+                </Box>
+              ))}
+              <Button
+                size="small"
+                variant="text"
+                onClick={() => addConstructionSpec(category)}
+                startIcon={<Icon icon="mdi:plus" />}
+                sx={{ color: '#6B7280' }}
+              >
+                Add {category} spec
+              </Button>
+            </Paper>
+          );
+        })}
+      </Box>
+    );
+  };
+
   const renderSeoTags = () => (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       {/* SEO Section */}
@@ -1289,6 +1550,8 @@ const PropertyForm = ({ propertyId = null }) => {
     renderFloorPlans,
     renderGallery,
     renderNearbyPlaces,
+    renderSpecialitiesAndDocs,
+    renderConstructionSpecs,
     renderSeoTags,
   ];
 

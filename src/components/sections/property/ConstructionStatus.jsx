@@ -5,16 +5,15 @@ import { useInView } from 'react-intersection-observer';
 import styles from './ConstructionStatus.module.css';
 
 const milestones = [
-  { key: 'foundation', label: 'Foundation', icon: 'mdi:shovel' },
-  { key: 'structure', label: 'Structure', icon: 'mdi:crane' },
-  { key: 'finishing', label: 'Finishing', icon: 'mdi:format-paint' },
-  { key: 'handover', label: 'Handover', icon: 'mdi:key-variant' },
+  { key: 'foundation', label: 'Foundation', icon: 'mdi:shovel', description: 'Site preparation & foundation work' },
+  { key: 'structure', label: 'Structure', icon: 'mdi:crane', description: 'Structural framework & RCC work' },
+  { key: 'finishing', label: 'Finishing', icon: 'mdi:format-paint', description: 'Interior finishing & fitouts' },
+  { key: 'handover', label: 'Handover', icon: 'mdi:key-variant', description: 'Final inspection & key handover' },
 ];
 
 const ConstructionStatus = ({ status }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
-  // Determine current milestone based on property status
   const getProgress = () => {
     if (status === 'ready-to-move') return 4;
     if (status === 'under-construction') return 2;
@@ -31,6 +30,13 @@ const ConstructionStatus = ({ status }) => {
     return status;
   };
 
+  const getStatusColor = () => {
+    if (status === 'ready-to-move') return '#059669';
+    if (status === 'under-construction') return '#D97706';
+    if (status === 'pre-launch') return '#2563EB';
+    return '#6B7280';
+  };
+
   return (
     <section className={styles.section} ref={ref} id="construction">
       <motion.div
@@ -38,44 +44,52 @@ const ConstructionStatus = ({ status }) => {
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
       >
-        <h2 className={styles.title}>Construction Status</h2>
-
-        <div className={styles.statusBadge}>
-          <Icon
-            icon={status === 'ready-to-move' ? 'mdi:check-circle' : 'mdi:progress-clock'}
-            className={styles.statusIcon}
-          />
-          <span>{getStatusLabel()}</span>
+        <div className={styles.header}>
+          <h2 className={styles.title}>Construction Status</h2>
+          <div className={styles.statusBadge} style={{ '--status-color': getStatusColor() }}>
+            <Icon
+              icon={status === 'ready-to-move' ? 'mdi:check-circle' : 'mdi:progress-clock'}
+              className={styles.statusIcon}
+            />
+            <span>{getStatusLabel()}</span>
+          </div>
         </div>
 
         <div className={styles.timeline}>
-          <div className={styles.progressBar}>
+          {/* Progress connector line */}
+          <div className={styles.connector}>
             <motion.div
-              className={styles.progressFill}
+              className={styles.connectorFill}
               initial={{ width: 0 }}
-              animate={inView ? { width: `${(progress / milestones.length) * 100}%` } : {}}
-              transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+              animate={inView ? { width: `${(Math.max(0, progress - 1) / (milestones.length - 1)) * 100}%` } : {}}
+              transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
             />
           </div>
 
           <div className={styles.milestones}>
             {milestones.map((milestone, idx) => {
               const isCompleted = idx < progress;
-              const isCurrent = idx === progress;
+              const isCurrent = idx === progress && progress < milestones.length;
               return (
-                <div
+                <motion.div
                   key={milestone.key}
                   className={`${styles.milestone} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.2 + idx * 0.15 }}
                 >
-                  <div className={styles.milestoneIcon}>
+                  <div className={styles.milestoneNode}>
                     {isCompleted ? (
-                      <Icon icon="mdi:check" />
+                      <Icon icon="mdi:check" className={styles.nodeIcon} />
                     ) : (
-                      <Icon icon={milestone.icon} />
+                      <Icon icon={milestone.icon} className={styles.nodeIcon} />
                     )}
                   </div>
-                  <span className={styles.milestoneLabel}>{milestone.label}</span>
-                </div>
+                  <div className={styles.milestoneInfo}>
+                    <span className={styles.milestoneLabel}>{milestone.label}</span>
+                    <span className={styles.milestoneDesc}>{milestone.description}</span>
+                  </div>
+                </motion.div>
               );
             })}
           </div>

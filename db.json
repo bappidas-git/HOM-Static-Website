@@ -167,6 +167,42 @@
           "type": "healthcare"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [
+        { "icon": "mdi:shield-star", "name": "RERA Approved", "description": "Fully compliant with RERA regulations" },
+        { "icon": "mdi:leaf", "name": "Eco Friendly Design", "description": "Sustainable materials and green building practices" },
+        { "icon": "mdi:shield-check", "name": "Gated Community", "description": "24/7 security with gated access" },
+        { "icon": "mdi:water-pump", "name": "High Pressure Geysers", "description": "Premium water heating system" },
+        { "icon": "mdi:home-automation", "name": "Smart Home", "description": "Home automation with smart controls" },
+        { "icon": "mdi:map-marker-star", "name": "Prime Location", "description": "Excellent connectivity to IT hubs" }
+      ],
+      "documents": [
+        { "name": "Commencement Certificate", "icon": "mdi:file-certificate" },
+        { "name": "RERA Certificate", "icon": "mdi:file-document-check" },
+        { "name": "Floor Plan Documents", "icon": "mdi:floor-plan" },
+        { "name": "Brochure", "icon": "mdi:book-open-variant" }
+      ],
+      "constructionSpecs": {
+        "flooring": [
+          { "area": "Living Room", "spec": "Italian marble flooring with premium finish" },
+          { "area": "Bedroom", "spec": "Vitrified tiles with anti-skid surface" },
+          { "area": "Kitchen", "spec": "Ceramic tiles with granite countertop" },
+          { "area": "Bathroom", "spec": "Anti-skid ceramic tiles with designer fittings" }
+        ],
+        "doors": [
+          { "area": "Main Door", "spec": "Teak wood frame with decorative laminate, quality hardware fittings" },
+          { "area": "Internal Doors", "spec": "Flush doors with melamine coating and quality fittings" }
+        ],
+        "structure": [
+          { "area": "Foundation", "spec": "RCC framed structure with earthquake resistant design" },
+          { "area": "Walls", "spec": "AAC blocks with weather proof exterior paint" }
+        ],
+        "electrical": [
+          { "area": "Wiring", "spec": "Concealed copper wiring with modular switches" },
+          { "area": "Power", "spec": "Full power backup for common areas and partial for flats" }
+        ]
+      },
       "tags": [
         "featured",
         "ready-to-move",
@@ -362,6 +398,42 @@
           "type": "education"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [
+        { "icon": "mdi:shield-star", "name": "RERA Approved", "description": "Fully compliant with RERA regulations" },
+        { "icon": "mdi:leaf", "name": "Eco with Smart Design", "description": "IGBC pre-certified green building" },
+        { "icon": "mdi:shield-check", "name": "Gated Community", "description": "24/7 security with gated access" },
+        { "icon": "mdi:water-pump", "name": "High Pressure Geysers", "description": "Premium water heating system" },
+        { "icon": "mdi:domain", "name": "Luxury Finishes", "description": "Italian marble and premium materials" },
+        { "icon": "mdi:map-marker-star", "name": "Prime Location", "description": "Whitefield IT hub connectivity" }
+      ],
+      "documents": [
+        { "name": "Commencement Certificate", "icon": "mdi:file-certificate" },
+        { "name": "RERA Certificate", "icon": "mdi:file-document-check" },
+        { "name": "Floor Plan Documents", "icon": "mdi:floor-plan" },
+        { "name": "Brochure", "icon": "mdi:book-open-variant" }
+      ],
+      "constructionSpecs": {
+        "flooring": [
+          { "area": "Living Room", "spec": "Italian marble with premium vitrified finish" },
+          { "area": "Bedroom", "spec": "Engineered wood flooring with premium finish" },
+          { "area": "Kitchen", "spec": "Anti-skid vitrified tiles with granite platform" },
+          { "area": "Bathroom", "spec": "Designer anti-skid tiles with premium fittings" }
+        ],
+        "doors": [
+          { "area": "Main Door", "spec": "Veneer finished flush door with designer hardware and security lock" },
+          { "area": "Internal Doors", "spec": "Painted flush doors with SS handles and quality fittings" }
+        ],
+        "structure": [
+          { "area": "Foundation", "spec": "RCC framed structure with seismic zone compliance" },
+          { "area": "Walls", "spec": "AAC blocks with weather-proof exterior and premium putty finish" }
+        ],
+        "electrical": [
+          { "area": "Wiring", "spec": "Concealed copper wiring with premium modular switches" },
+          { "area": "Power", "spec": "Full DG backup for common areas, partial for apartments" }
+        ]
+      },
       "tags": [
         "featured",
         "trending",
@@ -513,6 +585,11 @@
           "type": "healthcare"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [],
+      "documents": [],
+      "constructionSpecs": {},
       "tags": [
         "premium",
         "villa",
@@ -662,6 +739,11 @@
           "type": "healthcare"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [],
+      "documents": [],
+      "constructionSpecs": {},
       "tags": [
         "pre-launch",
         "trending",
@@ -813,6 +895,11 @@
           "type": "healthcare"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [],
+      "documents": [],
+      "constructionSpecs": {},
       "tags": [
         "featured",
         "premium",
@@ -953,6 +1040,11 @@
           "type": "healthcare"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [],
+      "documents": [],
+      "constructionSpecs": {},
       "tags": [
         "rent",
         "electronic-city",
@@ -1111,6 +1203,11 @@
           "type": "entertainment"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [],
+      "documents": [],
+      "constructionSpecs": {},
       "tags": [
         "under-construction",
         "investment",
@@ -1242,6 +1339,11 @@
           "type": "healthcare"
         }
       ],
+      "brochureUrl": "",
+      "floorPlanPdfUrl": "",
+      "specialities": [],
+      "documents": [],
+      "constructionSpecs": {},
       "tags": [
         "rent",
         "villa",
