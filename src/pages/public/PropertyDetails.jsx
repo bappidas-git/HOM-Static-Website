@@ -4,18 +4,21 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { SwipeableDrawer, useMediaQuery, useTheme } from '@mui/material';
-import { propertyService } from '../../services/api';
+import { propertyService, leadService } from '../../services/api';
 import { PropertyDetailSkeleton } from '../../components/common/SkeletonLoaders';
 import { useToast } from '../../components/common/ToastProvider';
 import PropertyGallery from '../../components/sections/property/PropertyGallery';
 import PropertyOverview from '../../components/sections/property/PropertyOverview';
 import PropertySpecs from '../../components/sections/property/PropertySpecs';
+import PropertySpecialities from '../../components/sections/property/PropertySpecialities';
 import PropertyAmenities from '../../components/sections/property/PropertyAmenities';
 import FloorPlans from '../../components/sections/property/FloorPlans';
 import FinanceGuide from '../../components/sections/property/FinanceGuide';
 import NearbyPlaces from '../../components/sections/property/NearbyPlaces';
-import BuilderOverview from '../../components/sections/property/BuilderOverview';
+import PropertyDocuments from '../../components/sections/property/PropertyDocuments';
+import ConstructionSpecs from '../../components/sections/property/ConstructionSpecs';
 import ConstructionStatus from '../../components/sections/property/ConstructionStatus';
+import BuilderOverview from '../../components/sections/property/BuilderOverview';
 import EnquiryForm from '../../components/sections/property/EnquiryForm';
 import PropertyFaq from '../../components/sections/property/PropertyFaq';
 import SimilarProperties from '../../components/sections/property/SimilarProperties';
@@ -49,6 +52,13 @@ const PropertyDetails = () => {
   const [error, setError] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
+
+  // Download lead capture modal state
+  const [downloadModal, setDownloadModal] = useState({ open: false, type: '' });
+  const [downloadFormData, setDownloadFormData] = useState({ name: '', email: '', phone: '' });
+  const [downloadSubmitting, setDownloadSubmitting] = useState(false);
+  const [downloadSubmitted, setDownloadSubmitted] = useState(false);
+  const [downloadError, setDownloadError] = useState('');
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -101,7 +111,51 @@ const PropertyDetails = () => {
     }
   }, []);
 
-  // Loading skeleton with shimmer
+  // Download modal handlers
+  const openDownloadModal = useCallback((type) => {
+    setDownloadModal({ open: true, type });
+    setDownloadSubmitted(false);
+    setDownloadError('');
+    setDownloadFormData({ name: '', email: '', phone: '' });
+  }, []);
+
+  const closeDownloadModal = useCallback(() => {
+    setDownloadModal({ open: false, type: '' });
+    setDownloadSubmitted(false);
+    setDownloadError('');
+  }, []);
+
+  const handleDownloadFormChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setDownloadFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleDownloadSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setDownloadError('');
+
+    if (!downloadFormData.name.trim() || !downloadFormData.phone.trim()) {
+      setDownloadError('Name and phone are required');
+      return;
+    }
+
+    try {
+      setDownloadSubmitting(true);
+      await leadService.create({
+        ...downloadFormData,
+        propertyId: property?.id || null,
+        source: downloadModal.type === 'brochure' ? 'brochure_download' : 'floorplan_download',
+      });
+      setDownloadSubmitted(true);
+      toast.success('Request submitted successfully!');
+    } catch {
+      setDownloadError('Something went wrong. Please try again.');
+    } finally {
+      setDownloadSubmitting(false);
+    }
+  }, [downloadFormData, downloadModal.type, property?.id, toast]);
+
+  // Loading skeleton
   if (loading) {
     return <PropertyDetailSkeleton />;
   }
@@ -131,6 +185,14 @@ const PropertyDetails = () => {
 
   const badge = property.type === 'rent' ? 'For Rent' : 'For Sale';
   const badgeClass = property.type === 'rent' ? styles.badgeRent : styles.badgeSale;
+
+  const downloadModalTitle = downloadModal.type === 'brochure'
+    ? `Download Brochure — ${property.title}`
+    : `Download Floor Plans — ${property.title}`;
+
+  const thankYouMessage = downloadModal.type === 'brochure'
+    ? 'Your brochure download request has been received. Our team will share the brochure with you shortly.'
+    : 'Your floor plan request has been received. Our team will share the detailed floor plans with you shortly.';
 
   return (
     <>
@@ -171,6 +233,112 @@ const PropertyDetails = () => {
                 <Icon icon="mdi:close" />
               </button>
               <EnquiryForm property={property} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Download Lead Capture Modal */}
+      <AnimatePresence>
+        {downloadModal.open && (
+          <motion.div
+            className={styles.modalOverlay}
+            onClick={closeDownloadModal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={styles.modalContent}
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.modalClose}
+                onClick={closeDownloadModal}
+                aria-label="Close download form"
+              >
+                <Icon icon="mdi:close" />
+              </button>
+
+              {downloadSubmitted ? (
+                <div className={styles.thankYou}>
+                  <Icon icon="mdi:check-circle" className={styles.thankYouIcon} />
+                  <h3 className={styles.thankYouTitle}>Thank You!</h3>
+                  <p className={styles.thankYouText}>{thankYouMessage}</p>
+                  <button className={styles.thankYouClose} onClick={closeDownloadModal}>
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <h3 className={styles.modalTitle}>{downloadModalTitle}</h3>
+                  <form onSubmit={handleDownloadSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Your Name *"
+                      value={downloadFormData.name}
+                      onChange={handleDownloadFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={downloadFormData.email}
+                      onChange={handleDownloadFormChange}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="Phone Number *"
+                      value={downloadFormData.phone}
+                      onChange={handleDownloadFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    {downloadError && (
+                      <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
+                        {downloadError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={downloadSubmitting}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%',
+                        padding: '12px',
+                        background: downloadModal.type === 'brochure' ? '#C9A86C' : '#1B2A4A',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        cursor: downloadSubmitting ? 'not-allowed' : 'pointer',
+                        opacity: downloadSubmitting ? 0.7 : 1,
+                      }}
+                    >
+                      {downloadSubmitting ? 'Submitting...' : (
+                        <>
+                          <Icon icon="mdi:download" />
+                          {downloadModal.type === 'brochure' ? 'Get Brochure' : 'Get Floor Plans'}
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -241,6 +409,22 @@ const PropertyDetails = () => {
           {/* Gallery */}
           <PropertyGallery images={property.gallery} />
 
+          {/* Download Buttons - below gallery */}
+          <div className={styles.downloadButtons}>
+            <button
+              className={`${styles.downloadBtn} ${styles.downloadBrochure}`}
+              onClick={() => openDownloadModal('brochure')}
+            >
+              <Icon icon="mdi:download" /> Download Brochure
+            </button>
+            <button
+              className={`${styles.downloadBtn} ${styles.downloadFloorPlan}`}
+              onClick={() => openDownloadModal('floorplan')}
+            >
+              <Icon icon="mdi:floor-plan" /> Download Floor Plans
+            </button>
+          </div>
+
           {/* Main content + sidebar layout */}
           <div className={styles.layout}>
             <div className={styles.mainContent}>
@@ -287,7 +471,7 @@ const PropertyDetails = () => {
                 </div>
 
                 <div className={styles.headerActions}>
-                  <button className={styles.ctaPrimary} onClick={() => setShowLeadForm(true)}>
+                  <button className={styles.ctaPrimary} onClick={() => openDownloadModal('brochure')}>
                     <Icon icon="mdi:download" /> Download Brochure
                   </button>
                   <button className={styles.ctaSecondary} onClick={() => setShowLeadForm(true)}>
@@ -300,9 +484,10 @@ const PropertyDetails = () => {
                 </div>
               </motion.div>
 
-              {/* Sections */}
+              {/* Sections — ordered per mockup */}
               <PropertyOverview property={property} />
               <PropertySpecs specifications={property.specifications} propertyType={property.propertyType} />
+              <PropertySpecialities specialities={property.specialities} />
               <PropertyAmenities amenities={property.amenities} />
               <FloorPlans
                 floorPlans={property.floorPlans}
@@ -311,12 +496,14 @@ const PropertyDetails = () => {
               />
               <FinanceGuide price={property.price} />
               <NearbyPlaces nearbyPlaces={property.nearbyPlaces} />
+              <PropertyDocuments documents={property.documents} />
+              <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
               <ConstructionStatus status={property.status} />
               <BuilderOverview developer={property.developer} />
               <PropertyFaq property={property} />
             </div>
 
-            {/* Sidebar */}
+            {/* Sidebar — sticky on desktop */}
             <div className={styles.sidebarCol} id="enquiry-sidebar">
               <EnquiryForm property={property} />
             </div>
@@ -331,6 +518,18 @@ const PropertyDetails = () => {
       <EnquiryForm property={property} isMobile />
     </>
   );
+};
+
+const inputStyle = {
+  width: '100%',
+  padding: '10px 14px',
+  border: '1.5px solid #E5E7EB',
+  borderRadius: '8px',
+  fontFamily: '"DM Sans", sans-serif',
+  fontSize: '0.875rem',
+  color: '#1B2A4A',
+  outline: 'none',
+  background: '#fff',
 };
 
 const shareOptionStyle = {
