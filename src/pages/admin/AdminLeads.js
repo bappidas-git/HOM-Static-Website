@@ -65,6 +65,7 @@ const sourceOptions = [
   { value: 'brochure_download', label: 'Brochure Download' },
   { value: 'floorplan_download', label: 'Floor Plan Download' },
   { value: 'document_download', label: 'Document Download' },
+  { value: 'detailed_pricing', label: 'Detailed Pricing' },
 ];
 
 const formatSource = (source) => {
