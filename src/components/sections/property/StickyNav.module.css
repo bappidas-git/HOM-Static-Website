@@ -80,8 +80,8 @@
 
 /* Active state */
 .navItem.active {
-  color: var(--color-secondary-dark);
-  background: rgba(201, 168, 108, 0.14);
+  color: #ffffff;
+  background: var(--color-primary);
   font-weight: 600;
 }
 
