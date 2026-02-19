@@ -45,6 +45,9 @@ const formatSource = (source) => {
     'careers': 'Careers',
     'partnership': 'Partnership',
     'property-listing-page': 'Property Listing',
+    'financial-assessment': 'Financial Assessment',
+    'brochure_download': 'Brochure Download',
+    'floorplan_download': 'Floor Plan Download',
   };
   return sourceMap[source] || source.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 };

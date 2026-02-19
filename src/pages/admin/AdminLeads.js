@@ -61,6 +61,9 @@ const sourceOptions = [
   { value: 'careers', label: 'Careers' },
   { value: 'partnership', label: 'Partnership' },
   { value: 'property-listing-page', label: 'Property Listing' },
+  { value: 'financial-assessment', label: 'Financial Assessment' },
+  { value: 'brochure_download', label: 'Brochure Download' },
+  { value: 'floorplan_download', label: 'Floor Plan Download' },
 ];
 
 const formatSource = (source) => {

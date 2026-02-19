@@ -494,7 +494,7 @@ const PropertyDetails = () => {
                 priceUnit={property.priceUnit}
                 onRequestDetails={() => setShowLeadForm(true)}
               />
-              <FinanceGuide price={property.price} />
+              <FinanceGuide price={property.price} property={property} />
               <NearbyPlaces nearbyPlaces={property.nearbyPlaces} />
               <PropertyDocuments documents={property.documents} />
               <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
