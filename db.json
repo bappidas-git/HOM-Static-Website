@@ -1,7 +1,7 @@
 {
   "properties": [
     {
-      "id": 1,
+      "id": "1",
       "title": "Nambiar District 25 Phase 2",
       "slug": "nambiar-district-25-phase-2",
       "type": "sale",
@@ -288,7 +288,7 @@
       "updatedAt": "2025-12-20T14:30:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Mahindra Blossom",
       "slug": "mahindra-blossom",
       "type": "sale",
@@ -585,7 +585,7 @@
       "updatedAt": "2025-11-15T12:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Prestige Lakeside Habitat",
       "slug": "prestige-lakeside-habitat",
       "type": "sale",
@@ -741,7 +741,7 @@
       "updatedAt": "2025-10-01T11:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Brigade El Dorado",
       "slug": "brigade-el-dorado",
       "type": "sale",
@@ -895,7 +895,7 @@
       "updatedAt": "2025-12-01T09:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Sobha Neopolis",
       "slug": "sobha-neopolis",
       "type": "sale",
@@ -1051,7 +1051,7 @@
       "updatedAt": "2025-12-10T15:00:00Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "Godrej Splendour",
       "slug": "godrej-splendour",
       "type": "rent",
@@ -1195,7 +1195,7 @@
       "updatedAt": "2025-11-20T10:00:00Z"
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "Puravankara Zenium",
       "slug": "puravankara-zenium",
       "type": "sale",
@@ -1359,7 +1359,7 @@
       "updatedAt": "2025-12-05T14:00:00Z"
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "Salarpuria Sattva Opus",
       "slug": "salarpuria-sattva-opus",
       "type": "rent",
@@ -1498,7 +1498,7 @@
   ],
   "leads": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Rajesh Kumar",
       "email": "rajesh.kumar@gmail.com",
       "phone": "+91 98765 43210",
@@ -1516,7 +1516,7 @@
       "updatedAt": "2025-12-18T10:30:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Priya Sharma",
       "email": "priya.sharma@outlook.com",
       "phone": "+91 87654 32109",
@@ -1538,7 +1538,7 @@
       "updatedAt": "2025-12-12T15:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Vikram Patel",
       "email": "vikram.p@yahoo.com",
       "phone": "+91 76543 21098",
@@ -1592,11 +1592,24 @@
       "notes": [],
       "createdAt": "2026-02-19T10:17:50.401Z",
       "updatedAt": "2026-02-19T10:17:50.410Z"
+    },
+    {
+      "id": "bfdc",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "2313123213",
+      "propertyId": "2",
+      "source": "detailed_pricing",
+      "message": "Requested detailed pricing for 4 BHK — Mahindra Blossom",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-19T14:32:25.625Z",
+      "updatedAt": "2026-02-19T14:32:25.632Z"
     }
   ],
   "neighborhoods": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Electronic City",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Electronic+City",
       "propertyCount": 52,
@@ -1604,7 +1617,7 @@
       "isActive": true
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Marathahalli",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Marathahalli",
       "propertyCount": 78,
@@ -1612,7 +1625,7 @@
       "isActive": true
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Hebbal",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Hebbal",
       "propertyCount": 41,
@@ -1620,7 +1633,7 @@
       "isActive": true
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Whitefield",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Whitefield",
       "propertyCount": 95,
@@ -1628,7 +1641,7 @@
       "isActive": true
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Sarjapur Road",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Sarjapur+Road",
       "propertyCount": 67,
@@ -1636,7 +1649,7 @@
       "isActive": true
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "Kanakapura Road",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Kanakapura+Road",
       "propertyCount": 34,
@@ -1646,7 +1659,7 @@
   ],
   "partners": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Prestige",
       "logo": "https://placehold.co/200x80/goldenrod/white?text=Prestige",
       "website": "https://www.prestigeconstructions.com",
@@ -1654,7 +1667,7 @@
       "order": 1
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Brigade",
       "logo": "https://placehold.co/200x80/goldenrod/white?text=Brigade",
       "website": "https://www.brigadegroup.com",
@@ -1662,7 +1675,7 @@
       "order": 2
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Sobha",
       "logo": "https://placehold.co/200x80/goldenrod/white?text=Sobha",
       "website": "https://www.sobha.com",
@@ -1670,7 +1683,7 @@
       "order": 3
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Godrej",
       "logo": "https://placehold.co/200x80/goldenrod/white?text=Godrej",
       "website": "https://www.godrejproperties.com",
@@ -1678,7 +1691,7 @@
       "order": 4
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Puravankara",
       "logo": "https://placehold.co/200x80/goldenrod/white?text=Puravankara",
       "website": "https://www.puravankara.com",
@@ -1686,7 +1699,7 @@
       "order": 5
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "Mahindra",
       "logo": "https://placehold.co/200x80/goldenrod/white?text=Mahindra",
       "website": "https://www.mahindralifespaces.com",
@@ -1696,7 +1709,7 @@
   ],
   "faqs": [
     {
-      "id": 1,
+      "id": "1",
       "question": "What is the buying process?",
       "answer": "The buying process involves: 1) Property search and shortlisting, 2) Site visits and evaluation, 3) Price negotiation, 4) Legal verification of documents, 5) Booking and agreement signing, 6) Home loan processing (if applicable), 7) Registration and stamp duty payment, 8) Possession and handover. Our team at H.O.M Advisory guides you through every step.",
       "category": "buying",
@@ -1704,7 +1717,7 @@
       "isActive": true
     },
     {
-      "id": 2,
+      "id": "2",
       "question": "How do I schedule a property viewing?",
       "answer": "You can schedule a property viewing by: 1) Clicking the 'Schedule Visit' button on any property page, 2) Calling us at (555) 123-4567, 3) Filling out the contact form on our website, or 4) Sending us an email at info@homadvisory.com. Our team will confirm and arrange the visit at your convenience.",
       "category": "general",
@@ -1712,7 +1725,7 @@
       "isActive": true
     },
     {
-      "id": 3,
+      "id": "3",
       "question": "What documents do I need to buy a property?",
       "answer": "To buy a property in India, you typically need: PAN Card, Aadhaar Card, Passport-size photos, Bank statements (last 6 months), Salary slips (last 3 months) or ITR (for self-employed), Property documents from seller including Title Deed, Encumbrance Certificate, Khata Certificate, and RERA registration details. Our legal team helps verify all documents.",
       "category": "buying",
@@ -1720,7 +1733,7 @@
       "isActive": true
     },
     {
-      "id": 4,
+      "id": "4",
       "question": "How long does it take to close a deal?",
       "answer": "The timeline varies depending on several factors. For a ready-to-move property with clear documents, the process from booking to registration typically takes 30-45 days. If a home loan is involved, add another 15-20 days for loan processing. For under-construction properties, you make staged payments per the builder's schedule.",
       "category": "buying",
@@ -1728,7 +1741,7 @@
       "isActive": true
     },
     {
-      "id": 5,
+      "id": "5",
       "question": "What are the additional costs beyond the property price?",
       "answer": "Beyond the base property price, you should budget for: Registration charges (1% of property value in Karnataka), Stamp duty (5% for properties above Rs 45 lakhs), GST (5% for under-construction, 0% for ready-to-move), Legal fees, Home loan processing fees, Maintenance deposit, and Parking charges (if not included). H.O.M Advisory provides a complete cost breakdown upfront.",
       "category": "buying",
@@ -1736,7 +1749,7 @@
       "isActive": true
     },
     {
-      "id": 6,
+      "id": "6",
       "question": "How does H.O.M Advisory help with home loans?",
       "answer": "H.O.M Advisory partners with leading banks and NBFCs to offer you the best home loan rates. We help with: Pre-approval of loan eligibility, Document preparation, Application submission to multiple banks, Rate negotiation, and EMI structuring. Our service is completely free for homebuyers.",
       "category": "home-loan",
@@ -1744,7 +1757,7 @@
       "isActive": true
     },
     {
-      "id": 7,
+      "id": "7",
       "question": "How do I sell my property through H.O.M Advisory?",
       "answer": "To sell your property, simply list it on our platform by filling out the Sell/Let form. Our team will evaluate your property, suggest a competitive market price, create a professional listing with photographs, and market it to our extensive buyer network. We handle all enquiries, site visits, and negotiations on your behalf.",
       "category": "selling",
@@ -1752,7 +1765,7 @@
       "isActive": true
     },
     {
-      "id": 8,
+      "id": "8",
       "question": "What is the commission for selling a property?",
       "answer": "H.O.M Advisory charges a standard brokerage of 1-2% of the transaction value for sale properties. This covers property listing, marketing, buyer screening, negotiation assistance, and documentation support. The exact percentage depends on the property value and location.",
       "category": "selling",
@@ -1760,7 +1773,7 @@
       "isActive": true
     },
     {
-      "id": 9,
+      "id": "9",
       "question": "What is the process for renting a property?",
       "answer": "For tenants: Browse available properties, shortlist preferred options, schedule visits, and once you finalize, we help with rental agreement preparation and move-in. For landlords: List your property, we verify tenants, handle negotiations, and prepare legally compliant rental agreements with police verification.",
       "category": "renting",
@@ -1768,7 +1781,7 @@
       "isActive": true
     },
     {
-      "id": 10,
+      "id": "10",
       "question": "What is the security deposit for rented properties in Bangalore?",
       "answer": "In Bangalore, the standard security deposit is typically 10 months' rent for unfurnished properties. For furnished properties, it can go up to 12 months. This deposit is refundable at the end of the lease period, subject to deductions for any damages. Some areas and newer buildings are now moving to lower deposit models of 3-6 months.",
       "category": "renting",
@@ -1776,7 +1789,7 @@
       "isActive": true
     },
     {
-      "id": 11,
+      "id": "11",
       "question": "What is the maximum home loan amount I can get?",
       "answer": "The maximum home loan amount depends on your income, existing liabilities, credit score, and the property value. Generally, banks finance up to 75-90% of the property value (Loan-to-Value ratio). For properties up to Rs 30 lakhs, LTV can be up to 90%. For properties between Rs 30-75 lakhs, LTV is up to 80%. For above Rs 75 lakhs, it's typically 75%.",
       "category": "home-loan",
@@ -1784,7 +1797,7 @@
       "isActive": true
     },
     {
-      "id": 12,
+      "id": "12",
       "question": "What is the difference between fixed and floating interest rates?",
       "answer": "Fixed interest rates remain constant throughout the loan tenure, providing predictable EMIs. Floating rates are linked to the RBI repo rate and can change periodically. While floating rates are usually 1-2% lower than fixed rates initially, they carry the risk of increasing over time. Most homebuyers in India prefer floating rates due to the overall lower cost and RBI's prohibition on prepayment penalties for floating-rate loans.",
       "category": "home-loan",
@@ -1792,7 +1805,7 @@
       "isActive": true
     },
     {
-      "id": 13,
+      "id": "13",
       "question": "What is RERA and how does it protect homebuyers?",
       "answer": "RERA (Real Estate Regulatory Authority) is a regulatory body established under the Real Estate (Regulation and Development) Act, 2016. It protects homebuyers by: mandating project registration before advertising, ensuring 70% of funds are kept in an escrow account, requiring developers to disclose project details and timelines, providing a mechanism for grievance redressal, and imposing penalties on builders for delays or non-compliance. Always verify RERA registration before buying.",
       "category": "legal",
@@ -1800,7 +1813,7 @@
       "isActive": true
     },
     {
-      "id": 14,
+      "id": "14",
       "question": "What legal checks should I do before buying a property?",
       "answer": "Essential legal checks include: 1) Title deed verification — ensure clear ownership chain for at least 30 years, 2) Encumbrance Certificate (EC) — confirms no pending loans or legal disputes, 3) Khata Certificate and extract — confirms property is in municipal records, 4) RERA registration — mandatory for new projects, 5) Approved building plan, 6) Occupancy Certificate (for ready properties), 7) Tax payment receipts, 8) NOC from relevant authorities. Our legal team handles all these verifications.",
       "category": "legal",
@@ -1808,7 +1821,7 @@
       "isActive": true
     },
     {
-      "id": 15,
+      "id": "15",
       "question": "Does H.O.M Advisory offer services in cities other than Bangalore?",
       "answer": "Currently, H.O.M Advisory primarily operates in Bangalore and surrounding areas. However, we have a network of trusted partners in Mumbai, Hyderabad, Chennai, and Pune. We're actively expanding our direct operations to these cities. Contact us for specific requirements in other cities, and we'll connect you with our partner network.",
       "category": "general",
@@ -1816,7 +1829,7 @@
       "isActive": true
     },
     {
-      "id": 16,
+      "id": "16",
       "question": "Are H.O.M Advisory's services free for homebuyers?",
       "answer": "Yes, our property search, advisory, and site visit coordination services are completely free for homebuyers. We earn our commission from the developer or seller. For specialized services like legal verification, home loan processing, and interior designing, transparent fees are communicated upfront before you engage.",
       "category": "general",
@@ -1826,7 +1839,7 @@
   ],
   "articles": [
     {
-      "id": 1,
+      "id": "1",
       "title": "Premium Apartments in Mumbai: Top 5 Luxury Towers",
       "slug": "premium-apartments-mumbai-top-luxury-towers",
       "excerpt": "Discover the most exclusive luxury apartment towers in Mumbai, from South Mumbai's iconic addresses to the emerging skyline of Lower Parel and Worli.",
@@ -1847,7 +1860,7 @@
       "seoDescription": "Explore Mumbai's most premium luxury apartment towers. Detailed guide to the best high-rise living options in India's financial capital."
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Discover Elegance in Bangalore's Most Sought-After Villas",
       "slug": "elegance-bangalore-sought-after-villas",
       "excerpt": "Bangalore's villa market is booming. Explore the best villa communities that combine luxury living with nature, from Whitefield to North Bangalore.",
@@ -1868,7 +1881,7 @@
       "seoDescription": "Complete guide to Bangalore's finest villa communities. From Whitefield to North Bangalore, find your dream villa."
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Exclusive Penthouses: 4 Homes with Rooftop Sky Lounges",
       "slug": "exclusive-penthouses-rooftop-sky-lounges",
       "excerpt": "Experience the pinnacle of luxury living with these exclusive penthouses featuring private rooftop sky lounges, infinity pools, and panoramic city views.",
@@ -1889,7 +1902,7 @@
       "seoDescription": "Discover India's most exclusive penthouses featuring private rooftop sky lounges and infinity pools."
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Understanding RERA: A Complete Guide for Indian Homebuyers",
       "slug": "understanding-rera-complete-guide-homebuyers",
       "excerpt": "RERA has transformed the Indian real estate landscape. Learn how this landmark regulation protects your rights as a homebuyer and what you must verify before purchasing.",
@@ -1910,7 +1923,7 @@
       "seoDescription": "Comprehensive guide to RERA regulations in India. Learn how RERA protects homebuyers and what to verify before buying property."
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Bangalore Real Estate Market Trends 2025: Where to Invest Next",
       "slug": "bangalore-real-estate-market-trends-2025",
       "excerpt": "Bangalore continues to lead India's residential real estate growth. Discover the hottest corridors, price trends, and investment opportunities for 2025.",
@@ -1931,7 +1944,7 @@
       "seoDescription": "Comprehensive analysis of Bangalore's real estate market in 2025. Price trends, top corridors, and investment opportunities."
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "First-Time Homebuyer's Checklist: 10 Steps to Your Dream Home",
       "slug": "first-time-homebuyer-checklist-10-steps",
       "excerpt": "Buying your first home in India? Follow this comprehensive 10-step checklist covering everything from budgeting and loan eligibility to registration and possession.",
@@ -1952,7 +1965,7 @@
       "seoDescription": "Complete checklist for first-time homebuyers in India. 10 essential steps from budgeting to possession."
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "Smart Interior Design Tips to Maximize Your Apartment Space",
       "slug": "smart-interior-design-tips-maximize-apartment-space",
       "excerpt": "Transform your compact apartment into a spacious haven with these expert interior design tips. From multifunctional furniture to smart storage solutions.",
@@ -1973,7 +1986,7 @@
       "seoDescription": "Expert interior design tips to maximize space in your Indian apartment. Multifunctional furniture, storage solutions, and budget-friendly ideas."
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "Karnataka Stamp Duty and Registration Charges 2025: Complete Guide",
       "slug": "karnataka-stamp-duty-registration-charges-2025",
       "excerpt": "Planning to buy property in Karnataka? Understand the latest stamp duty rates, registration charges, and how to calculate the total cost of property registration.",
@@ -1995,7 +2008,7 @@
       "seoDescription": "Complete guide to stamp duty and registration charges in Karnataka for 2025. Calculate your property registration costs accurately."
     },
     {
-      "id": 9,
+      "id": "9",
       "title": "North Bangalore: India's Fastest Growing Real Estate Corridor",
       "slug": "north-bangalore-fastest-growing-real-estate-corridor",
       "excerpt": "North Bangalore is witnessing unprecedented growth driven by the airport, Aerospace SEZ, and upcoming infrastructure. Discover why investors are bullish on this corridor.",
@@ -2057,7 +2070,7 @@
   },
   "adminUsers": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Admin User",
       "email": "admin@homadvisory.com",
       "password": "admin123",
@@ -2065,7 +2078,7 @@
       "avatar": null
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Content Manager",
       "email": "content@homadvisory.com",
       "password": "content123",
