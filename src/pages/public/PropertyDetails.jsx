@@ -22,6 +22,7 @@ import BuilderOverview from '../../components/sections/property/BuilderOverview'
 import EnquiryForm from '../../components/sections/property/EnquiryForm';
 import PropertyFaq from '../../components/sections/property/PropertyFaq';
 import SimilarProperties from '../../components/sections/property/SimilarProperties';
+import StickyNav from '../../components/sections/property/StickyNav';
 import styles from './PropertyDetails.module.css';
 
 const formatPrice = (price, unit) => {
@@ -559,6 +560,9 @@ const PropertyDetails = () => {
           </div>
         </SwipeableDrawer>
       )}
+
+      {/* Secondary sticky navigation */}
+      <StickyNav />
 
       <div className={styles.page}>
         <div className={styles.container}>
