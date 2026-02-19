@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { useInView } from 'react-intersection-observer';
@@ -144,7 +144,22 @@ const FinanceGuide = ({ price = 0, property = null }) => {
   const [fitScore, setFitScore] = useState(null);
 
   /* ─── Active Section Tabs ─── */
-  const [activeTab, setActiveTab] = useState('finance');
+  const [activeTab, setActiveTab] = useState('assessment');
+
+  /* ─── View More Banks State ─── */
+  const [showAllBanks, setShowAllBanks] = useState(false);
+  const [initialBankCount, setInitialBankCount] = useState(3);
+
+  useEffect(() => {
+    const updateBankCount = () => {
+      setInitialBankCount(window.innerWidth > 960 ? 3 : 1);
+    };
+    updateBankCount();
+    window.addEventListener('resize', updateBankCount);
+    return () => window.removeEventListener('resize', updateBankCount);
+  }, []);
+
+  const visibleBanks = showAllBanks ? banks : banks.slice(0, initialBankCount);
 
   const handleAssessmentChange = useCallback((field, value) => {
     setAssessmentData((prev) => ({ ...prev, [field]: value }));
@@ -208,8 +223,8 @@ const FinanceGuide = ({ price = 0, property = null }) => {
   const scoreInfo = fitScore !== null ? getScoreLabel(fitScore) : null;
 
   const tabs = [
-    { id: 'finance', label: 'Home Finance Clarity', icon: 'mdi:bank-check' },
     { id: 'assessment', label: 'Financial Fit Assessment', icon: 'mdi:clipboard-check-outline' },
+    { id: 'finance', label: 'Home Finance Clarity', icon: 'mdi:bank-check' },
     { id: 'emi', label: 'EMI Projections', icon: 'mdi:calculator-variant' },
   ];
 
@@ -255,7 +270,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
                 <Icon icon="mdi:shield-check" />
               </div>
               <div className={styles.financeBannerText}>
-                <h3>Pre-Approved by Leading Banks</h3>
+                <h3>Banks Approved</h3>
                 <p>This property is pre-approved for home loans from India&apos;s top banks with competitive rates starting from <strong>8.35% p.a.</strong></p>
               </div>
             </div>
@@ -297,7 +312,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
 
             {/* Bank Cards Grid */}
             <div className={styles.bankGrid}>
-              {banks.map((bank, idx) => (
+              {visibleBanks.map((bank, idx) => (
                 <motion.div
                   key={idx}
                   className={styles.bankCard}
@@ -337,6 +352,21 @@ const FinanceGuide = ({ price = 0, property = null }) => {
                 </motion.div>
               ))}
             </div>
+
+            {/* View More Banks Button */}
+            {!showAllBanks && banks.length > initialBankCount && (
+              <div className={styles.viewMoreWrap}>
+                <button
+                  className={styles.viewMoreBtn}
+                  onClick={() => setShowAllBanks(true)}
+                >
+                  <Icon icon="mdi:bank-plus" />
+                  <span className={styles.viewMoreTextDesktop}>View More Banks</span>
+                  <span className={styles.viewMoreTextMobile}>View More Bank</span>
+                  <Icon icon="mdi:chevron-down" />
+                </button>
+              </div>
+            )}
 
             {/* Approval Steps */}
             <div className={styles.approvalSteps}>
