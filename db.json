@@ -170,37 +170,103 @@
       "brochureUrl": "",
       "floorPlanPdfUrl": "",
       "specialities": [
-        { "icon": "mdi:shield-star", "name": "RERA Approved", "description": "Fully compliant with RERA regulations" },
-        { "icon": "mdi:leaf", "name": "Eco Friendly Design", "description": "Sustainable materials and green building practices" },
-        { "icon": "mdi:shield-check", "name": "Gated Community", "description": "24/7 security with gated access" },
-        { "icon": "mdi:water-pump", "name": "High Pressure Geysers", "description": "Premium water heating system" },
-        { "icon": "mdi:home-automation", "name": "Smart Home", "description": "Home automation with smart controls" },
-        { "icon": "mdi:map-marker-star", "name": "Prime Location", "description": "Excellent connectivity to IT hubs" }
+        {
+          "icon": "mdi:shield-star",
+          "name": "RERA Approved",
+          "description": "Fully compliant with RERA regulations"
+        },
+        {
+          "icon": "mdi:leaf",
+          "name": "Eco Friendly Design",
+          "description": "Sustainable materials and green building practices"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "Gated Community",
+          "description": "24/7 security with gated access"
+        },
+        {
+          "icon": "mdi:water-pump",
+          "name": "High Pressure Geysers",
+          "description": "Premium water heating system"
+        },
+        {
+          "icon": "mdi:home-automation",
+          "name": "Smart Home",
+          "description": "Home automation with smart controls"
+        },
+        {
+          "icon": "mdi:map-marker-star",
+          "name": "Prime Location",
+          "description": "Excellent connectivity to IT hubs"
+        }
       ],
       "documents": [
-        { "name": "Commencement Certificate", "icon": "mdi:file-certificate" },
-        { "name": "RERA Certificate", "icon": "mdi:file-document-check" },
-        { "name": "Floor Plan Documents", "icon": "mdi:floor-plan" },
-        { "name": "Brochure", "icon": "mdi:book-open-variant" }
+        {
+          "name": "Commencement Certificate",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "name": "RERA Certificate",
+          "icon": "mdi:file-document-check"
+        },
+        {
+          "name": "Floor Plan Documents",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "name": "Brochure",
+          "icon": "mdi:book-open-variant"
+        }
       ],
       "constructionSpecs": {
         "flooring": [
-          { "area": "Living Room", "spec": "Italian marble flooring with premium finish" },
-          { "area": "Bedroom", "spec": "Vitrified tiles with anti-skid surface" },
-          { "area": "Kitchen", "spec": "Ceramic tiles with granite countertop" },
-          { "area": "Bathroom", "spec": "Anti-skid ceramic tiles with designer fittings" }
+          {
+            "area": "Living Room",
+            "spec": "Italian marble flooring with premium finish"
+          },
+          {
+            "area": "Bedroom",
+            "spec": "Vitrified tiles with anti-skid surface"
+          },
+          {
+            "area": "Kitchen",
+            "spec": "Ceramic tiles with granite countertop"
+          },
+          {
+            "area": "Bathroom",
+            "spec": "Anti-skid ceramic tiles with designer fittings"
+          }
         ],
         "doors": [
-          { "area": "Main Door", "spec": "Teak wood frame with decorative laminate, quality hardware fittings" },
-          { "area": "Internal Doors", "spec": "Flush doors with melamine coating and quality fittings" }
+          {
+            "area": "Main Door",
+            "spec": "Teak wood frame with decorative laminate, quality hardware fittings"
+          },
+          {
+            "area": "Internal Doors",
+            "spec": "Flush doors with melamine coating and quality fittings"
+          }
         ],
         "structure": [
-          { "area": "Foundation", "spec": "RCC framed structure with earthquake resistant design" },
-          { "area": "Walls", "spec": "AAC blocks with weather proof exterior paint" }
+          {
+            "area": "Foundation",
+            "spec": "RCC framed structure with earthquake resistant design"
+          },
+          {
+            "area": "Walls",
+            "spec": "AAC blocks with weather proof exterior paint"
+          }
         ],
         "electrical": [
-          { "area": "Wiring", "spec": "Concealed copper wiring with modular switches" },
-          { "area": "Power", "spec": "Full power backup for common areas and partial for flats" }
+          {
+            "area": "Wiring",
+            "spec": "Concealed copper wiring with modular switches"
+          },
+          {
+            "area": "Power",
+            "spec": "Full power backup for common areas and partial for flats"
+          }
         ]
       },
       "tags": [
@@ -401,37 +467,103 @@
       "brochureUrl": "",
       "floorPlanPdfUrl": "",
       "specialities": [
-        { "icon": "mdi:shield-star", "name": "RERA Approved", "description": "Fully compliant with RERA regulations" },
-        { "icon": "mdi:leaf", "name": "Eco with Smart Design", "description": "IGBC pre-certified green building" },
-        { "icon": "mdi:shield-check", "name": "Gated Community", "description": "24/7 security with gated access" },
-        { "icon": "mdi:water-pump", "name": "High Pressure Geysers", "description": "Premium water heating system" },
-        { "icon": "mdi:domain", "name": "Luxury Finishes", "description": "Italian marble and premium materials" },
-        { "icon": "mdi:map-marker-star", "name": "Prime Location", "description": "Whitefield IT hub connectivity" }
+        {
+          "icon": "mdi:shield-star",
+          "name": "RERA Approved",
+          "description": "Fully compliant with RERA regulations"
+        },
+        {
+          "icon": "mdi:leaf",
+          "name": "Eco with Smart Design",
+          "description": "IGBC pre-certified green building"
+        },
+        {
+          "icon": "mdi:shield-check",
+          "name": "Gated Community",
+          "description": "24/7 security with gated access"
+        },
+        {
+          "icon": "mdi:water-pump",
+          "name": "High Pressure Geysers",
+          "description": "Premium water heating system"
+        },
+        {
+          "icon": "mdi:domain",
+          "name": "Luxury Finishes",
+          "description": "Italian marble and premium materials"
+        },
+        {
+          "icon": "mdi:map-marker-star",
+          "name": "Prime Location",
+          "description": "Whitefield IT hub connectivity"
+        }
       ],
       "documents": [
-        { "name": "Commencement Certificate", "icon": "mdi:file-certificate" },
-        { "name": "RERA Certificate", "icon": "mdi:file-document-check" },
-        { "name": "Floor Plan Documents", "icon": "mdi:floor-plan" },
-        { "name": "Brochure", "icon": "mdi:book-open-variant" }
+        {
+          "name": "Commencement Certificate",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "name": "RERA Certificate",
+          "icon": "mdi:file-document-check"
+        },
+        {
+          "name": "Floor Plan Documents",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "name": "Brochure",
+          "icon": "mdi:book-open-variant"
+        }
       ],
       "constructionSpecs": {
         "flooring": [
-          { "area": "Living Room", "spec": "Italian marble with premium vitrified finish" },
-          { "area": "Bedroom", "spec": "Engineered wood flooring with premium finish" },
-          { "area": "Kitchen", "spec": "Anti-skid vitrified tiles with granite platform" },
-          { "area": "Bathroom", "spec": "Designer anti-skid tiles with premium fittings" }
+          {
+            "area": "Living Room",
+            "spec": "Italian marble with premium vitrified finish"
+          },
+          {
+            "area": "Bedroom",
+            "spec": "Engineered wood flooring with premium finish"
+          },
+          {
+            "area": "Kitchen",
+            "spec": "Anti-skid vitrified tiles with granite platform"
+          },
+          {
+            "area": "Bathroom",
+            "spec": "Designer anti-skid tiles with premium fittings"
+          }
         ],
         "doors": [
-          { "area": "Main Door", "spec": "Veneer finished flush door with designer hardware and security lock" },
-          { "area": "Internal Doors", "spec": "Painted flush doors with SS handles and quality fittings" }
+          {
+            "area": "Main Door",
+            "spec": "Veneer finished flush door with designer hardware and security lock"
+          },
+          {
+            "area": "Internal Doors",
+            "spec": "Painted flush doors with SS handles and quality fittings"
+          }
         ],
         "structure": [
-          { "area": "Foundation", "spec": "RCC framed structure with seismic zone compliance" },
-          { "area": "Walls", "spec": "AAC blocks with weather-proof exterior and premium putty finish" }
+          {
+            "area": "Foundation",
+            "spec": "RCC framed structure with seismic zone compliance"
+          },
+          {
+            "area": "Walls",
+            "spec": "AAC blocks with weather-proof exterior and premium putty finish"
+          }
         ],
         "electrical": [
-          { "area": "Wiring", "spec": "Concealed copper wiring with premium modular switches" },
-          { "area": "Power", "spec": "Full DG backup for common areas, partial for apartments" }
+          {
+            "area": "Wiring",
+            "spec": "Concealed copper wiring with premium modular switches"
+          },
+          {
+            "area": "Power",
+            "spec": "Full DG backup for common areas, partial for apartments"
+          }
         ]
       },
       "tags": [
@@ -1435,6 +1567,31 @@
       ],
       "createdAt": "2026-02-13T12:16:10.426Z",
       "updatedAt": "2026-02-13T12:33:46.591Z"
+    },
+    {
+      "id": "8123",
+      "name": "Bappi Das",
+      "phone": "9999999999",
+      "email": "mail4bappidas@gmail.com",
+      "propertyId": 3,
+      "source": "financial-assessment",
+      "message": "Financial Assessment Lead | Score: 75/100 | Occupation: business-owner | Income: 20-50 LPA | Credit: good | EMI: 25000-50000 | Employment: 5-10 yrs | Down Payment: 29% | Co-applicant: yes (Income: 10-20)",
+      "assessmentData": {
+        "score": 75,
+        "occupation": "business-owner",
+        "yearlyIncome": "20-50",
+        "employmentYears": "5-10",
+        "existingEmi": "25000-50000",
+        "creditScore": "good",
+        "downPayment": "29",
+        "hasCoApplicant": "yes",
+        "coApplicantIncome": "10-20",
+        "propertyPrice": 35000000
+      },
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-19T10:17:50.401Z",
+      "updatedAt": "2026-02-19T10:17:50.410Z"
     }
   ],
   "neighborhoods": [
