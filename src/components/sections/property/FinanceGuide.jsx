@@ -38,6 +38,13 @@ const FinanceGuide = ({ price = 0 }) => {
     { name: 'LIC Housing Finance', icon: 'mdi:bank' },
   ];
 
+  const highlights = [
+    { icon: 'mdi:percent-circle', title: 'Lowest Interest Rates', desc: 'Starting 8.35% p.a.' },
+    { icon: 'mdi:clock-fast', title: 'Quick Approval', desc: 'Within 48 hours' },
+    { icon: 'mdi:file-document-check', title: 'Minimal Documentation', desc: 'Hassle-free process' },
+    { icon: 'mdi:cash-multiple', title: 'Up to 90% Financing', desc: 'Maximum loan coverage' },
+  ];
+
   if (!price) return null;
 
   return (
@@ -47,7 +54,56 @@ const FinanceGuide = ({ price = 0 }) => {
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
       >
-        <h2 className={styles.title}>Home Finance Guide</h2>
+        <h2 className={styles.title}>Home Finance Clarity</h2>
+
+        {/* ─── Bank Approval Info Section ─── */}
+        <div className={styles.financeInfo}>
+          <div className={styles.financeInfoHeader}>
+            <div className={styles.financeInfoIconWrap}>
+              <Icon icon="mdi:shield-check" className={styles.financeInfoIcon} />
+            </div>
+            <div className={styles.financeInfoText}>
+              <h3 className={styles.financeInfoTitle}>Pre-Approved by Leading Banks</h3>
+              <p className={styles.financeInfoDesc}>
+                This property is pre-approved for home loans from India's top banks, ensuring a seamless financing experience for your dream home.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.highlightsGrid}>
+            {highlights.map((item, idx) => (
+              <motion.div
+                key={idx}
+                className={styles.highlightCard}
+                initial={{ opacity: 0, y: 12 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.3, delay: 0.1 + idx * 0.08 }}
+              >
+                <Icon icon={item.icon} className={styles.highlightIcon} />
+                <span className={styles.highlightTitle}>{item.title}</span>
+                <span className={styles.highlightDesc}>{item.desc}</span>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className={styles.approvedBanks}>
+            <span className={styles.approvedBanksLabel}>Approved Banks</span>
+            <div className={styles.approvedBanksList}>
+              {banks.map((bank, idx) => (
+                <div key={idx} className={styles.approvedBankChip}>
+                  <Icon icon={bank.icon} className={styles.approvedBankIcon} />
+                  <span>{bank.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ─── EMI Calculator ─── */}
+        <h3 className={styles.calcTitle}>
+          <Icon icon="mdi:calculator-variant" className={styles.calcTitleIcon} />
+          EMI Calculator
+        </h3>
 
         <div className={styles.grid}>
           <div className={styles.calculator}>
@@ -120,18 +176,6 @@ const FinanceGuide = ({ price = 0 }) => {
               <span>Total Amount</span>
               <span className={styles.resultValue}>{formatCurrency(totalAmount)}</span>
             </div>
-          </div>
-        </div>
-
-        <div className={styles.banks}>
-          <h3 className={styles.banksTitle}>Approved for Home Loans</h3>
-          <div className={styles.bankGrid}>
-            {banks.map((bank, idx) => (
-              <div key={idx} className={styles.bankItem}>
-                <Icon icon={bank.icon} className={styles.bankIcon} />
-                <span>{bank.name}</span>
-              </div>
-            ))}
           </div>
         </div>
 

@@ -160,10 +160,11 @@
 }
 
 .price {
-  font-family: var(--font-heading);
+  font-family: var(--font-number);
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--color-text-primary);
+  letter-spacing: 0.3px;
 }
 
 .priceUnit {

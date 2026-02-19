@@ -11,6 +11,169 @@
   margin-bottom: var(--spacing-lg);
 }
 
+/* ─── Finance Info Banner ─── */
+.financeInfo {
+  background: linear-gradient(135deg, rgba(27, 42, 74, 0.04) 0%, rgba(201, 168, 108, 0.08) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.financeInfoHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.financeInfoIconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: rgba(201, 168, 108, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.financeInfoIcon {
+  font-size: 1.5rem;
+  color: var(--color-secondary);
+}
+
+.financeInfoText {
+  flex: 1;
+}
+
+.financeInfoTitle {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.financeInfoDesc {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ─── Finance Highlights Grid ─── */
+.highlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.highlightCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: var(--spacing-md);
+  background: var(--color-bg-default);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.highlightCard:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.highlightIcon {
+  font-size: 1.5rem;
+  color: var(--color-secondary);
+  margin-bottom: 4px;
+}
+
+.highlightTitle {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.highlightDesc {
+  font-family: var(--font-number);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-secondary-dark);
+}
+
+/* ─── Approved Banks ─── */
+.approvedBanks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.approvedBanksLabel {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.approvedBanksList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.approvedBankChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+}
+
+.approvedBankChip:hover {
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.approvedBankIcon {
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+/* ─── Calculator Sub-heading ─── */
+.calcTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.calcTitleIcon {
+  font-size: 1.3rem;
+  color: var(--color-secondary);
+}
+
+/* ─── EMI Calculator Grid ─── */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -40,7 +203,7 @@
 }
 
 .priceValue {
-  font-family: var(--font-body);
+  font-family: var(--font-number);
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-text-primary);
@@ -61,6 +224,7 @@
 }
 
 .inputValue {
+  font-family: var(--font-number);
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -96,6 +260,7 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* ─── Results Panel ─── */
 .results {
   display: flex;
   flex-direction: column;
@@ -120,9 +285,10 @@
 }
 
 .emiValue {
-  font-family: var(--font-heading);
+  font-family: var(--font-number);
   font-size: 2rem;
   font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .resultRow {
@@ -137,6 +303,7 @@
 }
 
 .resultValue {
+  font-family: var(--font-number);
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -148,43 +315,7 @@
   color: var(--color-text-primary);
 }
 
-.banks {
-  margin-bottom: var(--spacing-lg);
-}
-
-.banksTitle {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-md);
-}
-
-.bankGrid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: var(--spacing-sm);
-}
-
-.bankItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: var(--spacing-sm);
-  background: var(--color-bg-surface);
-  border-radius: var(--radius-md);
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-  text-align: center;
-}
-
-.bankIcon {
-  font-size: 1.5rem;
-  color: var(--color-primary);
-}
-
+/* ─── Steps Banner ─── */
 .steps {
   display: flex;
   align-items: center;
@@ -204,26 +335,73 @@
   flex-shrink: 0;
 }
 
+/* ─── Tablet ─── */
 @media (max-width: 960px) {
   .grid {
     grid-template-columns: 1fr;
   }
 
-  .bankGrid {
-    grid-template-columns: repeat(3, 1fr);
+  .highlightsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .financeInfoHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .approvedBanks {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .approvedBanksList {
+    width: 100%;
   }
 }
 
+/* ─── Mobile ─── */
 @media (max-width: 600px) {
   .title {
     font-size: 1.5rem;
   }
 
-  .bankGrid {
-    grid-template-columns: repeat(3, 1fr);
+  .financeInfo {
+    padding: var(--spacing-md);
+  }
+
+  .highlightsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .highlightCard {
+    padding: var(--spacing-sm);
+  }
+
+  .highlightTitle {
+    font-size: 0.72rem;
+  }
+
+  .highlightDesc {
+    font-size: 0.68rem;
   }
 
   .emiValue {
     font-size: 1.5rem;
+  }
+
+  .approvedBankChip {
+    padding: 4px 8px;
+    font-size: 0.68rem;
+  }
+
+  .calcTitle {
+    font-size: 1rem;
+  }
+
+  .steps {
+    font-size: 0.78rem;
   }
 }
