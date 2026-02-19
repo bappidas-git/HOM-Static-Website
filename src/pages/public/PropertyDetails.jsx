@@ -60,6 +60,13 @@ const PropertyDetails = () => {
   const [downloadSubmitted, setDownloadSubmitted] = useState(false);
   const [downloadError, setDownloadError] = useState('');
 
+  // Document download lead capture modal state
+  const [docModal, setDocModal] = useState({ open: false, docName: '' });
+  const [docFormData, setDocFormData] = useState({ name: '', email: '', phone: '' });
+  const [docSubmitting, setDocSubmitting] = useState(false);
+  const [docSubmitted, setDocSubmitted] = useState(false);
+  const [docError, setDocError] = useState('');
+
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -154,6 +161,51 @@ const PropertyDetails = () => {
       setDownloadSubmitting(false);
     }
   }, [downloadFormData, downloadModal.type, property?.id, toast]);
+
+  // Document download modal handlers
+  const openDocModal = useCallback((docName) => {
+    setDocModal({ open: true, docName });
+    setDocSubmitted(false);
+    setDocError('');
+    setDocFormData({ name: '', email: '', phone: '' });
+  }, []);
+
+  const closeDocModal = useCallback(() => {
+    setDocModal({ open: false, docName: '' });
+    setDocSubmitted(false);
+    setDocError('');
+  }, []);
+
+  const handleDocFormChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setDocFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleDocSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setDocError('');
+
+    if (!docFormData.name.trim() || !docFormData.phone.trim()) {
+      setDocError('Name and phone are required');
+      return;
+    }
+
+    try {
+      setDocSubmitting(true);
+      await leadService.create({
+        ...docFormData,
+        propertyId: property?.id || null,
+        source: 'document_download',
+        message: `Requested document: ${docModal.docName}`,
+      });
+      setDocSubmitted(true);
+      toast.success('Request submitted successfully!');
+    } catch {
+      setDocError('Something went wrong. Please try again.');
+    } finally {
+      setDocSubmitting(false);
+    }
+  }, [docFormData, docModal.docName, property?.id, toast]);
 
   // Loading skeleton
   if (loading) {
@@ -344,6 +396,119 @@ const PropertyDetails = () => {
         )}
       </AnimatePresence>
 
+      {/* Document Download Lead Capture Modal */}
+      <AnimatePresence>
+        {docModal.open && (
+          <motion.div
+            className={styles.modalOverlay}
+            onClick={closeDocModal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={styles.modalContent}
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.modalClose}
+                onClick={closeDocModal}
+                aria-label="Close document download form"
+              >
+                <Icon icon="mdi:close" />
+              </button>
+
+              {docSubmitted ? (
+                <div className={styles.thankYou}>
+                  <Icon icon="mdi:check-circle" className={styles.thankYouIcon} />
+                  <h3 className={styles.thankYouTitle}>Thank You!</h3>
+                  <p className={styles.thankYouText}>
+                    Your request for "{docModal.docName}" has been received. Our team will share the document with you shortly.
+                  </p>
+                  <button className={styles.thankYouClose} onClick={closeDocModal}>
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <h3 className={styles.modalTitle}>
+                    Download {docModal.docName}
+                  </h3>
+                  <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '0.8rem', color: '#6B7280', marginBottom: '16px', lineHeight: 1.5 }}>
+                    Please share your details to receive the document.
+                  </p>
+                  <form onSubmit={handleDocSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Your Name *"
+                      value={docFormData.name}
+                      onChange={handleDocFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={docFormData.email}
+                      onChange={handleDocFormChange}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="Phone Number *"
+                      value={docFormData.phone}
+                      onChange={handleDocFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    {docError && (
+                      <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
+                        {docError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={docSubmitting}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%',
+                        padding: '12px',
+                        background: '#1B2A4A',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        cursor: docSubmitting ? 'not-allowed' : 'pointer',
+                        opacity: docSubmitting ? 0.7 : 1,
+                      }}
+                    >
+                      {docSubmitting ? 'Submitting...' : (
+                        <>
+                          <Icon icon="mdi:download" />
+                          Get Document
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Share Bottom Sheet (mobile) */}
       {isMobile && (
         <SwipeableDrawer
@@ -496,7 +661,7 @@ const PropertyDetails = () => {
               />
               <FinanceGuide price={property.price} property={property} />
               <NearbyPlaces nearbyPlaces={property.nearbyPlaces} />
-              <PropertyDocuments documents={property.documents} />
+              <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />
               <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
               <ConstructionStatus status={property.status} />
               <BuilderOverview developer={property.developer} />

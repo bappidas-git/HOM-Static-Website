@@ -64,6 +64,7 @@ const sourceOptions = [
   { value: 'financial-assessment', label: 'Financial Assessment' },
   { value: 'brochure_download', label: 'Brochure Download' },
   { value: 'floorplan_download', label: 'Floor Plan Download' },
+  { value: 'document_download', label: 'Document Download' },
 ];
 
 const formatSource = (source) => {
