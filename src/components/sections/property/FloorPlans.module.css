@@ -105,7 +105,7 @@
 }
 
 .statValue {
-  font-family: var(--font-body);
+  font-family: var(--font-number);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-primary);

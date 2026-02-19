@@ -124,7 +124,7 @@
 }
 
 .placeDistance {
-  font-family: var(--font-body);
+  font-family: var(--font-number);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-secondary);

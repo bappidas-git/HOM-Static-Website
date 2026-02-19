@@ -52,7 +52,7 @@
 }
 
 .detailValue {
-  font-family: var(--font-body);
+  font-family: var(--font-number);
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-primary);
@@ -130,7 +130,7 @@
   border-radius: 50%;
   background: var(--color-secondary);
   color: #fff;
-  font-family: var(--font-body);
+  font-family: var(--font-number);
   font-size: 0.8rem;
   font-weight: 700;
   flex-shrink: 0;

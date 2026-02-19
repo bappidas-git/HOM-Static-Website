@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { useInView } from 'react-intersection-observer';
 import styles from './PropertySpecialities.module.css';
 
+const DESKTOP_ROW_COUNT = 6;
+
 const PropertySpecialities = ({ specialities = [] }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [expanded, setExpanded] = useState(false);
 
   if (specialities.length === 0) return null;
+
+  const remainingCount = Math.max(0, specialities.length - DESKTOP_ROW_COUNT);
 
   return (
     <section className={styles.section} ref={ref} id="specialities">
@@ -22,7 +27,7 @@ const PropertySpecialities = ({ specialities = [] }) => {
           {specialities.map((item, idx) => (
             <motion.div
               key={idx}
-              className={styles.item}
+              className={`${styles.item} ${!expanded && idx >= DESKTOP_ROW_COUNT ? styles.hiddenDesktop : ''}`}
               initial={{ opacity: 0, y: 12 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.3, delay: idx * 0.05 }}
@@ -35,6 +40,16 @@ const PropertySpecialities = ({ specialities = [] }) => {
             </motion.div>
           ))}
         </div>
+
+        {remainingCount > 0 && (
+          <button
+            className={styles.showMoreBtn}
+            onClick={() => setExpanded(!expanded)}
+          >
+            <Icon icon={expanded ? 'mdi:chevron-up' : 'mdi:chevron-down'} className={styles.showMoreIcon} />
+            {expanded ? 'Show Less' : `Show ${remainingCount} More Specialit${remainingCount > 1 ? 'ies' : 'y'}`}
+          </button>
+        )}
       </motion.div>
     </section>
   );
