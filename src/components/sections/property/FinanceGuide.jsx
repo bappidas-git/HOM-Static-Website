@@ -150,6 +150,18 @@ const FinanceGuide = ({ price = 0, property = null }) => {
   const [showAllBanks, setShowAllBanks] = useState(false);
   const [initialBankCount, setInitialBankCount] = useState(3);
 
+  /* ─── Eligibility Modal State ─── */
+  const [eligibilityModal, setEligibilityModal] = useState({ open: false, bank: null });
+  const [modalFormData, setModalFormData] = useState({
+    name: '', phone: '', email: '', occupation: '', yearlyIncome: '',
+    employmentYears: '', existingEmi: '', creditScore: '', downPayment: '20',
+    hasCoApplicant: '', coApplicantIncome: '',
+  });
+  const [modalErrors, setModalErrors] = useState({});
+  const [modalSubmitting, setModalSubmitting] = useState(false);
+  const [modalStep, setModalStep] = useState(0); // 0=form, 1=result
+  const [modalFitScore, setModalFitScore] = useState(null);
+
   useEffect(() => {
     const updateBankCount = () => {
       setInitialBankCount(window.innerWidth > 960 ? 3 : 1);
@@ -218,13 +230,299 @@ const FinanceGuide = ({ price = 0, property = null }) => {
     }
   }, [assessmentData, property?.id, price, validateAssessment]);
 
+  /* ─── Eligibility Modal Handlers ─── */
+  const openEligibilityModal = useCallback((bank) => {
+    setEligibilityModal({ open: true, bank });
+    setModalStep(0);
+    setModalFormData({
+      name: '', phone: '', email: '', occupation: '', yearlyIncome: '',
+      employmentYears: '', existingEmi: '', creditScore: '', downPayment: '20',
+      hasCoApplicant: '', coApplicantIncome: '',
+    });
+    setModalErrors({});
+    setModalFitScore(null);
+    document.body.style.overflow = 'hidden';
+  }, []);
+
+  const closeEligibilityModal = useCallback(() => {
+    setEligibilityModal({ open: false, bank: null });
+    setModalStep(0);
+    document.body.style.overflow = '';
+  }, []);
+
+  const handleModalChange = useCallback((field, value) => {
+    setModalFormData((prev) => ({ ...prev, [field]: value }));
+    setModalErrors((prev) => ({ ...prev, [field]: '' }));
+  }, []);
+
+  const validateModalForm = useCallback(() => {
+    const errors = {};
+    if (!modalFormData.name.trim()) errors.name = 'Name is required';
+    if (!modalFormData.phone.trim()) errors.phone = 'Phone is required';
+    else if (!/^[6-9]\d{9}$/.test(modalFormData.phone.trim())) errors.phone = 'Enter a valid 10-digit phone number';
+    if (modalFormData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(modalFormData.email)) errors.email = 'Enter a valid email';
+    if (!modalFormData.occupation) errors.occupation = 'Select your occupation';
+    if (!modalFormData.yearlyIncome) errors.yearlyIncome = 'Select your income range';
+    if (!modalFormData.creditScore) errors.creditScore = 'Select your credit score range';
+    if (!modalFormData.existingEmi) errors.existingEmi = 'Select existing EMI';
+    if (!modalFormData.employmentYears) errors.employmentYears = 'Select employment duration';
+    setModalErrors(errors);
+    return Object.keys(errors).length === 0;
+  }, [modalFormData]);
+
+  const handleModalSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    if (!validateModalForm()) return;
+
+    const score = calculateFitScore(modalFormData);
+    setModalFitScore(score);
+
+    try {
+      setModalSubmitting(true);
+      await leadService.create({
+        name: modalFormData.name,
+        phone: modalFormData.phone,
+        email: modalFormData.email || '',
+        propertyId: property?.id || null,
+        source: 'bank-eligibility-check',
+        message: `Bank Eligibility Check — ${eligibilityModal.bank?.name} | Score: ${score}/100 | Occupation: ${modalFormData.occupation} | Income: ${modalFormData.yearlyIncome} LPA | Credit: ${modalFormData.creditScore} | EMI: ${modalFormData.existingEmi} | Employment: ${modalFormData.employmentYears} yrs | Down Payment: ${modalFormData.downPayment}% | Co-applicant: ${modalFormData.hasCoApplicant || 'No'}${modalFormData.coApplicantIncome ? ' (Income: ' + modalFormData.coApplicantIncome + ')' : ''}`,
+        assessmentData: {
+          score,
+          bank: eligibilityModal.bank?.name,
+          occupation: modalFormData.occupation,
+          yearlyIncome: modalFormData.yearlyIncome,
+          employmentYears: modalFormData.employmentYears,
+          existingEmi: modalFormData.existingEmi,
+          creditScore: modalFormData.creditScore,
+          downPayment: modalFormData.downPayment,
+          hasCoApplicant: modalFormData.hasCoApplicant,
+          coApplicantIncome: modalFormData.coApplicantIncome,
+          propertyPrice: price,
+        },
+      });
+      setModalStep(1);
+    } catch {
+      setModalStep(1);
+    } finally {
+      setModalSubmitting(false);
+    }
+  }, [modalFormData, eligibilityModal.bank, property?.id, price, validateModalForm]);
+
+  // Cleanup body overflow on unmount
+  useEffect(() => {
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  /* ─── Reusable Form Fields Renderer ─── */
+  const renderFormFields = (data, errors, onChange) => (
+    <>
+      {/* ── Personal Details ── */}
+      <div className={styles.formSection}>
+        <h4 className={styles.formSectionTitle}>
+          <Icon icon="mdi:account-outline" /> Personal Details
+        </h4>
+        <div className={styles.formGrid3}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Full Name *</label>
+            <input
+              type="text"
+              className={`${styles.formInput} ${errors.name ? styles.formInputError : ''}`}
+              placeholder="Enter your full name"
+              value={data.name}
+              onChange={(e) => onChange('name', e.target.value)}
+            />
+            {errors.name && <span className={styles.fieldError}>{errors.name}</span>}
+          </div>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Phone Number *</label>
+            <input
+              type="tel"
+              className={`${styles.formInput} ${errors.phone ? styles.formInputError : ''}`}
+              placeholder="10-digit mobile number"
+              value={data.phone}
+              onChange={(e) => onChange('phone', e.target.value)}
+              maxLength={10}
+            />
+            {errors.phone && <span className={styles.fieldError}>{errors.phone}</span>}
+          </div>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Email Address</label>
+            <input
+              type="email"
+              className={`${styles.formInput} ${errors.email ? styles.formInputError : ''}`}
+              placeholder="your@email.com"
+              value={data.email}
+              onChange={(e) => onChange('email', e.target.value)}
+            />
+            {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Occupation ── */}
+      <div className={styles.formSection}>
+        <h4 className={styles.formSectionTitle}>
+          <Icon icon="mdi:briefcase-outline" /> Employment Details
+        </h4>
+        <label className={styles.formLabel}>Occupation Type *</label>
+        <div className={styles.chipSelector}>
+          {occupationOptions.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              className={`${styles.chipOption} ${data.occupation === opt.value ? styles.chipOptionActive : ''}`}
+              onClick={() => onChange('occupation', opt.value)}
+            >
+              <Icon icon={opt.icon} />
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        {errors.occupation && <span className={styles.fieldError}>{errors.occupation}</span>}
+
+        <div className={styles.formGrid2} style={{ marginTop: '16px' }}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Years of Employment / Business *</label>
+            <select
+              className={`${styles.formSelect} ${errors.employmentYears ? styles.formInputError : ''}`}
+              value={data.employmentYears}
+              onChange={(e) => onChange('employmentYears', e.target.value)}
+            >
+              <option value="">Select duration</option>
+              {employmentYearOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {errors.employmentYears && <span className={styles.fieldError}>{errors.employmentYears}</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Financial Details ── */}
+      <div className={styles.formSection}>
+        <h4 className={styles.formSectionTitle}>
+          <Icon icon="mdi:currency-inr" /> Financial Details
+        </h4>
+        <div className={styles.formGrid2}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Annual Income *</label>
+            <select
+              className={`${styles.formSelect} ${errors.yearlyIncome ? styles.formInputError : ''}`}
+              value={data.yearlyIncome}
+              onChange={(e) => onChange('yearlyIncome', e.target.value)}
+            >
+              <option value="">Select income range</option>
+              {incomeRanges.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {errors.yearlyIncome && <span className={styles.fieldError}>{errors.yearlyIncome}</span>}
+          </div>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Existing Monthly EMIs *</label>
+            <select
+              className={`${styles.formSelect} ${errors.existingEmi ? styles.formInputError : ''}`}
+              value={data.existingEmi}
+              onChange={(e) => onChange('existingEmi', e.target.value)}
+            >
+              <option value="">Select EMI range</option>
+              {existingEmiOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {errors.existingEmi && <span className={styles.fieldError}>{errors.existingEmi}</span>}
+          </div>
+        </div>
+
+        <label className={styles.formLabel} style={{ marginTop: '16px' }}>Credit Score Range *</label>
+        <div className={styles.chipSelector}>
+          {creditScoreOptions.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              className={`${styles.chipOption} ${data.creditScore === opt.value ? styles.chipOptionActive : ''}`}
+              onClick={() => onChange('creditScore', opt.value)}
+              style={data.creditScore === opt.value ? { borderColor: opt.color, background: `${opt.color}10` } : {}}
+            >
+              <span className={styles.creditDot} style={{ background: opt.color }} />
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        {errors.creditScore && <span className={styles.fieldError}>{errors.creditScore}</span>}
+
+        <div className={styles.formGrid2} style={{ marginTop: '16px' }}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Down Payment Available ({data.downPayment}%)</label>
+            <input
+              type="range"
+              min="10"
+              max="50"
+              value={data.downPayment}
+              onChange={(e) => onChange('downPayment', e.target.value)}
+              className={styles.rangeSlider}
+            />
+            <div className={styles.rangeLabels}>
+              <span>10%</span>
+              <span className={styles.rangeCurrentVal}>{formatCurrency(price * (parseInt(data.downPayment) || 0) / 100)}</span>
+              <span>50%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Co-Applicant ── */}
+      <div className={styles.formSection}>
+        <h4 className={styles.formSectionTitle}>
+          <Icon icon="mdi:account-multiple-outline" /> Co-Applicant (Optional)
+        </h4>
+        <div className={styles.formGrid2}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Do you have a co-applicant?</label>
+            <div className={styles.toggleRow}>
+              <button
+                type="button"
+                className={`${styles.toggleBtn} ${data.hasCoApplicant === 'yes' ? styles.toggleBtnActive : ''}`}
+                onClick={() => onChange('hasCoApplicant', 'yes')}
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                className={`${styles.toggleBtn} ${data.hasCoApplicant === 'no' ? styles.toggleBtnActive : ''}`}
+                onClick={() => onChange('hasCoApplicant', 'no')}
+              >
+                No
+              </button>
+            </div>
+          </div>
+          {data.hasCoApplicant === 'yes' && (
+            <div className={styles.formField}>
+              <label className={styles.formLabel}>Co-Applicant Annual Income</label>
+              <select
+                className={styles.formSelect}
+                value={data.coApplicantIncome}
+                onChange={(e) => onChange('coApplicantIncome', e.target.value)}
+              >
+                <option value="">Select income range</option>
+                {incomeRanges.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+
   if (!price) return null;
 
   const scoreInfo = fitScore !== null ? getScoreLabel(fitScore) : null;
 
   const tabs = [
     { id: 'assessment', label: 'Financial Fit Assessment', icon: 'mdi:clipboard-check-outline' },
-    { id: 'finance', label: 'Home Finance Clarity', icon: 'mdi:bank-check' },
+    { id: 'finance', label: 'Bank Loan Assistance', icon: 'mdi:bank-check' },
     { id: 'emi', label: 'EMI Projections', icon: 'mdi:calculator-variant' },
   ];
 
@@ -235,7 +533,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
       >
-        <h2 className={styles.sectionTitle}>Home Finance Clarity</h2>
+        <h2 className={styles.sectionTitle}>Bank Loan Assistance</h2>
         <p className={styles.sectionSubtitle}>
           Comprehensive financial planning tools to help you make an informed property investment decision
         </p>
@@ -345,7 +643,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
                       <span className={styles.bankRateValue}>0.5%<small> + GST</small></span>
                     </div>
                   </div>
-                  <button className={styles.bankCta}>
+                  <button className={styles.bankCta} onClick={() => openEligibilityModal(bank)}>
                     <Icon icon="mdi:check-decagram-outline" />
                     Check Eligibility
                   </button>
@@ -353,18 +651,28 @@ const FinanceGuide = ({ price = 0, property = null }) => {
               ))}
             </div>
 
-            {/* View More Banks Button */}
-            {!showAllBanks && banks.length > initialBankCount && (
+            {/* View More / Show Less Banks Button */}
+            {banks.length > initialBankCount && (
               <div className={styles.viewMoreWrap}>
-                <button
-                  className={styles.viewMoreBtn}
-                  onClick={() => setShowAllBanks(true)}
-                >
-                  <Icon icon="mdi:bank-plus" />
-                  <span className={styles.viewMoreTextDesktop}>View More Banks</span>
-                  <span className={styles.viewMoreTextMobile}>View More Bank</span>
-                  <Icon icon="mdi:chevron-down" />
-                </button>
+                {!showAllBanks ? (
+                  <button
+                    className={styles.viewMoreBtn}
+                    onClick={() => setShowAllBanks(true)}
+                  >
+                    <Icon icon="mdi:bank-plus" />
+                    <span className={styles.viewMoreTextDesktop}>View More Banks</span>
+                    <span className={styles.viewMoreTextMobile}>View More Bank</span>
+                    <Icon icon="mdi:chevron-down" />
+                  </button>
+                ) : (
+                  <button
+                    className={styles.viewMoreBtn}
+                    onClick={() => setShowAllBanks(false)}
+                  >
+                    <Icon icon="mdi:chevron-up" />
+                    Show Less
+                  </button>
+                )}
               </div>
             )}
 
@@ -432,203 +740,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
                   </div>
 
                   <form className={styles.assessmentForm} onSubmit={handleAssessmentSubmit}>
-                    {/* ── Personal Details ── */}
-                    <div className={styles.formSection}>
-                      <h4 className={styles.formSectionTitle}>
-                        <Icon icon="mdi:account-outline" /> Personal Details
-                      </h4>
-                      <div className={styles.formGrid3}>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Full Name *</label>
-                          <input
-                            type="text"
-                            className={`${styles.formInput} ${assessmentErrors.name ? styles.formInputError : ''}`}
-                            placeholder="Enter your full name"
-                            value={assessmentData.name}
-                            onChange={(e) => handleAssessmentChange('name', e.target.value)}
-                          />
-                          {assessmentErrors.name && <span className={styles.fieldError}>{assessmentErrors.name}</span>}
-                        </div>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Phone Number *</label>
-                          <input
-                            type="tel"
-                            className={`${styles.formInput} ${assessmentErrors.phone ? styles.formInputError : ''}`}
-                            placeholder="10-digit mobile number"
-                            value={assessmentData.phone}
-                            onChange={(e) => handleAssessmentChange('phone', e.target.value)}
-                            maxLength={10}
-                          />
-                          {assessmentErrors.phone && <span className={styles.fieldError}>{assessmentErrors.phone}</span>}
-                        </div>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Email Address</label>
-                          <input
-                            type="email"
-                            className={`${styles.formInput} ${assessmentErrors.email ? styles.formInputError : ''}`}
-                            placeholder="your@email.com"
-                            value={assessmentData.email}
-                            onChange={(e) => handleAssessmentChange('email', e.target.value)}
-                          />
-                          {assessmentErrors.email && <span className={styles.fieldError}>{assessmentErrors.email}</span>}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* ── Occupation ── */}
-                    <div className={styles.formSection}>
-                      <h4 className={styles.formSectionTitle}>
-                        <Icon icon="mdi:briefcase-outline" /> Employment Details
-                      </h4>
-                      <label className={styles.formLabel}>Occupation Type *</label>
-                      <div className={styles.chipSelector}>
-                        {occupationOptions.map((opt) => (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            className={`${styles.chipOption} ${assessmentData.occupation === opt.value ? styles.chipOptionActive : ''}`}
-                            onClick={() => handleAssessmentChange('occupation', opt.value)}
-                          >
-                            <Icon icon={opt.icon} />
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                      {assessmentErrors.occupation && <span className={styles.fieldError}>{assessmentErrors.occupation}</span>}
-
-                      <div className={styles.formGrid2} style={{ marginTop: '16px' }}>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Years of Employment / Business *</label>
-                          <select
-                            className={`${styles.formSelect} ${assessmentErrors.employmentYears ? styles.formInputError : ''}`}
-                            value={assessmentData.employmentYears}
-                            onChange={(e) => handleAssessmentChange('employmentYears', e.target.value)}
-                          >
-                            <option value="">Select duration</option>
-                            {employmentYearOptions.map((opt) => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                          </select>
-                          {assessmentErrors.employmentYears && <span className={styles.fieldError}>{assessmentErrors.employmentYears}</span>}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* ── Financial Details ── */}
-                    <div className={styles.formSection}>
-                      <h4 className={styles.formSectionTitle}>
-                        <Icon icon="mdi:currency-inr" /> Financial Details
-                      </h4>
-                      <div className={styles.formGrid2}>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Annual Income *</label>
-                          <select
-                            className={`${styles.formSelect} ${assessmentErrors.yearlyIncome ? styles.formInputError : ''}`}
-                            value={assessmentData.yearlyIncome}
-                            onChange={(e) => handleAssessmentChange('yearlyIncome', e.target.value)}
-                          >
-                            <option value="">Select income range</option>
-                            {incomeRanges.map((opt) => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                          </select>
-                          {assessmentErrors.yearlyIncome && <span className={styles.fieldError}>{assessmentErrors.yearlyIncome}</span>}
-                        </div>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Existing Monthly EMIs *</label>
-                          <select
-                            className={`${styles.formSelect} ${assessmentErrors.existingEmi ? styles.formInputError : ''}`}
-                            value={assessmentData.existingEmi}
-                            onChange={(e) => handleAssessmentChange('existingEmi', e.target.value)}
-                          >
-                            <option value="">Select EMI range</option>
-                            {existingEmiOptions.map((opt) => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                          </select>
-                          {assessmentErrors.existingEmi && <span className={styles.fieldError}>{assessmentErrors.existingEmi}</span>}
-                        </div>
-                      </div>
-
-                      <label className={styles.formLabel} style={{ marginTop: '16px' }}>Credit Score Range *</label>
-                      <div className={styles.chipSelector}>
-                        {creditScoreOptions.map((opt) => (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            className={`${styles.chipOption} ${assessmentData.creditScore === opt.value ? styles.chipOptionActive : ''}`}
-                            onClick={() => handleAssessmentChange('creditScore', opt.value)}
-                            style={assessmentData.creditScore === opt.value ? { borderColor: opt.color, background: `${opt.color}10` } : {}}
-                          >
-                            <span className={styles.creditDot} style={{ background: opt.color }} />
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                      {assessmentErrors.creditScore && <span className={styles.fieldError}>{assessmentErrors.creditScore}</span>}
-
-                      <div className={styles.formGrid2} style={{ marginTop: '16px' }}>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Down Payment Available ({assessmentData.downPayment}%)</label>
-                          <input
-                            type="range"
-                            min="10"
-                            max="50"
-                            value={assessmentData.downPayment}
-                            onChange={(e) => handleAssessmentChange('downPayment', e.target.value)}
-                            className={styles.rangeSlider}
-                          />
-                          <div className={styles.rangeLabels}>
-                            <span>10%</span>
-                            <span className={styles.rangeCurrentVal}>{formatCurrency(price * (parseInt(assessmentData.downPayment) || 0) / 100)}</span>
-                            <span>50%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* ── Co-Applicant ── */}
-                    <div className={styles.formSection}>
-                      <h4 className={styles.formSectionTitle}>
-                        <Icon icon="mdi:account-multiple-outline" /> Co-Applicant (Optional)
-                      </h4>
-                      <div className={styles.formGrid2}>
-                        <div className={styles.formField}>
-                          <label className={styles.formLabel}>Do you have a co-applicant?</label>
-                          <div className={styles.toggleRow}>
-                            <button
-                              type="button"
-                              className={`${styles.toggleBtn} ${assessmentData.hasCoApplicant === 'yes' ? styles.toggleBtnActive : ''}`}
-                              onClick={() => handleAssessmentChange('hasCoApplicant', 'yes')}
-                            >
-                              Yes
-                            </button>
-                            <button
-                              type="button"
-                              className={`${styles.toggleBtn} ${assessmentData.hasCoApplicant === 'no' ? styles.toggleBtnActive : ''}`}
-                              onClick={() => handleAssessmentChange('hasCoApplicant', 'no')}
-                            >
-                              No
-                            </button>
-                          </div>
-                        </div>
-                        {assessmentData.hasCoApplicant === 'yes' && (
-                          <div className={styles.formField}>
-                            <label className={styles.formLabel}>Co-Applicant Annual Income</label>
-                            <select
-                              className={styles.formSelect}
-                              value={assessmentData.coApplicantIncome}
-                              onChange={(e) => handleAssessmentChange('coApplicantIncome', e.target.value)}
-                            >
-                              <option value="">Select income range</option>
-                              {incomeRanges.map((opt) => (
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    {renderFormFields(assessmentData, assessmentErrors, handleAssessmentChange)}
 
                     {/* ── Submit ── */}
                     <div className={styles.assessmentSubmitWrap}>
@@ -981,6 +1093,158 @@ const FinanceGuide = ({ price = 0, property = null }) => {
           </motion.div>
         )}
       </motion.div>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* Eligibility Check Modal                                    */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {eligibilityModal.open && eligibilityModal.bank && (
+          <motion.div
+            className={styles.eligibilityOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={closeEligibilityModal}
+          >
+            <motion.div
+              className={styles.eligibilityModal}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className={styles.eligibilityHeader}>
+                <div className={styles.eligibilityTitleWrap}>
+                  <div
+                    className={styles.eligibilityBankIcon}
+                    style={{ background: `${eligibilityModal.bank.color}15` }}
+                  >
+                    <Icon
+                      icon={eligibilityModal.bank.icon}
+                      style={{ color: eligibilityModal.bank.color, fontSize: '1.3rem' }}
+                    />
+                  </div>
+                  <div>
+                    <h3 className={styles.eligibilityTitle}>
+                      Check Eligibility with {eligibilityModal.bank.name}
+                    </h3>
+                    <p className={styles.eligibilitySubtitle}>
+                      Rate from {eligibilityModal.bank.rate}% p.a. &bull; Max loan {formatCurrency(eligibilityModal.bank.maxLoan)}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  className={styles.eligibilityClose}
+                  onClick={closeEligibilityModal}
+                  aria-label="Close modal"
+                >
+                  <Icon icon="mdi:close" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className={styles.eligibilityBody}>
+                <AnimatePresence mode="wait">
+                  {modalStep === 0 && (
+                    <motion.div
+                      key="modal-form"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <form className={styles.assessmentForm} onSubmit={handleModalSubmit}>
+                        {renderFormFields(modalFormData, modalErrors, handleModalChange)}
+
+                        {/* ── Submit ── */}
+                        <div className={styles.assessmentSubmitWrap}>
+                          <button
+                            type="submit"
+                            className={styles.assessmentSubmitBtn}
+                            disabled={modalSubmitting}
+                          >
+                            {modalSubmitting ? (
+                              <>
+                                <Icon icon="mdi:loading" className={styles.spinIcon} />
+                                Checking Eligibility...
+                              </>
+                            ) : (
+                              <>
+                                <Icon icon="mdi:check-decagram-outline" />
+                                Check My Eligibility
+                              </>
+                            )}
+                          </button>
+                          <p className={styles.privacyNote}>
+                            <Icon icon="mdi:lock-outline" /> Your data is secure and used only for this assessment
+                          </p>
+                        </div>
+                      </form>
+                    </motion.div>
+                  )}
+
+                  {modalStep === 1 && modalFitScore !== null && (
+                    <motion.div
+                      key="modal-result"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.35, type: 'spring', stiffness: 200 }}
+                    >
+                      {(() => {
+                        const mScoreInfo = getScoreLabel(modalFitScore);
+                        return (
+                          <div className={styles.eligibilityResult}>
+                            <div className={styles.eligibilityResultIcon}>
+                              <Icon icon="mdi:check-circle" />
+                            </div>
+                            <div className={styles.eligibilityScoreCircle} style={{ borderColor: mScoreInfo.color }}>
+                              <span className={styles.eligibilityScoreNum} style={{ color: mScoreInfo.color }}>{modalFitScore}</span>
+                              <span className={styles.eligibilityScoreOf}>/ 100</span>
+                            </div>
+                            <div
+                              className={styles.eligibilityScoreBadge}
+                              style={{ background: mScoreInfo.bg, color: mScoreInfo.color }}
+                            >
+                              <Icon icon={mScoreInfo.icon} />
+                              {mScoreInfo.label}
+                            </div>
+                            <h3 className={styles.eligibilityResultTitle}>
+                              Eligibility Assessment Complete
+                            </h3>
+                            <p className={styles.eligibilityResultText}>
+                              {mScoreInfo.message}
+                            </p>
+                            <p className={styles.eligibilityResultSub}>
+                              Our {eligibilityModal.bank.name} loan advisors will contact you within 24 hours with personalised financing options.
+                            </p>
+                            <div className={styles.eligibilityResultActions}>
+                              <button
+                                className={styles.eligibilityDoneBtn}
+                                onClick={closeEligibilityModal}
+                              >
+                                <Icon icon="mdi:check" /> Done
+                              </button>
+                              <button
+                                className={styles.eligibilityRetakeBtn}
+                                onClick={() => { setModalStep(0); setModalFitScore(null); }}
+                              >
+                                <Icon icon="mdi:refresh" /> Retake
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
