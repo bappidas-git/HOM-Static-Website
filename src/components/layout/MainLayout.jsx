@@ -45,7 +45,7 @@ const MainLayout = ({ children }) => {
           paddingTop: isMobile ? 60 : 72,
           paddingBottom: isMobile ? 56 : 0,
           minHeight: '100vh',
-          overflowX: 'hidden',
+          overflowX: 'clip',
         }}
       >
         <AnimatePresence mode="wait">
