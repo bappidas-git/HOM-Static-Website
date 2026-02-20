@@ -52,6 +52,7 @@
 }
 
 .planImageCol {
+  margin-top: 15px;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);

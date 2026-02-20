@@ -1605,6 +1605,31 @@
       "notes": [],
       "createdAt": "2026-02-19T14:32:25.625Z",
       "updatedAt": "2026-02-19T14:32:25.632Z"
+    },
+    {
+      "id": "53c7",
+      "name": "Bappi Das",
+      "phone": "7787678785",
+      "email": "mail4bappidas@gmail.com",
+      "propertyId": "2",
+      "source": "financial-assessment",
+      "message": "Financial Assessment Lead | Score: 100/100 | Occupation: retired | Income: 50+ LPA | Credit: excellent | EMI: 0 | Employment: 10+ yrs | Down Payment: 36% | Co-applicant: no",
+      "assessmentData": {
+        "score": 100,
+        "occupation": "retired",
+        "yearlyIncome": "50+",
+        "employmentYears": "10+",
+        "existingEmi": "0",
+        "creditScore": "excellent",
+        "downPayment": "36",
+        "hasCoApplicant": "no",
+        "coApplicantIncome": "",
+        "propertyPrice": 19500000
+      },
+      "status": "qualified",
+      "notes": [],
+      "createdAt": "2026-02-19T15:48:42.082Z",
+      "updatedAt": "2026-02-19T15:50:17.643Z"
     }
   ],
   "neighborhoods": [

@@ -100,7 +100,7 @@
 
 .sidebarCol {
   position: sticky;
-  top: 88px;
+  top: 135px;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   scrollbar-width: none;
