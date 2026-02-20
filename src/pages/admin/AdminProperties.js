@@ -656,15 +656,12 @@ const AdminProperties = () => {
                   </TableCell>
                   <SortableHeader field="title">Name</SortableHeader>
                   <SortableHeader field="price">Price</SortableHeader>
-                  <SortableHeader field="location">Location</SortableHeader>
+
                   <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem' }}>
                     Type
                   </TableCell>
                   <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem' }}>
                     Status
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem' }}>
-                    Tags
                   </TableCell>
                   <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem', textAlign: 'center' }}>
                     Active
@@ -679,14 +676,14 @@ const AdminProperties = () => {
                   ? Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
                         <TableCell padding="checkbox"><Skeleton width={20} /></TableCell>
-                        {Array.from({ length: 9 }).map((_, j) => (
+                        {Array.from({ length: 7 }).map((_, j) => (
                           <TableCell key={j}><Skeleton /></TableCell>
                         ))}
                       </TableRow>
                     ))
                   : currentPageData.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={10} align="center" sx={{ py: 6 }}>
+                        <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
                           <Icon icon="mdi:home-search-outline" style={{ fontSize: 48, color: '#D1D5DB' }} />
                           <Typography variant="body2" sx={{ color: '#9CA3AF', mt: 1 }}>
                             No properties found
@@ -765,18 +762,6 @@ const AdminProperties = () => {
                           </Typography>
                         </TableCell>
 
-                        {/* Location */}
-                        <TableCell>
-                          <Typography
-                            variant="body2"
-                            sx={{ color: '#6B7280', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                          >
-                            {property.location?.area}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
-                            {property.location?.city}
-                          </Typography>
-                        </TableCell>
 
                         {/* Type */}
                         <TableCell>
@@ -802,35 +787,6 @@ const AdminProperties = () => {
                           />
                         </TableCell>
 
-                        {/* Tags */}
-                        <TableCell>
-                          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', maxWidth: 180 }}>
-                            {(property.tags || []).slice(0, 3).map((tag) => {
-                              const tc = tagColors[tag] || { bg: '#F3F4F6', color: '#6B7280' };
-                              return (
-                                <Chip
-                                  key={tag}
-                                  size="small"
-                                  label={tag}
-                                  sx={{
-                                    height: 20,
-                                    fontSize: '0.625rem',
-                                    fontWeight: 600,
-                                    bgcolor: tc.bg,
-                                    color: tc.color,
-                                  }}
-                                />
-                              );
-                            })}
-                            {(property.tags || []).length > 3 && (
-                              <Chip
-                                size="small"
-                                label={`+${property.tags.length - 3}`}
-                                sx={{ height: 20, fontSize: '0.625rem' }}
-                              />
-                            )}
-                          </Box>
-                        </TableCell>
 
                         {/* Active Toggle */}
                         <TableCell align="center">
