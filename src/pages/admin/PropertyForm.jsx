@@ -871,7 +871,7 @@ const PropertyForm = ({ propertyId = null }) => {
       </Typography>
 
       {formData.specifications.map((spec, index) => (
-        <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+        <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
           <TextField
             size="small"
             label="Key"
@@ -879,7 +879,7 @@ const PropertyForm = ({ propertyId = null }) => {
             onChange={(e) =>
               updateListItem('specifications', index, { ...spec, key: e.target.value })
             }
-            sx={{ flex: 1 }}
+            sx={{ flex: '1 1 140px' }}
             placeholder="e.g., projectArea"
           />
           <TextField
@@ -889,7 +889,7 @@ const PropertyForm = ({ propertyId = null }) => {
             onChange={(e) =>
               updateListItem('specifications', index, { ...spec, value: e.target.value })
             }
-            sx={{ flex: 1 }}
+            sx={{ flex: '1 1 140px' }}
             placeholder="e.g., 15 acres"
           />
           {formData.specifications.length > 1 && (
@@ -1295,7 +1295,7 @@ const PropertyForm = ({ propertyId = null }) => {
           Property Documents
         </Typography>
         {formData.documents.map((doc, index) => (
-          <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1 }}>
+          <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
             <TextField
               size="small"
               label="Icon"
@@ -1303,7 +1303,7 @@ const PropertyForm = ({ propertyId = null }) => {
               onChange={(e) =>
                 updateListItem('documents', index, { ...doc, icon: e.target.value })
               }
-              sx={{ width: 180 }}
+              sx={{ flex: '0 1 180px', minWidth: 120 }}
               placeholder="mdi:file-document"
             />
             <TextField
@@ -1313,7 +1313,7 @@ const PropertyForm = ({ propertyId = null }) => {
               onChange={(e) =>
                 updateListItem('documents', index, { ...doc, name: e.target.value })
               }
-              sx={{ flex: 1 }}
+              sx={{ flex: '1 1 180px' }}
               placeholder="e.g., RERA Certificate"
             />
             {formData.documents.length > 1 && (
@@ -1383,7 +1383,7 @@ const PropertyForm = ({ propertyId = null }) => {
                 </Typography>
               </Box>
               {items.map((item, index) => (
-                <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1 }}>
+                <Box key={index} sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
                   <TextField
                     size="small"
                     label="Area / Component"
@@ -1566,7 +1566,7 @@ const PropertyForm = ({ propertyId = null }) => {
   }
 
   return (
-    <Box>
+    <Box sx={{ minWidth: 0, overflow: 'hidden' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -1665,22 +1665,30 @@ const PropertyForm = ({ propertyId = null }) => {
         </Box>
       ) : (
         /* === Desktop: Horizontal Tabs === */
-        <Paper sx={{ borderRadius: 3, overflow: 'hidden' }}>
+        <Paper sx={{ borderRadius: 3, overflow: 'hidden', maxWidth: '100%' }}>
           <Tabs
             value={activeTab}
             onChange={(e, val) => setActiveTab(val)}
             variant="scrollable"
             scrollButtons="auto"
+            allowScrollButtonsMobile
             sx={{
               borderBottom: '1px solid #E5E7EB',
+              maxWidth: '100%',
               '& .MuiTab-root': {
                 textTransform: 'none',
                 fontWeight: 500,
                 minHeight: 56,
                 color: '#6B7280',
+                fontSize: { xs: '0.75rem', md: '0.8125rem', lg: '0.875rem' },
+                minWidth: { xs: 'auto', md: 100 },
+                px: { xs: 1, md: 2 },
                 '&.Mui-selected': { color: '#1B2A4A', fontWeight: 600 },
               },
               '& .MuiTabs-indicator': { bgcolor: '#C9A86C', height: 3 },
+              '& .MuiTabs-scrollButtons': {
+                '&.Mui-disabled': { opacity: 0.3 },
+              },
             }}
           >
             {TAB_LABELS.map((tab, index) => (
@@ -1696,7 +1704,7 @@ const PropertyForm = ({ propertyId = null }) => {
             ))}
           </Tabs>
 
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 }, overflow: 'hidden' }}>
             {tabRenderers[activeTab]()}
           </Box>
         </Paper>
