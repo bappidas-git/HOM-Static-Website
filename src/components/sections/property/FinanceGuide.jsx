@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { useInView } from "react-intersection-observer";
@@ -196,6 +196,7 @@ const getScoreLabel = (score) => {
 
 const FinanceGuide = ({ price = 0, property = null }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const resultRef = useRef(null);
 
   /* ─── EMI Calculator State ─── */
   const [loanPercent, setLoanPercent] = useState(80);
@@ -307,6 +308,23 @@ const FinanceGuide = ({ price = 0, property = null }) => {
     return Object.keys(errors).length === 0;
   }, [assessmentData]);
 
+  const scrollToResult = useCallback(() => {
+    setTimeout(() => {
+      const financeSection = document.getElementById("finance");
+      if (financeSection) {
+        const headerHeight = window.innerWidth <= 960 ? 60 : 72;
+        const navHeight = 48;
+        const gap = 16;
+        const offset = headerHeight + navHeight + gap;
+        const top =
+          financeSection.getBoundingClientRect().top +
+          window.scrollY -
+          offset;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 150);
+  }, []);
+
   const handleAssessmentSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -338,13 +356,15 @@ const FinanceGuide = ({ price = 0, property = null }) => {
           },
         });
         setAssessmentStep(1);
+        scrollToResult();
       } catch {
         setAssessmentStep(1);
+        scrollToResult();
       } finally {
         setSubmitting(false);
       }
     },
-    [assessmentData, property?.id, price, validateAssessment],
+    [assessmentData, property?.id, price, validateAssessment, scrollToResult],
   );
 
   /* ─── Eligibility Modal Handlers ─── */
@@ -714,7 +734,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
   const tabs = [
     {
       id: "assessment",
-      label: "Financial Fit Assessment",
+      label: "Know Your Eligibility",
       icon: "mdi:clipboard-check-outline",
     },
     { id: "finance", label: "Bank Loan Assistance", icon: "mdi:bank-check" },
@@ -1005,7 +1025,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
                         ) : (
                           <>
                             <Icon icon="mdi:chart-box-outline" />
-                            Get My Financial Fit Score
+                            Check My Eligibility
                           </>
                         )}
                       </button>

@@ -39,7 +39,7 @@ const PropertySpecs = ({ specifications = {}, propertyType }) => {
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
       >
-        <h2 className={styles.title}>Property Specifications</h2>
+        <h2 className={styles.title}>Property Details</h2>
 
         <div className={styles.grid}>
           {specs.map((spec, idx) => (
