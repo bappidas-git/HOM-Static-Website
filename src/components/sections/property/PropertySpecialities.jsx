@@ -21,7 +21,7 @@ const PropertySpecialities = ({ specialities = [] }) => {
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
       >
-        <h2 className={styles.title}>Property Specialities</h2>
+        <h2 className={styles.title}>Property Highlights</h2>
 
         <div className={styles.grid}>
           {specialities.map((item, idx) => (
@@ -47,7 +47,7 @@ const PropertySpecialities = ({ specialities = [] }) => {
             onClick={() => setExpanded(!expanded)}
           >
             <Icon icon={expanded ? 'mdi:chevron-up' : 'mdi:chevron-down'} className={styles.showMoreIcon} />
-            {expanded ? 'Show Less' : `Show ${remainingCount} More Specialit${remainingCount > 1 ? 'ies' : 'y'}`}
+            {expanded ? 'Show Less' : `Show ${remainingCount} More Highlight${remainingCount > 1 ? 's' : ''}`}
           </button>
         )}
       </motion.div>

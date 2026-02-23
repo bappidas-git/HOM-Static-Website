@@ -813,12 +813,6 @@ const PropertyDetails = () => {
                 </div>
 
                 <div className={styles.headerActions}>
-                  <button className={styles.ctaPrimary} onClick={() => openDownloadModal('brochure')}>
-                    <Icon icon="mdi:download" /> Download Brochure
-                  </button>
-                  <button className={styles.ctaSecondary} onClick={() => setShowLeadForm(true)}>
-                    <Icon icon="mdi:phone-outline" /> Contact For Price
-                  </button>
                   <button className={styles.shareBtn} onClick={handleShare} aria-label="Share property">
                     <Icon icon="mdi:share-variant" />
                     Share

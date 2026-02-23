@@ -3,10 +3,10 @@ import styles from './StickyNav.module.css';
 
 const NAV_ITEMS = [
   { label: 'Overview', targetId: 'overview' },
-  { label: 'Specs', targetId: 'specifications' },
-  { label: 'Specialities', targetId: 'specialities' },
+  { label: 'Details', targetId: 'specifications' },
+  { label: 'Highlights', targetId: 'specialities' },
   { label: 'Amenities', targetId: 'amenities' },
-  { label: 'Pricing', targetId: 'floor-plans' },
+  { label: 'Floor Plans & Pricing', targetId: 'floor-plans' },
   { label: 'Finance', targetId: 'finance' },
   { label: 'Location', targetId: 'nearby' },
   { label: 'Documents', targetId: 'documents' },
