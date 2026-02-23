@@ -285,7 +285,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Nambiar District 25 Phase 2\"}",
       "isActive": true,
       "createdAt": "2024-01-15T10:00:00Z",
-      "updatedAt": "2025-12-20T14:30:00Z"
+      "updatedAt": "2026-02-20T05:09:35.368Z"
     },
     {
       "id": "2",
@@ -1630,6 +1630,120 @@
       "notes": [],
       "createdAt": "2026-02-19T15:48:42.082Z",
       "updatedAt": "2026-02-19T15:50:17.643Z"
+    },
+    {
+      "id": "97a9",
+      "name": "Bappi Das",
+      "phone": "7867867876",
+      "email": "mail4bappidas@gmail.com",
+      "propertyId": "1",
+      "source": "financial-assessment",
+      "message": "Financial Assessment Lead | Score: 96/100 | Occupation: salaried | Income: 20-50 LPA | Credit: excellent | EMI: 0 | Employment: 10+ yrs | Down Payment: 25% | Co-applicant: no",
+      "assessmentData": {
+        "score": 96,
+        "occupation": "salaried",
+        "yearlyIncome": "20-50",
+        "employmentYears": "10+",
+        "existingEmi": "0",
+        "creditScore": "excellent",
+        "downPayment": "25",
+        "hasCoApplicant": "no",
+        "coApplicantIncome": "",
+        "propertyPrice": 12400000
+      },
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-20T05:54:52.430Z",
+      "updatedAt": "2026-02-20T05:54:52.430Z"
+    },
+    {
+      "id": "b7a5",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "+919707112233",
+      "propertyId": "1",
+      "source": "detailed_pricing",
+      "message": "Requested detailed pricing for 4 BHK — Nambiar District 25 Phase 2",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-20T06:16:53.501Z",
+      "updatedAt": "2026-02-20T06:16:53.501Z"
+    },
+    {
+      "id": "85e1",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "2313123213",
+      "propertyId": "1",
+      "source": "detailed_pricing",
+      "message": "Requested detailed pricing for 3 BHK — Nambiar District 25 Phase 2",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-20T06:18:54.901Z",
+      "updatedAt": "2026-02-20T06:18:54.901Z"
+    },
+    {
+      "id": "8bb4",
+      "name": "Bappi Das",
+      "phone": "7567567657",
+      "email": "mail4bappidas@gmail.com",
+      "propertyId": "1",
+      "source": "financial-assessment",
+      "message": "Financial Assessment Lead | Score: 91/100 | Occupation: business-owner | Income: 20-50 LPA | Credit: good | EMI: 0 | Employment: 10+ yrs | Down Payment: 27% | Co-applicant: yes (Income: 0-3)",
+      "assessmentData": {
+        "score": 91,
+        "occupation": "business-owner",
+        "yearlyIncome": "20-50",
+        "employmentYears": "10+",
+        "existingEmi": "0",
+        "creditScore": "good",
+        "downPayment": "27",
+        "hasCoApplicant": "yes",
+        "coApplicantIncome": "0-3",
+        "propertyPrice": 12400000
+      },
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-20T06:26:57.319Z",
+      "updatedAt": "2026-02-20T06:26:57.319Z"
+    },
+    {
+      "id": "ebed",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "2313123213",
+      "propertyId": "1",
+      "source": "document_download",
+      "message": "Requested document: Commencement Certificate",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-20T06:55:27.194Z",
+      "updatedAt": "2026-02-20T06:55:27.194Z"
+    },
+    {
+      "id": "b569",
+      "name": "Bappi Das",
+      "phone": "7757574574",
+      "email": "mail4bappidas@gmail.com",
+      "propertyId": "1",
+      "source": "financial-assessment",
+      "message": "Financial Assessment Lead | Score: 89/100 | Occupation: self-employed | Income: 10-20 LPA | Credit: excellent | EMI: 0 | Employment: 3-5 yrs | Down Payment: 20% | Co-applicant: no",
+      "assessmentData": {
+        "score": 89,
+        "occupation": "self-employed",
+        "yearlyIncome": "10-20",
+        "employmentYears": "3-5",
+        "existingEmi": "0",
+        "creditScore": "excellent",
+        "downPayment": "20",
+        "hasCoApplicant": "no",
+        "coApplicantIncome": "",
+        "propertyPrice": 12400000
+      },
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-23T11:33:29.774Z",
+      "updatedAt": "2026-02-23T11:33:29.774Z"
     }
   ],
   "neighborhoods": [
