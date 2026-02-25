@@ -164,8 +164,9 @@ const PropertyDetails = () => {
   }, [slug]);
 
   // Check sessionStorage on mount and when property changes
+  // Use per-property check so lead form appears on each new property page
   useEffect(() => {
-    const isCaptured = leadStorage.isLeadCaptured();
+    const isCaptured = leadStorage.isLeadCapturedForProperty(property?.id);
     setLeadCaptured(isCaptured);
   }, [property]);
 
