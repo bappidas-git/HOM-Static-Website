@@ -466,8 +466,25 @@ const PropertyDetails = () => {
       <Helmet>
         <title>{property.seoTitle || property.title}</title>
         <meta name="description" content={property.seoDescription || property.description} />
-        {property.seoKeywords && (
+        {property.seoKeywords?.length > 0 && (
           <meta name="keywords" content={property.seoKeywords.join(', ')} />
+        )}
+        {property.canonicalUrl && (
+          <link rel="canonical" href={property.canonicalUrl} />
+        )}
+        {/* Open Graph tags */}
+        <meta property="og:title" content={property.ogTitle || property.seoTitle || property.title} />
+        <meta property="og:description" content={property.ogDescription || property.seoDescription || property.description} />
+        <meta property="og:type" content="website" />
+        {(property.ogImage || property.gallery?.[0]) && (
+          <meta property="og:image" content={property.ogImage || property.gallery[0]} />
+        )}
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content={property.twitterCard || 'summary_large_image'} />
+        <meta name="twitter:title" content={property.ogTitle || property.seoTitle || property.title} />
+        <meta name="twitter:description" content={property.ogDescription || property.seoDescription || property.description} />
+        {(property.ogImage || property.gallery?.[0]) && (
+          <meta name="twitter:image" content={property.ogImage || property.gallery[0]} />
         )}
         {property.schemaMarkup && (
           <script type="application/ld+json">{property.schemaMarkup}</script>
@@ -1109,7 +1126,7 @@ const PropertyDetails = () => {
 
               {/* Sections — ordered per mockup */}
               <PropertyOverview property={property} />
-              <PropertySpecs specifications={property.specifications} propertyType={property.propertyType} />
+              <PropertySpecs specifications={property.specifications} specificationsArray={property.specificationsArray} propertyType={property.propertyType} />
               <PropertySpecialities specialities={property.specialities} />
               <PropertyAmenities amenities={property.amenities} />
               <FloorPlans
@@ -1130,7 +1147,7 @@ const PropertyDetails = () => {
               <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />
               <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
               <ConstructionStatus status={property.status} />
-              <BuilderOverview developer={property.developer} />
+              <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />
               <PropertyFaq property={property} />
             </div>
 
