@@ -70,7 +70,7 @@ const DeveloperTab = ({ formData, updateField }) => {
           size="small"
           placeholder="https://example.com/developer-logo.png"
         />
-        <ImageUrlHelperText />
+        <ImageUrlHelperText fieldType="developerLogo" />
       </Box>
 
       {/* Stats */}

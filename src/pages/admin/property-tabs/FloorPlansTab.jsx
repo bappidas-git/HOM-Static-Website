@@ -96,7 +96,7 @@ const FloorPlansTab = ({ formData, updateField, updateListItem, addListItem, rem
                 fullWidth
                 placeholder="https://placehold.co/600x400"
               />
-              <ImageUrlHelperText />
+              <ImageUrlHelperText fieldType="floorPlan" />
             </Box>
           </Box>
         </Paper>
