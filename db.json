@@ -1502,7 +1502,7 @@
       "type": "sale",
       "propertyType": "apartment",
       "status": "under-construction",
-      "price": 80,
+      "price": 8000000,
       "priceUnit": "onwards",
       "developer": "Assam Digital",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem ex, maximus ut turpis sit amet, mattis rutrum elit. Etiam tincidunt congue augue, ut finibus tortor hendrerit ac. Cras quis dolor ut ligula pulvinar placerat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris varius tristique mi mattis molestie. Donec pretium enim in ligula feugiat, ut vestibulum mauris malesuada. Phasellus nec nisl malesuada, posuere lectus in, tempus purus. Vestibulum felis dui, pretium in hendrerit non, hendrerit id nisi. Praesent faucibus suscipit nibh, non lobortis ex hendrerit eget. Cras iaculis lobortis lacus, efficitur mollis odio hendrerit nec. Vestibulum sodales laoreet euismod. Ut gravida scelerisque iaculis. Curabitur eget metus sit amet erat semper mattis et in diam.",
@@ -1544,32 +1544,32 @@
         {
           "key": "Project Area",
           "value": "8 acres",
-          "icon": "mdi:home-group"
+          "icon": ""
         },
         {
           "key": "Towers",
           "value": "4",
-          "icon": "mdi:office-building"
+          "icon": ""
         },
         {
           "key": "Total Units",
           "value": "450+ Apartments",
-          "icon": "mdi:home-city"
+          "icon": ""
         },
         {
           "key": "Floors",
           "value": "Upto 22 Floors",
-          "icon": "mdi:stairs"
+          "icon": ""
         },
         {
           "key": "Unit Variants",
           "value": "RCC framed structure",
-          "icon": "mdi:land-plots"
+          "icon": ""
         },
         {
           "key": "Launch Date",
           "value": "March 2032",
-          "icon": "mdi:rocket-launch"
+          "icon": ""
         }
       ],
       "amenities": [
@@ -1855,7 +1855,7 @@
       "developerInfo": {
         "name": "Assam Digital",
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem ex, maximus ut turpis sit amet, mattis rutrum elit. Etiam tincidunt congue augue, ut finibus tortor hendrerit ac. Cras quis dolor ut ligula pulvinar placerat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris varius tristique mi mattis molestie. Donec pretium enim in ligula feugiat, ut vestibulum mauris malesuada. Phasellus nec nisl malesuada, posuere lectus in, tempus purus. Vestibulum felis dui, pretium in hendrerit non, hendrerit id nisi. Praesent faucibus suscipit nibh, non lobortis ex hendrerit eget. Cras iaculis lobortis lacus, efficitur mollis odio hendrerit nec. Vestibulum sodales laoreet euismod. Ut gravida scelerisque iaculis. Curabitur eget metus sit amet erat semper mattis et in diam.",
-        "logo": "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606771/samples/cloudinary-logo-vector.svg",
+        "logo": "https://assamdigital.com/wp-content/uploads/2022/04/logo.png",
         "stats": [
           {
             "value": 20,
@@ -1920,9 +1920,9 @@
       "schemaMarkup": "",
       "tags": [],
       "isActive": true,
-      "publishStatus": "draft",
+      "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-25T10:07:58.431Z"
+      "updatedAt": "2026-02-25T13:18:03.730Z"
     }
   ],
   "leads": [
