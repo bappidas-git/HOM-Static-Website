@@ -6,7 +6,7 @@ import styles from './PropertySpecs.module.css';
 
 const DESKTOP_ROW_COUNT = 4;
 
-const PropertySpecs = ({ specifications = {}, propertyType }) => {
+const PropertySpecs = ({ specifications = {}, specificationsArray, propertyType }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const [expanded, setExpanded] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState(null);
@@ -17,16 +17,28 @@ const PropertySpecs = ({ specifications = {}, propertyType }) => {
     return d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
   };
 
-  const specs = [
-    { icon: 'mdi:land-plots', label: 'Project Area', value: specifications.projectArea || '—' },
-    { icon: 'mdi:office-building', label: specifications.towers ? 'Towers' : 'Type', value: specifications.towers ? `${specifications.towers} Towers` : propertyType || '—' },
-    { icon: 'mdi:home-group', label: 'Total Units', value: specifications.totalUnits ? `${specifications.totalUnits}+ ${propertyType === 'villa' ? 'Villas' : 'Apartments'}` : '—' },
-    { icon: 'mdi:stairs', label: 'Floors', value: specifications.floors ? `Upto ${specifications.floors} Floors` : '—' },
-    { icon: 'mdi:floor-plan', label: 'Unit Variants', value: specifications.constructionType || '—' },
-    { icon: 'mdi:file-certificate', label: 'RERA ID', value: specifications.reraId || '—' },
-    { icon: 'mdi:rocket-launch', label: 'Launch Date', value: formatDate(specifications.launchDate) },
-    { icon: 'mdi:key-variant', label: 'Possession Date', value: formatDate(specifications.possessionDate) },
-  ].filter((s) => s.value !== '—');
+  // Support both new array format (specificationsArray) and legacy object format
+  let specs;
+  if (Array.isArray(specificationsArray) && specificationsArray.length > 0) {
+    specs = specificationsArray
+      .filter((s) => s.key && s.value)
+      .map((s) => ({
+        icon: s.icon || 'mdi:information-outline',
+        label: s.key,
+        value: String(s.value),
+      }));
+  } else {
+    specs = [
+      { icon: 'mdi:land-plots', label: 'Project Area', value: specifications.projectArea || '—' },
+      { icon: 'mdi:office-building', label: specifications.towers ? 'Towers' : 'Type', value: specifications.towers ? `${specifications.towers} Towers` : propertyType || '—' },
+      { icon: 'mdi:home-group', label: 'Total Units', value: specifications.totalUnits ? `${specifications.totalUnits}+ ${propertyType === 'villa' ? 'Villas' : 'Apartments'}` : '—' },
+      { icon: 'mdi:stairs', label: 'Floors', value: specifications.floors ? `Upto ${specifications.floors} Floors` : '—' },
+      { icon: 'mdi:floor-plan', label: 'Unit Variants', value: specifications.constructionType || '—' },
+      { icon: 'mdi:file-certificate', label: 'RERA ID', value: specifications.reraId || '—' },
+      { icon: 'mdi:rocket-launch', label: 'Launch Date', value: formatDate(specifications.launchDate) },
+      { icon: 'mdi:key-variant', label: 'Possession Date', value: formatDate(specifications.possessionDate) },
+    ].filter((s) => s.value !== '—');
+  }
 
   if (specs.length === 0) return null;
 

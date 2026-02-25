@@ -55,7 +55,10 @@ const PropertyFaq = ({ property }) => {
 
   if (!property) return null;
 
-  const faqs = defaultFaqs(property);
+  // Use custom FAQs from API if available, otherwise fall back to auto-generated
+  const faqs = (property.faqs && property.faqs.length > 0)
+    ? property.faqs
+    : defaultFaqs(property);
 
   return (
     <section className={styles.section} ref={ref} id="faqs">

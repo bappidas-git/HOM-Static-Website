@@ -14,7 +14,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.9058,
-        "lng": 77.6854
+        "lng": 77.6854,
+        "address": "Dommasandra, Sarjapur Road, Bangalore, Karnataka"
       },
       "configuration": [
         "2 BHK",
@@ -204,19 +205,23 @@
       "documents": [
         {
           "name": "Commencement Certificate",
-          "icon": "mdi:file-certificate"
+          "icon": "mdi:file-certificate",
+          "url": ""
         },
         {
           "name": "RERA Certificate",
-          "icon": "mdi:file-document-check"
+          "icon": "mdi:file-document-check",
+          "url": ""
         },
         {
           "name": "Floor Plan Documents",
-          "icon": "mdi:floor-plan"
+          "icon": "mdi:floor-plan",
+          "url": ""
         },
         {
           "name": "Brochure",
-          "icon": "mdi:book-open-variant"
+          "icon": "mdi:book-open-variant",
+          "url": ""
         }
       ],
       "constructionSpecs": {
@@ -285,7 +290,98 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Nambiar District 25 Phase 2\"}",
       "isActive": true,
       "createdAt": "2024-01-15T10:00:00Z",
-      "updatedAt": "2026-02-20T05:09:35.368Z"
+      "updatedAt": "2026-02-20T05:09:35.368Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "15 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Towers",
+          "value": "8 Towers",
+          "icon": "mdi:office-building"
+        },
+        {
+          "key": "Total Units",
+          "value": "750+ Apartments",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 14 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "RCC framed structure",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/309/PR/180523/001927",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2021-06-15",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2024-12-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "completed",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "completed",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "completed",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Nambiar Builders",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Nambiar District 25 Phase 2 | 2, 3, 4 BHK Apartments in Sarjapur Road Bangalore",
+      "ogDescription": "Explore Nambiar District 25 Phase 2 - Premium ready-to-move apartments on Sarjapur Road, Bangalore. 2, 3, 4 & 4.5 BHK from 1245-2990 sqft starting at Rs 1.24 Cr.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Nambiar+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "2",
@@ -301,7 +397,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.9698,
-        "lng": 77.75
+        "lng": 77.75,
+        "address": "HopeFarm Junction, Whitefield, Bangalore, Karnataka"
       },
       "configuration": [
         "2 BHK",
@@ -318,8 +415,8 @@
       "developer": "Mahindra Lifespaces",
       "description": "Mahindra Blossom is a Home at Positive Energy at HopeFarm Junction, Whitefield, Bangalore. Featuring contemporary building design, beautifully landscaped gardens, sustainability & centralized water systems. This is a RERA-approved project offering spacious apartments with world-class amenities, designed to provide a holistic lifestyle experience.",
       "highlights": [
-        "Prime Whitefield location — IT hub connectivity",
-        "Mahindra Lifespaces — Trusted Legacy of 20+ years",
+        "Prime Whitefield location \u2014 IT hub connectivity",
+        "Mahindra Lifespaces \u2014 Trusted Legacy of 20+ years",
         "Centralized AC with VRV/VRF, home automation",
         "Sustainable design with solar panels, rainwater harvesting",
         "IGBC pre-certified green building"
@@ -501,19 +598,23 @@
       "documents": [
         {
           "name": "Commencement Certificate",
-          "icon": "mdi:file-certificate"
+          "icon": "mdi:file-certificate",
+          "url": ""
         },
         {
           "name": "RERA Certificate",
-          "icon": "mdi:file-document-check"
+          "icon": "mdi:file-document-check",
+          "url": ""
         },
         {
           "name": "Floor Plan Documents",
-          "icon": "mdi:floor-plan"
+          "icon": "mdi:floor-plan",
+          "url": ""
         },
         {
           "name": "Brochure",
-          "icon": "mdi:book-open-variant"
+          "icon": "mdi:book-open-variant",
+          "url": ""
         }
       ],
       "constructionSpecs": {
@@ -582,7 +683,98 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Mahindra Blossom\"}",
       "isActive": true,
       "createdAt": "2024-03-10T08:00:00Z",
-      "updatedAt": "2025-11-15T12:00:00Z"
+      "updatedAt": "2025-11-15T12:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "8 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Towers",
+          "value": "4 Towers",
+          "icon": "mdi:office-building"
+        },
+        {
+          "key": "Total Units",
+          "value": "450+ Apartments",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 22 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "RCC framed structure with seismic design",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/310/PR/240310/006543",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2024-03-10",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2030-12-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "in-progress",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "pending",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "pending",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Mahindra Lifespaces",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Mahindra Blossom Whitefield | 2, 3, 4 BHK Apartments by Mahindra Lifespaces",
+      "ogDescription": "Mahindra Blossom at Whitefield, Bangalore - Premium apartments by Mahindra Lifespaces. 2, 3, 3.5 & 4 BHK from 1250-2450 sqft starting Rs 1.95 Cr.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Mahindra+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "3",
@@ -598,7 +790,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.9416,
-        "lng": 77.746
+        "lng": 77.746,
+        "address": "Varthur, Whitefield, Bangalore, Karnataka"
       },
       "configuration": [
         "3 BHK Villa",
@@ -615,9 +808,9 @@
       "highlights": [
         "Lakeside living with panoramic views",
         "Premium villas with private gardens",
-        "Prestige Group — India's most trusted developer",
+        "Prestige Group \u2014 India's most trusted developer",
         "50+ world-class amenities in the township",
-        "Close to IT hubs — Whitefield, Marathahalli"
+        "Close to IT hubs \u2014 Whitefield, Marathahalli"
       ],
       "specifications": {
         "projectArea": "102 acres",
@@ -728,7 +921,7 @@
         "ready-to-move"
       ],
       "seoTitle": "Prestige Lakeside Habitat Varthur | Luxury Villas in Whitefield Bangalore",
-      "seoDescription": "Prestige Lakeside Habitat — Premium villas in Varthur, Whitefield, Bangalore. 3 & 4 BHK villas from 2800-4500 sqft in a 102-acre township.",
+      "seoDescription": "Prestige Lakeside Habitat \u2014 Premium villas in Varthur, Whitefield, Bangalore. 3 & 4 BHK villas from 2800-4500 sqft in a 102-acre township.",
       "seoKeywords": [
         "prestige lakeside habitat",
         "villas whitefield bangalore",
@@ -738,7 +931,93 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Prestige Lakeside Habitat\"}",
       "isActive": true,
       "createdAt": "2024-02-01T09:00:00Z",
-      "updatedAt": "2025-10-01T11:00:00Z"
+      "updatedAt": "2025-10-01T11:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "102 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Total Units",
+          "value": "3000+ Villas",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 4 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "Independent villas with RCC structure",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/446/PR/180120/001234",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2018-01-20",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2023-06-15",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "completed",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "completed",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "completed",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Prestige Group",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Prestige Lakeside Habitat Varthur | Luxury Villas in Whitefield Bangalore",
+      "ogDescription": "Prestige Lakeside Habitat \u2014 Premium villas in Varthur, Whitefield, Bangalore. 3 & 4 BHK villas from 2800-4500 sqft in a 102-acre township.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Prestige+Villa+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "4",
@@ -754,7 +1033,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 13.1186,
-        "lng": 77.6358
+        "lng": 77.6358,
+        "address": "Bagalur, North Bangalore, Bangalore, Karnataka"
       },
       "configuration": [
         "1 BHK",
@@ -770,11 +1050,11 @@
       "developer": "Brigade Group",
       "description": "Brigade El Dorado is a pre-launch residential project by Brigade Group in the fast-growing Bagalur corridor of North Bangalore. Positioned near the upcoming Aerospace SEZ and Kempegowda International Airport, this project offers excellent appreciation potential with modern living spaces.",
       "highlights": [
-        "Pre-launch pricing — best investment opportunity",
-        "Near KIA Airport — 15 minutes drive",
-        "Brigade Group — 35+ years of trust",
+        "Pre-launch pricing \u2014 best investment opportunity",
+        "Near KIA Airport \u2014 15 minutes drive",
+        "Brigade Group \u2014 35+ years of trust",
         "Adjacent to upcoming Aerospace Park",
-        "Excellent future connectivity — Metro Phase 3"
+        "Excellent future connectivity \u2014 Metro Phase 3"
       ],
       "specifications": {
         "projectArea": "35 acres",
@@ -882,7 +1162,7 @@
         "investment"
       ],
       "seoTitle": "Brigade El Dorado Bagalur | Pre-Launch Apartments Near KIA Bangalore",
-      "seoDescription": "Brigade El Dorado — Pre-launch apartments in Bagalur, North Bangalore. 1, 2, 3 BHK near airport starting Rs 89 Lakhs by Brigade Group.",
+      "seoDescription": "Brigade El Dorado \u2014 Pre-launch apartments in Bagalur, North Bangalore. 1, 2, 3 BHK near airport starting Rs 89 Lakhs by Brigade Group.",
       "seoKeywords": [
         "brigade el dorado",
         "bagalur apartments",
@@ -892,7 +1172,98 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Brigade El Dorado\"}",
       "isActive": true,
       "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-12-01T09:00:00Z"
+      "updatedAt": "2025-12-01T09:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "35 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Towers",
+          "value": "15 Towers",
+          "icon": "mdi:office-building"
+        },
+        {
+          "key": "Total Units",
+          "value": "2500+ Apartments",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 20 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "RCC framed structure",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "RERA-PENDING",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2025-06-01",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2029-03-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "pending",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "pending",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "pending",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "pending",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Brigade Group",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Brigade El Dorado Bagalur | Pre-Launch Apartments Near KIA Bangalore",
+      "ogDescription": "Brigade El Dorado \u2014 Pre-launch apartments in Bagalur, North Bangalore. 1, 2, 3 BHK near airport starting Rs 89 Lakhs by Brigade Group.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Brigade+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "5",
@@ -908,7 +1279,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.9352,
-        "lng": 77.7248
+        "lng": 77.7248,
+        "address": "Panathur, Off Outer Ring Road, Bangalore, Karnataka"
       },
       "configuration": [
         "3 BHK",
@@ -925,8 +1297,8 @@
       "highlights": [
         "Sobha's signature construction quality",
         "Italian marble & German fittings standard",
-        "Prime ORR location — minutes from major tech parks",
-        "Green certified — IGBC Gold rating",
+        "Prime ORR location \u2014 minutes from major tech parks",
+        "Green certified \u2014 IGBC Gold rating",
         "30+ lifestyle amenities"
       ],
       "specifications": {
@@ -1038,7 +1410,7 @@
         "under-construction"
       ],
       "seoTitle": "Sobha Neopolis Panathur | Luxury 3, 4 BHK Apartments Off ORR Bangalore",
-      "seoDescription": "Sobha Neopolis — Ultra-luxury apartments in Panathur, off Outer Ring Road. 3 & 4 BHK from Rs 2.2 Cr by Sobha Limited.",
+      "seoDescription": "Sobha Neopolis \u2014 Ultra-luxury apartments in Panathur, off Outer Ring Road. 3 & 4 BHK from Rs 2.2 Cr by Sobha Limited.",
       "seoKeywords": [
         "sobha neopolis",
         "panathur apartments",
@@ -1048,7 +1420,98 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Sobha Neopolis\"}",
       "isActive": true,
       "createdAt": "2024-09-20T10:00:00Z",
-      "updatedAt": "2025-12-10T15:00:00Z"
+      "updatedAt": "2025-12-10T15:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "12 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Towers",
+          "value": "6 Towers",
+          "icon": "mdi:office-building"
+        },
+        {
+          "key": "Total Units",
+          "value": "600+ Apartments",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 25 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "Mivan technology with RCC structure",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/310/PR/240915/007890",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2024-09-15",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2028-06-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "in-progress",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "pending",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "pending",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Sobha Limited",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Sobha Neopolis Panathur | Luxury 3, 4 BHK Apartments Off ORR Bangalore",
+      "ogDescription": "Sobha Neopolis \u2014 Ultra-luxury apartments in Panathur, off Outer Ring Road. 3 & 4 BHK from Rs 2.2 Cr by Sobha Limited.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Sobha+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "6",
@@ -1064,7 +1527,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.8452,
-        "lng": 77.6602
+        "lng": 77.6602,
+        "address": "Electronic City Phase 1, Bangalore, Karnataka"
       },
       "configuration": [
         "2 BHK",
@@ -1192,7 +1656,98 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Godrej Splendour\"}",
       "isActive": true,
       "createdAt": "2024-06-01T10:00:00Z",
-      "updatedAt": "2025-11-20T10:00:00Z"
+      "updatedAt": "2025-11-20T10:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "7 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Towers",
+          "value": "10 Towers",
+          "icon": "mdi:office-building"
+        },
+        {
+          "key": "Total Units",
+          "value": "800+ Apartments",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 18 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "RCC framed structure",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/309/PR/190510/003456",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2019-05-10",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2023-01-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "completed",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "completed",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "completed",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Godrej Properties",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Godrej Splendour for Rent | 2, 3 BHK Apartments Electronic City Bangalore",
+      "ogDescription": "Rent at Godrej Splendour, Electronic City. Semi-furnished 2 & 3 BHK apartments from Rs 35,000/month near IT hubs.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Godrej+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "7",
@@ -1208,7 +1763,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 12.8726,
-        "lng": 77.5468
+        "lng": 77.5468,
+        "address": "Hosahalli, Off Kanakapura Road, Bangalore, Karnataka"
       },
       "configuration": [
         "2 BHK",
@@ -1224,9 +1780,9 @@
       "developer": "Puravankara Limited",
       "description": "Puravankara Zenium is a modern residential project off Kanakapura Road, South Bangalore. Designed for the discerning homebuyer, it combines contemporary architecture with nature-inspired living, featuring open green spaces, water bodies, and world-class amenities within a secure gated community.",
       "highlights": [
-        "Kanakapura Road — Bangalore's fastest growing corridor",
-        "Near NICE Road junction — seamless connectivity",
-        "Puravankara — 50+ years of legacy",
+        "Kanakapura Road \u2014 Bangalore's fastest growing corridor",
+        "Near NICE Road junction \u2014 seamless connectivity",
+        "Puravankara \u2014 50+ years of legacy",
         "Close to Art of Living Ashram & BGS Health City",
         "Smart home features in all units"
       ],
@@ -1346,7 +1902,7 @@
         "south-bangalore"
       ],
       "seoTitle": "Puravankara Zenium Kanakapura Road | 2, 3 BHK Apartments South Bangalore",
-      "seoDescription": "Puravankara Zenium — Modern apartments off Kanakapura Road, South Bangalore. 2, 3 & 3.5 BHK from Rs 1.55 Cr.",
+      "seoDescription": "Puravankara Zenium \u2014 Modern apartments off Kanakapura Road, South Bangalore. 2, 3 & 3.5 BHK from Rs 1.55 Cr.",
       "seoKeywords": [
         "puravankara zenium",
         "kanakapura road apartments",
@@ -1356,7 +1912,98 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Puravankara Zenium\"}",
       "isActive": true,
       "createdAt": "2024-07-01T10:00:00Z",
-      "updatedAt": "2025-12-05T14:00:00Z"
+      "updatedAt": "2025-12-05T14:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "18 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Towers",
+          "value": "10 Towers",
+          "icon": "mdi:office-building"
+        },
+        {
+          "key": "Total Units",
+          "value": "1200+ Apartments",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 16 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "RCC framed with aluminium formwork",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/310/PR/240620/008123",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2024-06-20",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2027-09-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "in-progress",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "pending",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "pending",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Puravankara Limited",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Puravankara Zenium Kanakapura Road | 2, 3 BHK Apartments South Bangalore",
+      "ogDescription": "Puravankara Zenium \u2014 Modern apartments off Kanakapura Road, South Bangalore. 2, 3 & 3.5 BHK from Rs 1.55 Cr.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Puravankara+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     },
     {
       "id": "8",
@@ -1372,7 +2019,8 @@
         "city": "Bangalore",
         "state": "Karnataka",
         "lat": 13.022,
-        "lng": 77.5437
+        "lng": 77.5437,
+        "address": "Yeshwanthpur, North Bangalore, Bangalore, Karnataka"
       },
       "configuration": [
         "4 BHK Villa"
@@ -1493,7 +2141,93 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Salarpuria Sattva Opus\"}",
       "isActive": true,
       "createdAt": "2024-08-15T10:00:00Z",
-      "updatedAt": "2025-11-30T16:00:00Z"
+      "updatedAt": "2025-11-30T16:00:00Z",
+      "publishStatus": "published",
+      "specificationsArray": [
+        {
+          "key": "Project Area",
+          "value": "25 acres",
+          "icon": "mdi:land-plots"
+        },
+        {
+          "key": "Total Units",
+          "value": "200+ Villas",
+          "icon": "mdi:home-group"
+        },
+        {
+          "key": "Floors",
+          "value": "Upto 3 Floors",
+          "icon": "mdi:stairs"
+        },
+        {
+          "key": "Unit Variants",
+          "value": "Independent villa structure",
+          "icon": "mdi:floor-plan"
+        },
+        {
+          "key": "RERA ID",
+          "value": "PRM/KA/RERA/1251/309/PR/170801/002345",
+          "icon": "mdi:file-certificate"
+        },
+        {
+          "key": "Launch Date",
+          "value": "2017-08-01",
+          "icon": "mdi:rocket-launch"
+        },
+        {
+          "key": "Possession Date",
+          "value": "2021-12-01",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "constructionTimeline": [
+        {
+          "label": "Foundation",
+          "status": "completed",
+          "icon": "mdi:shovel"
+        },
+        {
+          "label": "Structure",
+          "status": "completed",
+          "icon": "mdi:crane"
+        },
+        {
+          "label": "Finishing",
+          "status": "completed",
+          "icon": "mdi:format-paint"
+        },
+        {
+          "label": "Handover",
+          "status": "completed",
+          "icon": "mdi:key-variant"
+        }
+      ],
+      "developerInfo": {
+        "name": "Salarpuria Sattva Group",
+        "description": "",
+        "logo": "",
+        "stats": [
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Years Experience",
+            "icon": "mdi:calendar-star"
+          },
+          {
+            "value": "",
+            "suffix": "+",
+            "label": "Projects Completed",
+            "icon": "mdi:office-building"
+          }
+        ]
+      },
+      "faqs": [],
+      "similarPropertyIds": [],
+      "ogTitle": "Luxury Villa for Rent in Yeshwanthpur | Salarpuria Sattva Opus Bangalore",
+      "ogDescription": "Rent a luxury 4 BHK villa at Salarpuria Sattva Opus, Yeshwanthpur, Bangalore. Fully furnished, Rs 85,000/month.",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Sattva+Villa+Exterior",
+      "twitterCard": "summary_large_image",
+      "canonicalUrl": ""
     }
   ],
   "leads": [
@@ -1600,7 +2334,7 @@
       "phone": "2313123213",
       "propertyId": "2",
       "source": "detailed_pricing",
-      "message": "Requested detailed pricing for 4 BHK — Mahindra Blossom",
+      "message": "Requested detailed pricing for 4 BHK \u2014 Mahindra Blossom",
       "status": "new",
       "notes": [],
       "createdAt": "2026-02-19T14:32:25.625Z",
@@ -1663,7 +2397,7 @@
       "phone": "+919707112233",
       "propertyId": "1",
       "source": "detailed_pricing",
-      "message": "Requested detailed pricing for 4 BHK — Nambiar District 25 Phase 2",
+      "message": "Requested detailed pricing for 4 BHK \u2014 Nambiar District 25 Phase 2",
       "status": "new",
       "notes": [],
       "createdAt": "2026-02-20T06:16:53.501Z",
@@ -1676,7 +2410,7 @@
       "phone": "2313123213",
       "propertyId": "1",
       "source": "detailed_pricing",
-      "message": "Requested detailed pricing for 3 BHK — Nambiar District 25 Phase 2",
+      "message": "Requested detailed pricing for 3 BHK \u2014 Nambiar District 25 Phase 2",
       "status": "new",
       "notes": [],
       "createdAt": "2026-02-20T06:18:54.901Z",
@@ -2028,7 +2762,7 @@
     {
       "id": "14",
       "question": "What legal checks should I do before buying a property?",
-      "answer": "Essential legal checks include: 1) Title deed verification — ensure clear ownership chain for at least 30 years, 2) Encumbrance Certificate (EC) — confirms no pending loans or legal disputes, 3) Khata Certificate and extract — confirms property is in municipal records, 4) RERA registration — mandatory for new projects, 5) Approved building plan, 6) Occupancy Certificate (for ready properties), 7) Tax payment receipts, 8) NOC from relevant authorities. Our legal team handles all these verifications.",
+      "answer": "Essential legal checks include: 1) Title deed verification \u2014 ensure clear ownership chain for at least 30 years, 2) Encumbrance Certificate (EC) \u2014 confirms no pending loans or legal disputes, 3) Khata Certificate and extract \u2014 confirms property is in municipal records, 4) RERA registration \u2014 mandatory for new projects, 5) Approved building plan, 6) Occupancy Certificate (for ready properties), 7) Tax payment receipts, 8) NOC from relevant authorities. Our legal team handles all these verifications.",
       "category": "legal",
       "order": 14,
       "isActive": true
@@ -2140,7 +2874,7 @@
       "title": "Bangalore Real Estate Market Trends 2025: Where to Invest Next",
       "slug": "bangalore-real-estate-market-trends-2025",
       "excerpt": "Bangalore continues to lead India's residential real estate growth. Discover the hottest corridors, price trends, and investment opportunities for 2025.",
-      "content": "Bangalore has cemented its position as India's most dynamic real estate market, driven by a robust IT sector, growing infrastructure, and increasing demand from young professionals and families.\n\n## Market Overview\nThe Bangalore residential market recorded over 65,000 unit launches in 2024, with a healthy absorption rate of 72%. The average price appreciation was 8-12% across key corridors.\n\n## Top Investment Corridors\n\n### 1. North Bangalore (Devanahalli-Bagalur)\nWith the airport as the anchor, this corridor is witnessing massive infrastructure development including the upcoming Aerospace SEZ, metro connectivity, and peripheral ring road. Property prices have appreciated 15-20% in the last year.\n\n### 2. Sarjapur Road\nThe IT corridor connecting Electronic City to Whitefield continues to attract buyers. New developments offer competitive pricing with excellent future appreciation potential.\n\n### 3. Whitefield-ITPL Corridor\nMature market with established social infrastructure. The upcoming metro line will further boost connectivity and property values.\n\n### 4. Kanakapura Road (South Bangalore)\nEmerging as the new affordable luxury corridor with large township projects by top developers. NICE Road connectivity is a major advantage.\n\n## Price Trends\n| Corridor | Avg Price/sqft 2024 | Avg Price/sqft 2025 | Growth |\n|----------|-------------------|-------------------|--------|\n| North Bangalore | Rs 5,200 | Rs 6,000 | 15% |\n| Sarjapur Road | Rs 6,800 | Rs 7,500 | 10% |\n| Whitefield | Rs 7,500 | Rs 8,200 | 9% |\n| Kanakapura Road | Rs 5,500 | Rs 6,100 | 11% |\n\n## What's Driving Growth?\n- IT sector expansion with 5 lakh+ new hires projected\n- Metro Phase 2 and 3 progress\n- Peripheral Ring Road development\n- Growing startup ecosystem\n- Remote work driving demand for larger homes\n\n## Investment Tips for 2025\n1. Focus on pre-launch projects near upcoming metro stations\n2. Look at integrated townships for long-term appreciation\n3. Verify RERA compliance before investing\n4. Consider rental yield potential — Bangalore offers 3-4% yields\n5. Track infrastructure announcements for emerging corridors",
+      "content": "Bangalore has cemented its position as India's most dynamic real estate market, driven by a robust IT sector, growing infrastructure, and increasing demand from young professionals and families.\n\n## Market Overview\nThe Bangalore residential market recorded over 65,000 unit launches in 2024, with a healthy absorption rate of 72%. The average price appreciation was 8-12% across key corridors.\n\n## Top Investment Corridors\n\n### 1. North Bangalore (Devanahalli-Bagalur)\nWith the airport as the anchor, this corridor is witnessing massive infrastructure development including the upcoming Aerospace SEZ, metro connectivity, and peripheral ring road. Property prices have appreciated 15-20% in the last year.\n\n### 2. Sarjapur Road\nThe IT corridor connecting Electronic City to Whitefield continues to attract buyers. New developments offer competitive pricing with excellent future appreciation potential.\n\n### 3. Whitefield-ITPL Corridor\nMature market with established social infrastructure. The upcoming metro line will further boost connectivity and property values.\n\n### 4. Kanakapura Road (South Bangalore)\nEmerging as the new affordable luxury corridor with large township projects by top developers. NICE Road connectivity is a major advantage.\n\n## Price Trends\n| Corridor | Avg Price/sqft 2024 | Avg Price/sqft 2025 | Growth |\n|----------|-------------------|-------------------|--------|\n| North Bangalore | Rs 5,200 | Rs 6,000 | 15% |\n| Sarjapur Road | Rs 6,800 | Rs 7,500 | 10% |\n| Whitefield | Rs 7,500 | Rs 8,200 | 9% |\n| Kanakapura Road | Rs 5,500 | Rs 6,100 | 11% |\n\n## What's Driving Growth?\n- IT sector expansion with 5 lakh+ new hires projected\n- Metro Phase 2 and 3 progress\n- Peripheral Ring Road development\n- Growing startup ecosystem\n- Remote work driving demand for larger homes\n\n## Investment Tips for 2025\n1. Focus on pre-launch projects near upcoming metro stations\n2. Look at integrated townships for long-term appreciation\n3. Verify RERA compliance before investing\n4. Consider rental yield potential \u2014 Bangalore offers 3-4% yields\n5. Track infrastructure announcements for emerging corridors",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Bangalore+Market+2025",
       "category": "market-trends",
       "tags": [
@@ -2182,7 +2916,7 @@
       "title": "Smart Interior Design Tips to Maximize Your Apartment Space",
       "slug": "smart-interior-design-tips-maximize-apartment-space",
       "excerpt": "Transform your compact apartment into a spacious haven with these expert interior design tips. From multifunctional furniture to smart storage solutions.",
-      "content": "Living in a compact apartment doesn't mean compromising on style or functionality. With smart design choices, you can create a home that feels spacious, organized, and beautiful.\n\n## 1. Embrace Multifunctional Furniture\nInvest in pieces that serve multiple purposes:\n- Sofa-cum-beds for guest rooms\n- Ottoman storage for living rooms\n- Extendable dining tables\n- Murphy beds for studio apartments\n- Coffee tables with hidden storage\n\n## 2. Use Vertical Space Wisely\nDon't let your walls go to waste:\n- Floor-to-ceiling bookshelves\n- Floating shelves in kitchens and bathrooms\n- Tall, narrow storage units\n- Hanging planters and wall gardens\n- Over-door organizers\n\n## 3. Light and Color Strategy\nMake spaces feel larger with:\n- Light, neutral wall colors (whites, creams, pastels)\n- Mirrors to reflect light and create depth\n- Sheer curtains to maximize natural light\n- Strategic task lighting instead of single overhead lights\n- Light-colored flooring\n\n## 4. Kitchen Optimization\nMaximize your kitchen efficiency:\n- Modular kitchen with pull-out drawers\n- Magnetic knife strips and hanging utensil racks\n- Corner units with lazy Susan\n- Under-cabinet lighting\n- Compact appliances designed for Indian cooking\n\n## 5. Bathroom Solutions\n- Wall-mounted vanities to free floor space\n- Glass shower enclosures instead of curtains\n- Recessed medicine cabinets\n- Over-toilet storage units\n\n## 6. Indian-Specific Tips\n- Pooja room integrated into wall niches\n- Shoe rack designs for Indian entryways\n- Separate wet and dry kitchen zones\n- Mosquito-proof window solutions that don't block light\n- Vastu-compliant layout adjustments\n\n## Budget-Friendly Ideas\nYou don't need a massive budget to transform your space:\n- DIY accent walls with paint or wallpaper\n- Repurpose old furniture with a fresh coat of paint\n- Use plants as natural decor elements\n- Switch to curtain dividers instead of walls\n- Invest in good lighting — it transforms any space",
+      "content": "Living in a compact apartment doesn't mean compromising on style or functionality. With smart design choices, you can create a home that feels spacious, organized, and beautiful.\n\n## 1. Embrace Multifunctional Furniture\nInvest in pieces that serve multiple purposes:\n- Sofa-cum-beds for guest rooms\n- Ottoman storage for living rooms\n- Extendable dining tables\n- Murphy beds for studio apartments\n- Coffee tables with hidden storage\n\n## 2. Use Vertical Space Wisely\nDon't let your walls go to waste:\n- Floor-to-ceiling bookshelves\n- Floating shelves in kitchens and bathrooms\n- Tall, narrow storage units\n- Hanging planters and wall gardens\n- Over-door organizers\n\n## 3. Light and Color Strategy\nMake spaces feel larger with:\n- Light, neutral wall colors (whites, creams, pastels)\n- Mirrors to reflect light and create depth\n- Sheer curtains to maximize natural light\n- Strategic task lighting instead of single overhead lights\n- Light-colored flooring\n\n## 4. Kitchen Optimization\nMaximize your kitchen efficiency:\n- Modular kitchen with pull-out drawers\n- Magnetic knife strips and hanging utensil racks\n- Corner units with lazy Susan\n- Under-cabinet lighting\n- Compact appliances designed for Indian cooking\n\n## 5. Bathroom Solutions\n- Wall-mounted vanities to free floor space\n- Glass shower enclosures instead of curtains\n- Recessed medicine cabinets\n- Over-toilet storage units\n\n## 6. Indian-Specific Tips\n- Pooja room integrated into wall niches\n- Shoe rack designs for Indian entryways\n- Separate wet and dry kitchen zones\n- Mosquito-proof window solutions that don't block light\n- Vastu-compliant layout adjustments\n\n## Budget-Friendly Ideas\nYou don't need a massive budget to transform your space:\n- DIY accent walls with paint or wallpaper\n- Repurpose old furniture with a fresh coat of paint\n- Use plants as natural decor elements\n- Switch to curtain dividers instead of walls\n- Invest in good lighting \u2014 it transforms any space",
       "image": "https://placehold.co/800x400/1B2A4A/C9A86C?text=Interior+Design+Tips",
       "category": "interior",
       "tags": [

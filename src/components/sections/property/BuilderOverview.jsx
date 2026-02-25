@@ -5,17 +5,25 @@ import { useInView } from 'react-intersection-observer';
 import CountUp from 'react-countup';
 import styles from './BuilderOverview.module.css';
 
-const BuilderOverview = ({ developer }) => {
+const DEFAULT_STATS = [
+  { value: 20, suffix: '+', label: 'Years Experience', icon: 'mdi:calendar-star' },
+  { value: 50, suffix: '+', label: 'Projects Completed', icon: 'mdi:office-building' },
+  { value: 97, suffix: '%', label: 'Customer Satisfaction', icon: 'mdi:emoticon-happy' },
+  { value: 10, suffix: '+', label: 'Cities Present In', icon: 'mdi:city-variant' },
+];
+
+const BuilderOverview = ({ developer, developerInfo }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 });
 
   if (!developer) return null;
 
-  const stats = [
-    { value: 20, suffix: '+', label: 'Years Experience', icon: 'mdi:calendar-star' },
-    { value: 50, suffix: '+', label: 'Projects Completed', icon: 'mdi:office-building' },
-    { value: 97, suffix: '%', label: 'Customer Satisfaction', icon: 'mdi:emoticon-happy' },
-    { value: 10, suffix: '+', label: 'Cities Present In', icon: 'mdi:city-variant' },
-  ];
+  // Use custom stats from API if available, otherwise fall back to defaults
+  const stats = (developerInfo?.stats && developerInfo.stats.length > 0)
+    ? developerInfo.stats
+    : DEFAULT_STATS;
+
+  const description = developerInfo?.description || null;
+  const logo = developerInfo?.logo || null;
 
   return (
     <section className={styles.section} ref={ref} id="builder">
@@ -32,15 +40,16 @@ const BuilderOverview = ({ developer }) => {
             <h2 className={styles.title}>{developer}</h2>
           </div>
           <div className={styles.logoPlaceholder}>
-            <Icon icon="mdi:domain" className={styles.logoIcon} />
+            {logo ? (
+              <img src={logo} alt={`${developer} logo`} style={{ maxHeight: 48, maxWidth: 120, objectFit: 'contain' }} />
+            ) : (
+              <Icon icon="mdi:domain" className={styles.logoIcon} />
+            )}
           </div>
         </div>
 
         <p className={styles.description}>
-          {developer} is one of India's leading real estate developers with decades of experience delivering
-          high-quality residential and commercial projects. Known for maintaining high construction standards,
-          timely possession, and strong customer focus, {developer} continues to shape India's urban landscape
-          with innovation and trust.
+          {description || `${developer} is one of India's leading real estate developers with decades of experience delivering high-quality residential and commercial projects. Known for maintaining high construction standards, timely possession, and strong customer focus, ${developer} continues to shape India's urban landscape with innovation and trust.`}
         </p>
 
         <div className={styles.statsGrid}>
