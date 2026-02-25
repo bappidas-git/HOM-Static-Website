@@ -4,9 +4,11 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { SwipeableDrawer, useMediaQuery, useTheme } from '@mui/material';
+import Swal from 'sweetalert2';
 import { propertyService, leadService } from '../../services/api';
 import { PropertyDetailSkeleton } from '../../components/common/SkeletonLoaders';
 import { useToast } from '../../components/common/ToastProvider';
+import { leadStorage } from '../../utils/leadStorage';
 import PropertyGallery from '../../components/sections/property/PropertyGallery';
 import PropertyOverview from '../../components/sections/property/PropertyOverview';
 import PropertySpecs from '../../components/sections/property/PropertySpecs';
@@ -43,6 +45,43 @@ const modalVariants = {
   exit: { opacity: 0, scale: 0.95, y: 10, transition: { duration: 0.2 } },
 };
 
+const swalConfig = {
+  customClass: {
+    popup: 'hom-swal-popup',
+    title: 'hom-swal-title',
+    htmlContainer: 'hom-swal-html',
+    confirmButton: 'hom-swal-confirm',
+  },
+  confirmButtonColor: '#C9A86C',
+  iconColor: '#059669',
+};
+
+const getSweetAlertMessage = (type, config) => {
+  const messages = {
+    brochure: {
+      title: 'We Have Your Request!',
+      text: 'Thank you for your interest! Our executive will be contacting you within 24 hours and will share the detailed brochure with you.',
+    },
+    floorplan: {
+      title: 'We Have Your Request!',
+      text: 'Thank you for your interest! Our executive will be contacting you within 24 hours and you will receive the detailed floor plan from the executive.',
+    },
+    floorplan_request: {
+      title: 'We Have Your Request!',
+      text: 'Thank you for your interest! Our executive will be contacting you within 24 hours with the detailed floor plan information.',
+    },
+    pricing: {
+      title: 'We Have Your Request!',
+      text: `Thank you for your interest! Our executive will be contacting you within 24 hours with the detailed pricing breakdown${config ? ` for ${config}` : ''}.`,
+    },
+    document: {
+      title: 'We Have Your Request!',
+      text: 'Thank you for your interest! Our executive will contact you within 24 hours and share the requested document with you.',
+    },
+  };
+  return messages[type] || messages.brochure;
+};
+
 const PropertyDetails = () => {
   const { slug } = useParams();
   const theme = useTheme();
@@ -53,6 +92,7 @@ const PropertyDetails = () => {
   const [error, setError] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
+  const [leadCaptured, setLeadCaptured] = useState(false);
 
   // Download lead capture modal state
   const [downloadModal, setDownloadModal] = useState({ open: false, type: '' });
@@ -75,6 +115,33 @@ const PropertyDetails = () => {
   const [pricingSubmitted, setPricingSubmitted] = useState(false);
   const [pricingError, setPricingError] = useState('');
 
+  // Floor plan request modal state (separate from Contact Agent)
+  const [floorPlanRequestModal, setFloorPlanRequestModal] = useState({ open: false });
+  const [floorPlanRequestFormData, setFloorPlanRequestFormData] = useState({ name: '', email: '', phone: '' });
+  const [floorPlanRequestSubmitting, setFloorPlanRequestSubmitting] = useState(false);
+  const [floorPlanRequestSubmitted, setFloorPlanRequestSubmitted] = useState(false);
+  const [floorPlanRequestError, setFloorPlanRequestError] = useState('');
+
+  // Helper: save lead to sessionStorage and update state
+  const saveLeadToSession = useCallback((formData, propertyId, source) => {
+    leadStorage.save(formData, propertyId, source);
+    setLeadCaptured(true);
+  }, []);
+
+  // Helper: get saved user details for pre-filling forms
+  const getSavedUserDetails = useCallback(() => {
+    return leadStorage.getUserDetails();
+  }, []);
+
+  // Helper: pre-fill form data from sessionStorage
+  const getPrefilledData = useCallback(() => {
+    const saved = getSavedUserDetails();
+    if (saved) {
+      return { name: saved.name || '', email: saved.email || '', phone: saved.phone || '' };
+    }
+    return { name: '', email: '', phone: '' };
+  }, [getSavedUserDetails]);
+
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -95,6 +162,12 @@ const PropertyDetails = () => {
     fetchProperty();
     window.scrollTo(0, 0);
   }, [slug]);
+
+  // Check sessionStorage on mount and when property changes
+  useEffect(() => {
+    const isCaptured = leadStorage.isLeadCaptured();
+    setLeadCaptured(isCaptured);
+  }, [property]);
 
   const handleShare = useCallback(() => {
     if (isMobile && navigator.share) {
@@ -126,13 +199,29 @@ const PropertyDetails = () => {
     }
   }, []);
 
+  // Show SweetAlert for already-captured leads
+  const showLeadCapturedAlert = useCallback((type, config) => {
+    const msg = getSweetAlertMessage(type, config);
+    Swal.fire({
+      icon: 'success',
+      title: msg.title,
+      text: msg.text,
+      ...swalConfig,
+    });
+  }, []);
+
   // Download modal handlers
   const openDownloadModal = useCallback((type) => {
+    if (leadCaptured) {
+      showLeadCapturedAlert(type);
+      return;
+    }
+    const prefilled = getPrefilledData();
     setDownloadModal({ open: true, type });
     setDownloadSubmitted(false);
     setDownloadError('');
-    setDownloadFormData({ name: '', email: '', phone: '' });
-  }, []);
+    setDownloadFormData(prefilled);
+  }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
   const closeDownloadModal = useCallback(() => {
     setDownloadModal({ open: false, type: '' });
@@ -156,11 +245,13 @@ const PropertyDetails = () => {
 
     try {
       setDownloadSubmitting(true);
+      const source = downloadModal.type === 'brochure' ? 'brochure_download' : 'floorplan_download';
       await leadService.create({
         ...downloadFormData,
         propertyId: property?.id || null,
-        source: downloadModal.type === 'brochure' ? 'brochure_download' : 'floorplan_download',
+        source,
       });
+      saveLeadToSession(downloadFormData, property?.id, source);
       setDownloadSubmitted(true);
       toast.success('Request submitted successfully!');
     } catch {
@@ -168,15 +259,20 @@ const PropertyDetails = () => {
     } finally {
       setDownloadSubmitting(false);
     }
-  }, [downloadFormData, downloadModal.type, property?.id, toast]);
+  }, [downloadFormData, downloadModal.type, property?.id, toast, saveLeadToSession]);
 
   // Document download modal handlers
   const openDocModal = useCallback((docName) => {
+    if (leadCaptured) {
+      showLeadCapturedAlert('document');
+      return;
+    }
+    const prefilled = getPrefilledData();
     setDocModal({ open: true, docName });
     setDocSubmitted(false);
     setDocError('');
-    setDocFormData({ name: '', email: '', phone: '' });
-  }, []);
+    setDocFormData(prefilled);
+  }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
   const closeDocModal = useCallback(() => {
     setDocModal({ open: false, docName: '' });
@@ -206,6 +302,7 @@ const PropertyDetails = () => {
         source: 'document_download',
         message: `Requested document: ${docModal.docName}`,
       });
+      saveLeadToSession(docFormData, property?.id, 'document_download');
       setDocSubmitted(true);
       toast.success('Request submitted successfully!');
     } catch {
@@ -213,15 +310,20 @@ const PropertyDetails = () => {
     } finally {
       setDocSubmitting(false);
     }
-  }, [docFormData, docModal.docName, property?.id, toast]);
+  }, [docFormData, docModal.docName, property?.id, toast, saveLeadToSession]);
 
   // Pricing modal handlers
   const openPricingModal = useCallback((config) => {
+    if (leadCaptured) {
+      showLeadCapturedAlert('pricing', config);
+      return;
+    }
+    const prefilled = getPrefilledData();
     setPricingModal({ open: true, config });
     setPricingSubmitted(false);
     setPricingError('');
-    setPricingFormData({ name: '', email: '', phone: '' });
-  }, []);
+    setPricingFormData(prefilled);
+  }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
   const closePricingModal = useCallback(() => {
     setPricingModal({ open: false, config: '' });
@@ -251,6 +353,7 @@ const PropertyDetails = () => {
         source: 'detailed_pricing',
         message: `Requested detailed pricing for ${pricingModal.config} — ${property?.title || ''}`,
       });
+      saveLeadToSession(pricingFormData, property?.id, 'detailed_pricing');
       setPricingSubmitted(true);
       toast.success('Pricing request submitted successfully!');
     } catch {
@@ -258,7 +361,63 @@ const PropertyDetails = () => {
     } finally {
       setPricingSubmitting(false);
     }
-  }, [pricingFormData, pricingModal.config, property?.id, property?.title, toast]);
+  }, [pricingFormData, pricingModal.config, property?.id, property?.title, toast, saveLeadToSession]);
+
+  // Floor plan request modal handlers (for "Request Floor Plan Details" CTA)
+  const openFloorPlanRequestModal = useCallback(() => {
+    if (leadCaptured) {
+      showLeadCapturedAlert('floorplan_request');
+      return;
+    }
+    const prefilled = getPrefilledData();
+    setFloorPlanRequestModal({ open: true });
+    setFloorPlanRequestSubmitted(false);
+    setFloorPlanRequestError('');
+    setFloorPlanRequestFormData(prefilled);
+  }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
+
+  const closeFloorPlanRequestModal = useCallback(() => {
+    setFloorPlanRequestModal({ open: false });
+    setFloorPlanRequestSubmitted(false);
+    setFloorPlanRequestError('');
+  }, []);
+
+  const handleFloorPlanRequestFormChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFloorPlanRequestFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleFloorPlanRequestSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setFloorPlanRequestError('');
+
+    if (!floorPlanRequestFormData.name.trim() || !floorPlanRequestFormData.phone.trim()) {
+      setFloorPlanRequestError('Name and phone are required');
+      return;
+    }
+
+    try {
+      setFloorPlanRequestSubmitting(true);
+      await leadService.create({
+        ...floorPlanRequestFormData,
+        propertyId: property?.id || null,
+        source: 'floorplan_request',
+        message: `Requested floor plan details for ${property?.title || ''}`,
+      });
+      saveLeadToSession(floorPlanRequestFormData, property?.id, 'floorplan_request');
+      setFloorPlanRequestSubmitted(true);
+      toast.success('Floor plan request submitted successfully!');
+    } catch {
+      setFloorPlanRequestError('Something went wrong. Please try again.');
+    } finally {
+      setFloorPlanRequestSubmitting(false);
+    }
+  }, [floorPlanRequestFormData, property?.id, property?.title, toast, saveLeadToSession]);
+
+  // Callback for when EnquiryForm or FinanceGuide captures a lead
+  const handleLeadCapturedFromChild = useCallback((formData) => {
+    saveLeadToSession(formData, property?.id, 'child_form');
+  }, [property?.id, saveLeadToSession]);
 
   // Loading skeleton
   if (loading) {
@@ -299,6 +458,8 @@ const PropertyDetails = () => {
     ? 'Your brochure download request has been received. Our team will share the brochure with you shortly.'
     : 'Your floor plan request has been received. Our team will share the detailed floor plans with you shortly.';
 
+  const savedUserDetails = getSavedUserDetails();
+
   return (
     <>
       <Helmet>
@@ -337,7 +498,11 @@ const PropertyDetails = () => {
               >
                 <Icon icon="mdi:close" />
               </button>
-              <EnquiryForm property={property} />
+              <EnquiryForm
+                property={property}
+                savedUserDetails={savedUserDetails}
+                onLeadCaptured={handleLeadCapturedFromChild}
+              />
             </motion.div>
           </motion.div>
         )}
@@ -683,6 +848,127 @@ const PropertyDetails = () => {
         )}
       </AnimatePresence>
 
+      {/* Floor Plan Request Lead Capture Modal */}
+      <AnimatePresence>
+        {floorPlanRequestModal.open && (
+          <motion.div
+            className={styles.modalOverlay}
+            onClick={closeFloorPlanRequestModal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={styles.modalContent}
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.modalClose}
+                onClick={closeFloorPlanRequestModal}
+                aria-label="Close floor plan request form"
+              >
+                <Icon icon="mdi:close" />
+              </button>
+
+              {floorPlanRequestSubmitted ? (
+                <div className={styles.thankYou}>
+                  <Icon icon="mdi:check-circle" className={styles.thankYouIcon} />
+                  <h3 className={styles.thankYouTitle}>Thank You!</h3>
+                  <p className={styles.thankYouText}>
+                    Your floor plan request has been received. Our executive will contact you within 24 hours with detailed floor plan information.
+                  </p>
+                  <button className={styles.thankYouClose} onClick={closeFloorPlanRequestModal}>
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.pricingModalHeader}>
+                    <Icon icon="mdi:file-document-outline" className={styles.pricingModalIcon} />
+                    <div>
+                      <h3 className={styles.modalTitle} style={{ marginBottom: 0 }}>
+                        Request Floor Plan Details
+                      </h3>
+                      <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '0.8rem', color: '#6B7280', margin: '4px 0 0', lineHeight: 1.5 }}>
+                        {property?.title}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '0.8rem', color: '#6B7280', marginBottom: '16px', lineHeight: 1.5 }}>
+                    Please share your details to receive the complete floor plan with dimensions and layout details.
+                  </p>
+                  <form onSubmit={handleFloorPlanRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Your Name *"
+                      value={floorPlanRequestFormData.name}
+                      onChange={handleFloorPlanRequestFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={floorPlanRequestFormData.email}
+                      onChange={handleFloorPlanRequestFormChange}
+                      style={inputStyle}
+                    />
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="Phone Number *"
+                      value={floorPlanRequestFormData.phone}
+                      onChange={handleFloorPlanRequestFormChange}
+                      required
+                      style={inputStyle}
+                    />
+                    {floorPlanRequestError && (
+                      <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
+                        {floorPlanRequestError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={floorPlanRequestSubmitting}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        width: '100%',
+                        padding: '12px',
+                        background: '#C9A86C',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontFamily: '"DM Sans", sans-serif',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        cursor: floorPlanRequestSubmitting ? 'not-allowed' : 'pointer',
+                        opacity: floorPlanRequestSubmitting ? 0.7 : 1,
+                      }}
+                    >
+                      {floorPlanRequestSubmitting ? 'Submitting...' : (
+                        <>
+                          <Icon icon="mdi:file-document-outline" />
+                          Get Floor Plan Details
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Share Bottom Sheet (mobile) */}
       {isMobile && (
         <SwipeableDrawer
@@ -828,10 +1114,17 @@ const PropertyDetails = () => {
               <FloorPlans
                 floorPlans={property.floorPlans}
                 priceUnit={property.priceUnit}
-                onRequestDetails={() => setShowLeadForm(true)}
+                onRequestDetails={openFloorPlanRequestModal}
                 onGetPricing={openPricingModal}
+                isLeadCaptured={leadCaptured}
+                onFloorPlanImageClick={openFloorPlanRequestModal}
               />
-              <FinanceGuide price={property.price} property={property} />
+              <FinanceGuide
+                price={property.price}
+                property={property}
+                savedUserDetails={savedUserDetails}
+                onLeadCaptured={handleLeadCapturedFromChild}
+              />
               <NearbyPlaces nearbyPlaces={property.nearbyPlaces} />
               <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />
               <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
@@ -842,7 +1135,11 @@ const PropertyDetails = () => {
 
             {/* Sidebar — sticky on desktop */}
             <div className={styles.sidebarCol} id="enquiry-sidebar">
-              <EnquiryForm property={property} />
+              <EnquiryForm
+                property={property}
+                savedUserDetails={savedUserDetails}
+                onLeadCaptured={handleLeadCapturedFromChild}
+              />
             </div>
           </div>
 
@@ -852,7 +1149,12 @@ const PropertyDetails = () => {
       </div>
 
       {/* Mobile Enquiry Button */}
-      <EnquiryForm property={property} isMobile />
+      <EnquiryForm
+        property={property}
+        isMobile
+        savedUserDetails={savedUserDetails}
+        onLeadCaptured={handleLeadCapturedFromChild}
+      />
     </>
   );
 };

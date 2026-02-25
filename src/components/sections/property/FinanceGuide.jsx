@@ -194,7 +194,7 @@ const getScoreLabel = (score) => {
   };
 };
 
-const FinanceGuide = ({ price = 0, property = null }) => {
+const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCaptured }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const resultRef = useRef(null);
 
@@ -277,6 +277,18 @@ const FinanceGuide = ({ price = 0, property = null }) => {
     return () => window.removeEventListener("resize", updateBankCount);
   }, []);
 
+  // Pre-fill assessment and modal forms with saved user details
+  useEffect(() => {
+    if (savedUserDetails) {
+      setAssessmentData((prev) => ({
+        ...prev,
+        name: savedUserDetails.name || prev.name,
+        email: savedUserDetails.email || prev.email,
+        phone: savedUserDetails.phone || prev.phone,
+      }));
+    }
+  }, [savedUserDetails]);
+
   const visibleBanks = showAllBanks ? banks : banks.slice(0, initialBankCount);
 
   const handleAssessmentChange = useCallback((field, value) => {
@@ -357,6 +369,9 @@ const FinanceGuide = ({ price = 0, property = null }) => {
         });
         setAssessmentStep(1);
         scrollToResult();
+        if (onLeadCaptured) {
+          onLeadCaptured({ name: assessmentData.name, email: assessmentData.email, phone: assessmentData.phone });
+        }
       } catch {
         setAssessmentStep(1);
         scrollToResult();
@@ -364,7 +379,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
         setSubmitting(false);
       }
     },
-    [assessmentData, property?.id, price, validateAssessment, scrollToResult],
+    [assessmentData, property?.id, price, validateAssessment, scrollToResult, onLeadCaptured],
   );
 
   /* ─── Eligibility Modal Handlers ─── */
@@ -372,9 +387,9 @@ const FinanceGuide = ({ price = 0, property = null }) => {
     setEligibilityModal({ open: true, bank });
     setModalStep(0);
     setModalFormData({
-      name: "",
-      phone: "",
-      email: "",
+      name: savedUserDetails?.name || "",
+      phone: savedUserDetails?.phone || "",
+      email: savedUserDetails?.email || "",
       occupation: "",
       yearlyIncome: "",
       employmentYears: "",
@@ -387,7 +402,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
     setModalErrors({});
     setModalFitScore(null);
     document.body.style.overflow = "hidden";
-  }, []);
+  }, [savedUserDetails]);
 
   const closeEligibilityModal = useCallback(() => {
     setEligibilityModal({ open: false, bank: null });
@@ -455,6 +470,9 @@ const FinanceGuide = ({ price = 0, property = null }) => {
           },
         });
         setModalStep(1);
+        if (onLeadCaptured) {
+          onLeadCaptured({ name: modalFormData.name, email: modalFormData.email, phone: modalFormData.phone });
+        }
       } catch {
         setModalStep(1);
       } finally {
@@ -467,6 +485,7 @@ const FinanceGuide = ({ price = 0, property = null }) => {
       property?.id,
       price,
       validateModalForm,
+      onLeadCaptured,
     ],
   );
 

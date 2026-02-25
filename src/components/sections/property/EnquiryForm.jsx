@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../../services/api';
 import { useToast } from '../../common/ToastProvider';
 import styles from './EnquiryForm.module.css';
 
-const EnquiryForm = ({ property, isMobile = false }) => {
+const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptured }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,6 +17,18 @@ const EnquiryForm = ({ property, isMobile = false }) => {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Pre-fill form with saved user details
+  useEffect(() => {
+    if (savedUserDetails) {
+      setFormData((prev) => ({
+        ...prev,
+        name: savedUserDetails.name || prev.name,
+        email: savedUserDetails.email || prev.email,
+        phone: savedUserDetails.phone || prev.phone,
+      }));
+    }
+  }, [savedUserDetails]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,12 +53,23 @@ const EnquiryForm = ({ property, isMobile = false }) => {
       });
       setSubmitted(true);
       toast.success('Enquiry submitted! Our team will contact you soon.');
+      if (onLeadCaptured) {
+        onLeadCaptured({ name: formData.name, email: formData.email, phone: formData.phone });
+      }
     } catch {
       setError('Something went wrong. Please try again.');
       toast.error('Failed to submit enquiry. Please try again.');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleSendAnother = () => {
+    setSubmitted(false);
+    setFormData((prev) => ({
+      ...prev,
+      message: property ? `I'm interested in ${property.title}` : '',
+    }));
   };
 
   const formContent = submitted ? (
@@ -56,6 +79,14 @@ const EnquiryForm = ({ property, isMobile = false }) => {
       <p className={styles.successText}>
         Our team will contact you shortly about {property?.title || 'this property'}.
       </p>
+      <button
+        className={styles.sendAnotherBtn}
+        onClick={handleSendAnother}
+        type="button"
+      >
+        <Icon icon="mdi:message-plus-outline" />
+        Send Another Message
+      </button>
     </div>
   ) : (
     <form onSubmit={handleSubmit} className={styles.form}>
