@@ -1718,6 +1718,7 @@
         }
       ],
       "gallery": [
+        "https://youtu.be/VKAKbueezMk?si=T3k7AoGYVijtRuQ0",
         "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606789/cld-sample-2.jpg",
         "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606786/samples/cup-on-a-table.jpg",
         "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606785/samples/coffee.jpg"
@@ -1922,7 +1923,7 @@
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-25T13:18:03.730Z"
+      "updatedAt": "2026-02-25T15:28:34.806Z"
     }
   ],
   "leads": [
