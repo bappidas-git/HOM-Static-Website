@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, IconButton, Paper } from '@mui/material';
 import { Icon } from '@iconify/react';
 import IconPicker from '../../../components/admin/IconPicker';
+import ImageUrlHelperText from '../../../components/admin/ImageUrlHelperText';
 
 const DeveloperTab = ({ formData, updateField }) => {
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
@@ -60,14 +61,17 @@ const DeveloperTab = ({ formData, updateField }) => {
         placeholder="Describe the developer's background, track record, and reputation..."
       />
 
-      <TextField
-        label="Logo URL"
-        value={devInfo.logo}
-        onChange={(e) => updateDevInfo('logo', e.target.value)}
-        fullWidth
-        size="small"
-        placeholder="https://example.com/developer-logo.png"
-      />
+      <Box>
+        <TextField
+          label="Logo URL"
+          value={devInfo.logo}
+          onChange={(e) => updateDevInfo('logo', e.target.value)}
+          fullWidth
+          size="small"
+          placeholder="https://example.com/developer-logo.png"
+        />
+        <ImageUrlHelperText />
+      </Box>
 
       {/* Stats */}
       <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mt: 1 }}>
