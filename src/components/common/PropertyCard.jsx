@@ -4,6 +4,12 @@ import { Icon } from '@iconify/react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { useMediaQuery, useTheme } from '@mui/material';
 import styles from './PropertyCard.module.css';
+import { TAG_OPTIONS } from '../../pages/admin/property-tabs/constants';
+
+const tagMap = TAG_OPTIONS.reduce((acc, t) => {
+  acc[t.value] = t;
+  return acc;
+}, {});
 
 const formatPrice = (price, unit) => {
   if (unit === 'per month') {
@@ -98,6 +104,25 @@ const PropertyCard = memo(({ property }) => {
         {!imageLoaded && <div className={styles.imagePlaceholder} />}
 
         <span className={`${styles.badge} ${badgeClass}`}>{badge}</span>
+
+        {property.tags?.length > 0 && (
+          <div className={styles.tagStrip}>
+            {property.tags.slice(0, 2).map((tagVal) => {
+              const tag = tagMap[tagVal];
+              if (!tag) return null;
+              return (
+                <span
+                  key={tagVal}
+                  className={styles.tag}
+                  style={{ background: tag.bg, color: tag.color, borderColor: tag.color }}
+                >
+                  <Icon icon={tag.icon} style={{ fontSize: 12 }} />
+                  {tag.label}
+                </span>
+              );
+            })}
+          </div>
+        )}
 
         <button
           className={styles.heartBtn}
