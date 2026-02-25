@@ -75,12 +75,12 @@ const occupationOptions = [
 ];
 
 const incomeRanges = [
-  { value: "0-3", label: "Below ₹3 Lakhs" },
-  { value: "3-5", label: "₹3 - 5 Lakhs" },
-  { value: "5-10", label: "₹5 - 10 Lakhs" },
-  { value: "10-20", label: "₹10 - 20 Lakhs" },
-  { value: "20-50", label: "₹20 - 50 Lakhs" },
-  { value: "50+", label: "Above ₹50 Lakhs" },
+  { value: "0-25000", label: "Below ₹25,000" },
+  { value: "25000-50000", label: "₹25,000 - ₹50,000" },
+  { value: "50000-100000", label: "₹50,000 - ₹1,00,000" },
+  { value: "100000-150000", label: "₹1,00,000 - ₹1,50,000" },
+  { value: "150000-250000", label: "₹1,50,000 - ₹2,50,000" },
+  { value: "250000+", label: "Above ₹2,50,000" },
 ];
 
 const creditScoreOptions = [
@@ -99,6 +99,12 @@ const existingEmiOptions = [
   { value: "50000+", label: "Above ₹50,000" },
 ];
 
+const emiTenureOptions = [
+  { value: "0-12", label: "0 to 12 Months" },
+  { value: "12-24", label: "12 to 24 Months" },
+  { value: "24+", label: "More than 24 Months" },
+];
+
 const employmentYearOptions = [
   { value: "0-1", label: "Less than 1 year" },
   { value: "1-3", label: "1 - 3 years" },
@@ -107,82 +113,77 @@ const employmentYearOptions = [
   { value: "10+", label: "10+ years" },
 ];
 
+/* ─── Numeric Lookup Tables ─── */
+const monthlyIncomeValues = {
+  "0-25000": 15000,
+  "25000-50000": 37500,
+  "50000-100000": 75000,
+  "100000-150000": 125000,
+  "150000-250000": 200000,
+  "250000+": 350000,
+};
+
+const emiNumericValues = {
+  "0": 0,
+  "1-10000": 5000,
+  "10000-25000": 17500,
+  "25000-50000": 37500,
+  "50000+": 75000,
+};
+
 /* ─── Score Calculation ─── */
+/* Formula: (60% of Monthly Income - Existing EMI) / (60% of Monthly Income) × 100 */
 const calculateFitScore = (data) => {
-  let score = 0;
+  const monthlyIncome = monthlyIncomeValues[data.monthlyIncome] || 0;
+  const existingEmi = emiNumericValues[data.existingEmi] || 0;
 
-  // Income score (max 30)
-  const incomeScores = {
-    "0-3": 5,
-    "3-5": 12,
-    "5-10": 20,
-    "10-20": 25,
-    "20-50": 28,
-    "50+": 30,
-  };
-  score += incomeScores[data.yearlyIncome] || 0;
+  const maxEmiCapacity = 0.6 * monthlyIncome;
+  if (maxEmiCapacity <= 0) return 0;
 
-  // Credit score (max 25)
-  const creditScores = {
-    excellent: 25,
-    good: 20,
-    fair: 12,
-    poor: 5,
-    "not-sure": 10,
-  };
-  score += creditScores[data.creditScore] || 0;
+  const availableCapacity = maxEmiCapacity - existingEmi;
+  const score = Math.min(100, Math.max(0, Math.round((availableCapacity / maxEmiCapacity) * 100)));
 
-  // Existing EMI burden (max 20)
-  const emiScores = {
-    0: 20,
-    "1-10000": 16,
-    "10000-25000": 12,
-    "25000-50000": 6,
-    "50000+": 2,
-  };
-  score += emiScores[data.existingEmi] || 0;
+  return score;
+};
 
-  // Employment stability (max 15)
-  const empScores = { "0-1": 3, "1-3": 8, "3-5": 11, "5-10": 13, "10+": 15 };
-  score += empScores[data.employmentYears] || 0;
-
-  // Down payment (max 10)
-  const dp = parseInt(data.downPayment) || 0;
-  if (dp >= 30) score += 10;
-  else if (dp >= 20) score += 8;
-  else if (dp >= 15) score += 5;
-  else if (dp >= 10) score += 3;
-
-  return Math.min(score, 100);
+/* Helper to compute eligible loan amount based on available EMI capacity */
+const computeEligibleLoan = (data, rate = 8.5, tenureYears = 20) => {
+  const monthlyIncome = monthlyIncomeValues[data.monthlyIncome] || 0;
+  const existingEmi = emiNumericValues[data.existingEmi] || 0;
+  const availableEmi = Math.max(0, 0.6 * monthlyIncome - existingEmi);
+  const r = rate / 12 / 100;
+  const n = tenureYears * 12;
+  if (r === 0 || availableEmi === 0) return 0;
+  return Math.round(availableEmi * (Math.pow(1 + r, n) - 1) / (r * Math.pow(1 + r, n)));
 };
 
 const getScoreLabel = (score) => {
-  if (score >= 80)
+  if (score >= 75)
     return {
       label: "Excellent",
       color: "#10B981",
       bg: "#ECFDF5",
       icon: "mdi:check-decagram",
       message:
-        "You have an excellent financial profile for home ownership. You are likely to get the best interest rates and quick loan approval.",
+        "Your estimated EMI capacity is strong. Based on standard FOIR (Fixed Obligation to Income Ratio) norms, you may have a high likelihood of loan approval with competitive interest rates.",
     };
-  if (score >= 60)
+  if (score >= 50)
     return {
       label: "Good",
       color: "#3B82F6",
       bg: "#EFF6FF",
       icon: "mdi:thumb-up",
       message:
-        "Your financial profile looks good for a home loan. You should be eligible for competitive rates from most banks.",
+        "Your estimated EMI capacity looks favourable. You may be eligible for home loans from most banks. Final approval and terms are subject to the respective bank's assessment.",
     };
-  if (score >= 40)
+  if (score >= 25)
     return {
       label: "Moderate",
       color: "#F59E0B",
       bg: "#FFFBEB",
       icon: "mdi:alert-circle-outline",
       message:
-        "Your profile is moderate. Consider reducing existing liabilities or increasing your down payment for better loan terms.",
+        "Your existing obligations consume a significant portion of your income. Consider reducing existing EMIs or exploring a longer tenure to improve your affordability. Consult a bank for a detailed evaluation.",
     };
   return {
     label: "Needs Improvement",
@@ -190,7 +191,7 @@ const getScoreLabel = (score) => {
     bg: "#FEF2F2",
     icon: "mdi:information-outline",
     message:
-      "We recommend strengthening your financial profile before applying. Our advisors can help you plan a path to home ownership.",
+      "Your current financial obligations may exceed the recommended FOIR limit. We suggest clearing existing liabilities or increasing your income before applying. Speak to a financial advisor for personalised guidance.",
   };
 };
 
@@ -226,9 +227,10 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
     phone: "",
     email: "",
     occupation: "",
-    yearlyIncome: "",
+    monthlyIncome: "",
     employmentYears: "",
     existingEmi: "",
+    emiTenure: "",
     creditScore: "",
     downPayment: "20",
     hasCoApplicant: "",
@@ -255,9 +257,10 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
     phone: "",
     email: "",
     occupation: "",
-    yearlyIncome: "",
+    monthlyIncome: "",
     employmentYears: "",
     existingEmi: "",
+    emiTenure: "",
     creditScore: "",
     downPayment: "20",
     hasCoApplicant: "",
@@ -309,11 +312,13 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
       errors.email = "Enter a valid email";
     if (!assessmentData.occupation)
       errors.occupation = "Select your occupation";
-    if (!assessmentData.yearlyIncome)
-      errors.yearlyIncome = "Select your income range";
+    if (!assessmentData.monthlyIncome)
+      errors.monthlyIncome = "Select your income range";
     if (!assessmentData.creditScore)
       errors.creditScore = "Select your credit score range";
     if (!assessmentData.existingEmi) errors.existingEmi = "Select existing EMI";
+    if (assessmentData.existingEmi && assessmentData.existingEmi !== "0" && !assessmentData.emiTenure)
+      errors.emiTenure = "Select remaining EMI tenure";
     if (!assessmentData.employmentYears)
       errors.employmentYears = "Select employment duration";
     setAssessmentErrors(errors);
@@ -353,13 +358,14 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
           email: assessmentData.email || "",
           propertyId: property?.id || null,
           source: "financial-assessment",
-          message: `Financial Assessment Lead | Score: ${score}/100 | Occupation: ${assessmentData.occupation} | Income: ${assessmentData.yearlyIncome} LPA | Credit: ${assessmentData.creditScore} | EMI: ${assessmentData.existingEmi} | Employment: ${assessmentData.employmentYears} yrs | Down Payment: ${assessmentData.downPayment}% | Co-applicant: ${assessmentData.hasCoApplicant || "No"}${assessmentData.coApplicantIncome ? " (Income: " + assessmentData.coApplicantIncome + ")" : ""}`,
+          message: `Financial Assessment Lead | Score: ${score}/100 | Occupation: ${assessmentData.occupation} | Monthly Income: ${assessmentData.monthlyIncome} | Credit: ${assessmentData.creditScore} | EMI: ${assessmentData.existingEmi}${assessmentData.emiTenure ? " (Tenure: " + assessmentData.emiTenure + ")" : ""} | Employment: ${assessmentData.employmentYears} yrs | Down Payment: ${assessmentData.downPayment}% | Co-applicant: ${assessmentData.hasCoApplicant || "No"}${assessmentData.coApplicantIncome ? " (Income: " + assessmentData.coApplicantIncome + ")" : ""}`,
           assessmentData: {
             score,
             occupation: assessmentData.occupation,
-            yearlyIncome: assessmentData.yearlyIncome,
+            monthlyIncome: assessmentData.monthlyIncome,
             employmentYears: assessmentData.employmentYears,
             existingEmi: assessmentData.existingEmi,
+            emiTenure: assessmentData.emiTenure,
             creditScore: assessmentData.creditScore,
             downPayment: assessmentData.downPayment,
             hasCoApplicant: assessmentData.hasCoApplicant,
@@ -391,9 +397,10 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
       phone: savedUserDetails?.phone || "",
       email: savedUserDetails?.email || "",
       occupation: "",
-      yearlyIncome: "",
+      monthlyIncome: "",
       employmentYears: "",
       existingEmi: "",
+      emiTenure: "",
       creditScore: "",
       downPayment: "20",
       hasCoApplicant: "",
@@ -427,11 +434,13 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
     )
       errors.email = "Enter a valid email";
     if (!modalFormData.occupation) errors.occupation = "Select your occupation";
-    if (!modalFormData.yearlyIncome)
-      errors.yearlyIncome = "Select your income range";
+    if (!modalFormData.monthlyIncome)
+      errors.monthlyIncome = "Select your income range";
     if (!modalFormData.creditScore)
       errors.creditScore = "Select your credit score range";
     if (!modalFormData.existingEmi) errors.existingEmi = "Select existing EMI";
+    if (modalFormData.existingEmi && modalFormData.existingEmi !== "0" && !modalFormData.emiTenure)
+      errors.emiTenure = "Select remaining EMI tenure";
     if (!modalFormData.employmentYears)
       errors.employmentYears = "Select employment duration";
     setModalErrors(errors);
@@ -454,14 +463,15 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
           email: modalFormData.email || "",
           propertyId: property?.id || null,
           source: "bank-eligibility-check",
-          message: `Bank Eligibility Check — ${eligibilityModal.bank?.name} | Score: ${score}/100 | Occupation: ${modalFormData.occupation} | Income: ${modalFormData.yearlyIncome} LPA | Credit: ${modalFormData.creditScore} | EMI: ${modalFormData.existingEmi} | Employment: ${modalFormData.employmentYears} yrs | Down Payment: ${modalFormData.downPayment}% | Co-applicant: ${modalFormData.hasCoApplicant || "No"}${modalFormData.coApplicantIncome ? " (Income: " + modalFormData.coApplicantIncome + ")" : ""}`,
+          message: `Bank Eligibility Check — ${eligibilityModal.bank?.name} | Score: ${score}/100 | Occupation: ${modalFormData.occupation} | Monthly Income: ${modalFormData.monthlyIncome} | Credit: ${modalFormData.creditScore} | EMI: ${modalFormData.existingEmi}${modalFormData.emiTenure ? " (Tenure: " + modalFormData.emiTenure + ")" : ""} | Employment: ${modalFormData.employmentYears} yrs | Down Payment: ${modalFormData.downPayment}% | Co-applicant: ${modalFormData.hasCoApplicant || "No"}${modalFormData.coApplicantIncome ? " (Income: " + modalFormData.coApplicantIncome + ")" : ""}`,
           assessmentData: {
             score,
             bank: eligibilityModal.bank?.name,
             occupation: modalFormData.occupation,
-            yearlyIncome: modalFormData.yearlyIncome,
+            monthlyIncome: modalFormData.monthlyIncome,
             employmentYears: modalFormData.employmentYears,
             existingEmi: modalFormData.existingEmi,
+            emiTenure: modalFormData.emiTenure,
             creditScore: modalFormData.creditScore,
             downPayment: modalFormData.downPayment,
             hasCoApplicant: modalFormData.hasCoApplicant,
@@ -604,11 +614,11 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
         </h4>
         <div className={styles.formGrid2}>
           <div className={styles.formField}>
-            <label className={styles.formLabel}>Annual Income *</label>
+            <label className={styles.formLabel}>Monthly Income *</label>
             <select
-              className={`${styles.formSelect} ${errors.yearlyIncome ? styles.formInputError : ""}`}
-              value={data.yearlyIncome}
-              onChange={(e) => onChange("yearlyIncome", e.target.value)}
+              className={`${styles.formSelect} ${errors.monthlyIncome ? styles.formInputError : ""}`}
+              value={data.monthlyIncome}
+              onChange={(e) => onChange("monthlyIncome", e.target.value)}
             >
               <option value="">Select income range</option>
               {incomeRanges.map((opt) => (
@@ -617,8 +627,8 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                 </option>
               ))}
             </select>
-            {errors.yearlyIncome && (
-              <span className={styles.fieldError}>{errors.yearlyIncome}</span>
+            {errors.monthlyIncome && (
+              <span className={styles.fieldError}>{errors.monthlyIncome}</span>
             )}
           </div>
           <div className={styles.formField}>
@@ -626,7 +636,12 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
             <select
               className={`${styles.formSelect} ${errors.existingEmi ? styles.formInputError : ""}`}
               value={data.existingEmi}
-              onChange={(e) => onChange("existingEmi", e.target.value)}
+              onChange={(e) => {
+                onChange("existingEmi", e.target.value);
+                if (e.target.value === "0" || e.target.value === "") {
+                  onChange("emiTenure", "");
+                }
+              }}
             >
               <option value="">Select EMI range</option>
               {existingEmiOptions.map((opt) => (
@@ -640,6 +655,30 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
             )}
           </div>
         </div>
+
+        {/* EMI Tenure — shown only when existing EMIs are selected */}
+        {data.existingEmi && data.existingEmi !== "0" && (
+          <div className={styles.formGrid2} style={{ marginTop: "16px" }}>
+            <div className={styles.formField}>
+              <label className={styles.formLabel}>Remaining EMI Tenure *</label>
+              <select
+                className={`${styles.formSelect} ${errors.emiTenure ? styles.formInputError : ""}`}
+                value={data.emiTenure}
+                onChange={(e) => onChange("emiTenure", e.target.value)}
+              >
+                <option value="">Select tenure</option>
+                {emiTenureOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              {errors.emiTenure && (
+                <span className={styles.fieldError}>{errors.emiTenure}</span>
+              )}
+            </div>
+          </div>
+        )}
 
         <label className={styles.formLabel} style={{ marginTop: "16px" }}>
           Credit Score Range *
@@ -725,7 +764,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
           {data.hasCoApplicant === "yes" && (
             <div className={styles.formField}>
               <label className={styles.formLabel}>
-                Co-Applicant Annual Income
+                Co-Applicant Monthly Income
               </label>
               <select
                 className={styles.formSelect}
@@ -1052,6 +1091,10 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                         <Icon icon="mdi:lock-outline" /> Your data is secure and
                         used only for this assessment
                       </p>
+                      <p style={{ fontSize: "0.65rem", color: "#9CA3AF", textAlign: "center", marginTop: "8px", lineHeight: 1.5 }}>
+                        <Icon icon="mdi:information-outline" style={{ fontSize: "0.75rem", verticalAlign: "middle", marginRight: "2px" }} />
+                        This is an indicative tool only. We are not a bank or financial institution. Final eligibility is subject to the bank&apos;s assessment.
+                      </p>
                     </div>
                   </form>
                 </motion.div>
@@ -1099,101 +1142,63 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                       </div>
                     </div>
 
-                    {/* Score Breakdown */}
+                    {/* Eligibility Breakdown */}
                     <div className={styles.scoreBreakdown}>
-                      <h4 className={styles.breakdownTitle}>Score Breakdown</h4>
+                      <h4 className={styles.breakdownTitle}>Eligibility Breakdown</h4>
                       <div className={styles.breakdownGrid}>
-                        {[
-                          {
-                            label: "Income Level",
-                            icon: "mdi:currency-inr",
-                            max: 30,
-                          },
-                          {
-                            label: "Credit Health",
-                            icon: "mdi:shield-check",
-                            max: 25,
-                          },
-                          {
-                            label: "Debt Burden",
-                            icon: "mdi:scale-balance",
-                            max: 20,
-                          },
-                          {
-                            label: "Job Stability",
-                            icon: "mdi:briefcase-check",
-                            max: 15,
-                          },
-                          {
-                            label: "Down Payment",
-                            icon: "mdi:piggy-bank-outline",
-                            max: 10,
-                          },
-                        ].map((item, idx) => {
-                          const categoryScores = {
-                            "Income Level": {
-                              "0-3": 5,
-                              "3-5": 12,
-                              "5-10": 20,
-                              "10-20": 25,
-                              "20-50": 28,
-                              "50+": 30,
+                        {(() => {
+                          const mIncome = monthlyIncomeValues[assessmentData.monthlyIncome] || 0;
+                          const eEmi = emiNumericValues[assessmentData.existingEmi] || 0;
+                          const maxCapacity = Math.round(0.6 * mIncome);
+                          const availableEmi = Math.max(0, maxCapacity - eEmi);
+                          const eligibleLoan = computeEligibleLoan(assessmentData);
+                          const dp = parseInt(assessmentData.downPayment) || 20;
+                          const affordableProperty = dp > 0 ? Math.round(eligibleLoan / (1 - dp / 100)) : eligibleLoan;
+
+                          const breakdownItems = [
+                            {
+                              label: "Monthly Income",
+                              icon: "mdi:currency-inr",
+                              value: formatCurrency(mIncome),
+                              sub: "Gross monthly income",
                             },
-                            "Credit Health": {
-                              excellent: 25,
-                              good: 20,
-                              fair: 12,
-                              poor: 5,
-                              "not-sure": 10,
+                            {
+                              label: "Max EMI Capacity (60% FOIR)",
+                              icon: "mdi:calculator-variant",
+                              value: formatCurrency(maxCapacity),
+                              sub: "60% of monthly income",
                             },
-                            "Debt Burden": {
-                              0: 20,
-                              "1-10000": 16,
-                              "10000-25000": 12,
-                              "25000-50000": 6,
-                              "50000+": 2,
+                            {
+                              label: "Existing EMI Obligations",
+                              icon: "mdi:minus-circle-outline",
+                              value: `- ${formatCurrency(eEmi)}`,
+                              sub: assessmentData.emiTenure ? `Remaining tenure: ${assessmentData.emiTenure.replace("24+", "24+")} months` : "No existing EMIs",
                             },
-                            "Job Stability": {
-                              "0-1": 3,
-                              "1-3": 8,
-                              "3-5": 11,
-                              "5-10": 13,
-                              "10+": 15,
+                            {
+                              label: "Available EMI Capacity",
+                              icon: "mdi:check-circle-outline",
+                              value: formatCurrency(availableEmi),
+                              sub: "Monthly amount available for new home loan EMI",
+                              highlight: true,
                             },
-                            "Down Payment": {},
-                          };
-                          let val = 0;
-                          if (item.label === "Income Level")
-                            val =
-                              categoryScores["Income Level"][
-                                assessmentData.yearlyIncome
-                              ] || 0;
-                          else if (item.label === "Credit Health")
-                            val =
-                              categoryScores["Credit Health"][
-                                assessmentData.creditScore
-                              ] || 0;
-                          else if (item.label === "Debt Burden")
-                            val =
-                              categoryScores["Debt Burden"][
-                                assessmentData.existingEmi
-                              ] || 0;
-                          else if (item.label === "Job Stability")
-                            val =
-                              categoryScores["Job Stability"][
-                                assessmentData.employmentYears
-                              ] || 0;
-                          else {
-                            const dp =
-                              parseInt(assessmentData.downPayment) || 0;
-                            if (dp >= 30) val = 10;
-                            else if (dp >= 20) val = 8;
-                            else if (dp >= 15) val = 5;
-                            else if (dp >= 10) val = 3;
-                          }
-                          const pct = Math.round((val / item.max) * 100);
-                          return (
-                            <div key={idx} className={styles.breakdownItem}>
+                            {
+                              label: "Estimated Loan Eligibility",
+                              icon: "mdi:bank-outline",
+                              value: formatCurrency(eligibleLoan),
+                              sub: "Based on 8.5% p.a. for 20 years (indicative)",
+                              highlight: true,
+                            },
+                            {
+                              label: "Estimated Affordable Property Value",
+                              icon: "mdi:home-outline",
+                              value: formatCurrency(affordableProperty),
+                              sub: `With ${dp}% down payment`,
+                              highlight: true,
+                            },
+                          ];
+
+                          return breakdownItems.map((item, idx) => (
+                            <div key={idx} className={styles.breakdownItem} style={item.highlight ? { background: "#F0FDF4", borderRadius: "8px", padding: "10px 12px" } : {}}>
                               <div className={styles.breakdownItemTop}>
                                 <Icon
                                   icon={item.icon}
@@ -1202,27 +1207,16 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                                 <span className={styles.breakdownLabel}>
                                   {item.label}
                                 </span>
-                                <span className={styles.breakdownScore}>
-                                  {val}/{item.max}
+                                <span className={styles.breakdownScore} style={item.highlight ? { fontWeight: 700, color: "#10B981" } : {}}>
+                                  {item.value}
                                 </span>
                               </div>
-                              <div className={styles.breakdownBar}>
-                                <div
-                                  className={styles.breakdownBarFill}
-                                  style={{
-                                    width: `${pct}%`,
-                                    background:
-                                      pct >= 70
-                                        ? "#10B981"
-                                        : pct >= 40
-                                          ? "#F59E0B"
-                                          : "#EF4444",
-                                  }}
-                                />
-                              </div>
+                              <span style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: "2px", display: "block" }}>
+                                {item.sub}
+                              </span>
                             </div>
-                          );
-                        })}
+                          ));
+                        })()}
                       </div>
                     </div>
 
@@ -1232,19 +1226,18 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                         <Icon icon="mdi:lightbulb-outline" /> Recommendations
                       </h4>
                       <div className={styles.recoList}>
-                        {fitScore >= 60 && (
+                        {fitScore >= 50 && (
                           <div className={styles.recoItem}>
                             <Icon
                               icon="mdi:check-circle"
                               style={{ color: "#10B981" }}
                             />
                             <span>
-                              You are eligible for pre-approved home loans from
-                              multiple banks for this property.
+                              Based on the FOIR estimate, you may be eligible for home loans from major banks for this property.
                             </span>
                           </div>
                         )}
-                        {fitScore < 80 &&
+                        {fitScore < 75 &&
                           assessmentData.creditScore !== "excellent" && (
                             <div className={styles.recoItem}>
                               <Icon
@@ -1252,8 +1245,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                                 style={{ color: "#3B82F6" }}
                               />
                               <span>
-                                Improving your credit score can help you secure
-                                better interest rates.
+                                A good credit score (750+) can help you negotiate better interest rates from banks.
                               </span>
                             </div>
                           )}
@@ -1264,8 +1256,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                               style={{ color: "#F59E0B" }}
                             />
                             <span>
-                              Clearing existing loans before applying can
-                              significantly improve your eligibility.
+                              Clearing or reducing existing EMIs before applying can significantly improve your loan eligibility and available capacity.
                             </span>
                           </div>
                         )}
@@ -1276,8 +1267,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                               style={{ color: "#8B5CF6" }}
                             />
                             <span>
-                              A higher down payment (20%+) can lower your EMI
-                              and improve loan approval chances.
+                              A higher down payment (20%+) can lower your EMI burden and improve loan approval chances with banks.
                             </span>
                           </div>
                         )}
@@ -1287,11 +1277,18 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                             style={{ color: "#C9A86C" }}
                           />
                           <span>
-                            Our financial advisors will contact you shortly with
-                            personalised loan options.
+                            Our property advisors will contact you shortly to assist with connecting you to suitable banks and financial institutions.
                           </span>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Disclaimer */}
+                    <div style={{ marginTop: "16px", padding: "12px 16px", background: "#FEF9E7", borderRadius: "8px", border: "1px solid #F5E6B8" }}>
+                      <p style={{ fontSize: "0.7rem", color: "#92400E", lineHeight: 1.6, margin: 0 }}>
+                        <Icon icon="mdi:alert-outline" style={{ fontSize: "0.85rem", verticalAlign: "middle", marginRight: "4px" }} />
+                        <strong>Disclaimer:</strong> This is an indicative assessment based on the information provided and standard FOIR (Fixed Obligation to Income Ratio) norms used in the Indian real estate industry. We are not a bank, NBFC, or financial institution. Actual loan eligibility, interest rates, and terms are determined solely by the respective lending institution after their independent evaluation. This tool is for informational purposes only and does not constitute financial advice or a loan offer. Please consult with your bank or a certified financial advisor for accurate eligibility.
+                      </p>
                     </div>
 
                     <div className={styles.resultActions}>
@@ -1343,9 +1340,13 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                       ({scoreInfo?.label}) has been recorded.
                     </p>
                     <p className={styles.thankYouSubtext}>
-                      Our dedicated home loan advisors will reach out to you
-                      within 24 hours with personalised financing options
+                      Our property advisors will reach out to you
+                      within 24 hours to help connect you with suitable banks and financing options
                       tailored to your profile for this property.
+                    </p>
+                    <p style={{ fontSize: "0.65rem", color: "#9CA3AF", textAlign: "center", marginTop: "8px", lineHeight: 1.5 }}>
+                      <Icon icon="mdi:information-outline" style={{ fontSize: "0.7rem", verticalAlign: "middle", marginRight: "2px" }} />
+                      We are a real estate advisory platform, not a bank or financial institution. All loan-related decisions are made by the respective banks.
                     </p>
                     <div className={styles.thankYouActions}>
                       <button
@@ -1693,6 +1694,10 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                             <Icon icon="mdi:lock-outline" /> Your data is secure
                             and used only for this assessment
                           </p>
+                          <p style={{ fontSize: "0.65rem", color: "#9CA3AF", textAlign: "center", marginTop: "8px", lineHeight: 1.5 }}>
+                            <Icon icon="mdi:information-outline" style={{ fontSize: "0.75rem", verticalAlign: "middle", marginRight: "2px" }} />
+                            This is an indicative tool only. We are not a bank or financial institution. Final eligibility is subject to the bank&apos;s assessment.
+                          </p>
                         </div>
                       </form>
                     </motion.div>
@@ -1711,6 +1716,10 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                     >
                       {(() => {
                         const mScoreInfo = getScoreLabel(modalFitScore);
+                        const mIncome = monthlyIncomeValues[modalFormData.monthlyIncome] || 0;
+                        const eEmi = emiNumericValues[modalFormData.existingEmi] || 0;
+                        const availableEmi = Math.max(0, 0.6 * mIncome - eEmi);
+                        const eligibleLoan = computeEligibleLoan(modalFormData, eligibilityModal.bank?.rate || 8.5);
                         return (
                           <div className={styles.eligibilityResult}>
                             <div className={styles.eligibilityResultIcon}>
@@ -1746,10 +1755,25 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                             <p className={styles.eligibilityResultText}>
                               {mScoreInfo.message}
                             </p>
+                            <div style={{ width: "100%", margin: "12px 0", padding: "12px", background: "#F9FAFB", borderRadius: "8px", textAlign: "left" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "0.8rem" }}>
+                                <span style={{ color: "#6B7280" }}>Available EMI Capacity</span>
+                                <span style={{ fontWeight: 600, color: "#059669" }}>{formatCurrency(availableEmi)}/month</span>
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem" }}>
+                                <span style={{ color: "#6B7280" }}>Estimated Loan Eligibility</span>
+                                <span style={{ fontWeight: 600, color: "#059669" }}>{formatCurrency(eligibleLoan)}</span>
+                              </div>
+                              <span style={{ display: "block", fontSize: "0.65rem", color: "#9CA3AF", marginTop: "6px" }}>
+                                *Based on {eligibilityModal.bank?.rate || 8.5}% p.a. for 20 years (indicative only)
+                              </span>
+                            </div>
                             <p className={styles.eligibilityResultSub}>
-                              Our {eligibilityModal.bank.name} loan advisors
-                              will contact you within 24 hours with personalised
-                              financing options.
+                              Our team will help connect you with {eligibilityModal.bank.name} for detailed loan processing and final eligibility assessment.
+                            </p>
+                            <p style={{ fontSize: "0.65rem", color: "#9CA3AF", textAlign: "center", lineHeight: 1.5, marginTop: "4px" }}>
+                              <Icon icon="mdi:information-outline" style={{ fontSize: "0.7rem", verticalAlign: "middle", marginRight: "2px" }} />
+                              We are not a bank or financial institution. This is an indicative estimate only. Actual eligibility is determined by {eligibilityModal.bank.name}.
                             </p>
                             <div className={styles.eligibilityResultActions}>
                               <button
