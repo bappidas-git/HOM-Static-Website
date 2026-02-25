@@ -116,7 +116,7 @@ const GalleryTab = ({ formData, updateField, updateListItem, addListItem, remove
                   : updateListItem('gallery', index, e.target.value)
               }
             />
-            <ImageUrlHelperText />
+            <ImageUrlHelperText fieldType="gallery" />
           </Box>
 
           {formData.gallery.length > 1 && (

@@ -153,7 +153,7 @@ const SeoTagsTab = ({ formData, updateField }) => {
               fullWidth
               placeholder="Defaults to first gallery image if empty"
             />
-            <ImageUrlHelperText />
+            <ImageUrlHelperText fieldType="ogImage" />
           </Box>
         </Box>
       </Paper>
