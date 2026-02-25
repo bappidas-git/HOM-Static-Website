@@ -119,6 +119,27 @@
   font-family: var(--font-body);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.sendAnotherBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--color-secondary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.sendAnotherBtn:hover {
+  background: var(--color-secondary-dark);
 }
 
 /* Mobile Fixed Button */

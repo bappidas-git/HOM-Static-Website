@@ -11,13 +11,26 @@ const formatPrice = (price, unit) => {
   return `₹${price.toLocaleString('en-IN')}`;
 };
 
-const FloorPlans = ({ floorPlans = [], priceUnit = 'onwards', onRequestDetails, onGetPricing }) => {
+const FloorPlans = ({
+  floorPlans = [],
+  priceUnit = 'onwards',
+  onRequestDetails,
+  onGetPricing,
+  isLeadCaptured = false,
+  onFloorPlanImageClick,
+}) => {
   const [activeTab, setActiveTab] = useState(0);
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   if (floorPlans.length === 0) return null;
 
   const activePlan = floorPlans[activeTab];
+
+  const handleFloorPlanImageClick = () => {
+    if (!isLeadCaptured && onFloorPlanImageClick) {
+      onFloorPlanImageClick();
+    }
+  };
 
   return (
     <section className={styles.section} ref={ref} id="floor-plans">
@@ -42,12 +55,27 @@ const FloorPlans = ({ floorPlans = [], priceUnit = 'onwards', onRequestDetails, 
 
         <div className={styles.content}>
           <div className={styles.planImageCol}>
-            <div className={styles.planImage}>
+            <div
+              className={`${styles.planImage} ${!isLeadCaptured ? styles.planImageBlurred : ''}`}
+              onClick={handleFloorPlanImageClick}
+              role={!isLeadCaptured ? 'button' : undefined}
+              tabIndex={!isLeadCaptured ? 0 : undefined}
+              onKeyDown={!isLeadCaptured ? (e) => { if (e.key === 'Enter' || e.key === ' ') handleFloorPlanImageClick(); } : undefined}
+            >
               <img
                 src={activePlan.image || 'https://placehold.co/600x400/1B2A4A/white?text=Floor+Plan'}
                 alt={`${activePlan.config} floor plan`}
                 loading="lazy"
               />
+              {!isLeadCaptured && (
+                <div className={styles.blurOverlay}>
+                  <div className={styles.blurOverlayContent}>
+                    <Icon icon="mdi:lock-outline" className={styles.blurOverlayIcon} />
+                    <span className={styles.blurOverlayText}>Click to View Floor Plan</span>
+                    <span className={styles.blurOverlaySubtext}>Share your details to unlock</span>
+                  </div>
+                </div>
+              )}
             </div>
             <button
               className={styles.getPricingBtn}

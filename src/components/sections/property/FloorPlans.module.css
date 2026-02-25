@@ -59,6 +59,7 @@
 }
 
 .planImage {
+  position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-bg-surface);
@@ -68,6 +69,56 @@
   width: 100%;
   height: auto;
   display: block;
+  transition: filter 0.3s ease;
+}
+
+.planImageBlurred {
+  cursor: pointer;
+}
+
+.planImageBlurred img {
+  filter: blur(8px);
+}
+
+.blurOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 42, 74, 0.35);
+  transition: background 0.3s ease;
+}
+
+.planImageBlurred:hover .blurOverlay {
+  background: rgba(27, 42, 74, 0.5);
+}
+
+.blurOverlayContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: var(--spacing-md);
+}
+
+.blurOverlayIcon {
+  font-size: 2.5rem;
+  color: #fff;
+}
+
+.blurOverlayText {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.blurOverlaySubtext {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .getPricingBtn {
