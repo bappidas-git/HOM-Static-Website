@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { useInView } from 'react-intersection-observer';
@@ -14,17 +14,40 @@ const typeConfig = {
   entertainment: { icon: 'mdi:theater', label: 'Entertainment' },
 };
 
-const NearbyPlaces = ({ nearbyPlaces = [] }) => {
+const isValidCoordinate = (lat, lng) => {
+  const latNum = Number(lat);
+  const lngNum = Number(lng);
+  return (
+    !isNaN(latNum) &&
+    !isNaN(lngNum) &&
+    latNum >= -90 &&
+    latNum <= 90 &&
+    lngNum >= -180 &&
+    lngNum <= 180 &&
+    (latNum !== 0 || lngNum !== 0)
+  );
+};
+
+const NearbyPlaces = ({ nearbyPlaces = [], location }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   const categories = [...new Set(nearbyPlaces.map((p) => p.type))];
   const [activeCategory, setActiveCategory] = useState(categories[0] || '');
+
+  const hasValidCoords = useMemo(
+    () => location && isValidCoordinate(location.lat, location.lng),
+    [location]
+  );
 
   if (nearbyPlaces.length === 0) return null;
 
   const filteredPlaces = activeCategory
     ? nearbyPlaces.filter((p) => p.type === activeCategory)
     : nearbyPlaces;
+
+  const mapSrc = hasValidCoords
+    ? `https://maps.google.com/maps?q=${location.lat},${location.lng}&z=15&output=embed`
+    : null;
 
   return (
     <section className={styles.section} ref={ref} id="nearby">
@@ -51,10 +74,23 @@ const NearbyPlaces = ({ nearbyPlaces = [] }) => {
           })}
         </div>
 
-        <div className={styles.mapPlaceholder}>
-          <Icon icon="mdi:map-outline" className={styles.mapIcon} />
-          <span>Map view available on live version</span>
-        </div>
+        {hasValidCoords ? (
+          <div className={styles.mapContainer}>
+            <iframe
+              title="Property Location"
+              src={mapSrc}
+              className={styles.mapIframe}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        ) : (
+          <div className={styles.mapPlaceholder}>
+            <Icon icon="mdi:map-outline" className={styles.mapIcon} />
+            <span>Map view available on live version</span>
+          </div>
+        )}
 
         <div className={styles.placesList}>
           {filteredPlaces.map((place, idx) => {

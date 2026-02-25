@@ -3,6 +3,56 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import styles from './PropertyGallery.module.css';
 
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov'];
+
+const isVideoUrl = (url) => {
+  if (!url) return false;
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    return VIDEO_EXTENSIONS.some((ext) => pathname.endsWith(ext));
+  } catch {
+    return VIDEO_EXTENSIONS.some((ext) => url.toLowerCase().includes(ext));
+  }
+};
+
+const GalleryMedia = ({ src, alt, className, ...motionProps }) => {
+  if (isVideoUrl(src)) {
+    return (
+      <motion.video
+        {...motionProps}
+        className={className}
+        src={src}
+        controls
+        playsInline
+        muted
+        preload="metadata"
+        style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+        onClick={(e) => e.stopPropagation()}
+      />
+    );
+  }
+  return (
+    <motion.img
+      {...motionProps}
+      src={src}
+      alt={alt}
+      className={className}
+    />
+  );
+};
+
+const ThumbnailMedia = ({ src, alt, ...props }) => {
+  if (isVideoUrl(src)) {
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <video src={src} muted preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <Icon icon="mdi:play-circle" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: 20, color: '#fff', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }} />
+      </div>
+    );
+  }
+  return <img src={src} alt={alt} {...props} />;
+};
+
 const PropertyGallery = ({ images = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -11,6 +61,8 @@ const PropertyGallery = ({ images = [] }) => {
   const gallery = images.length
     ? images
     : ['https://placehold.co/800x600/1B2A4A/white?text=No+Image'];
+
+  const currentIsVideo = isVideoUrl(gallery[currentIndex]);
 
   const goTo = useCallback((index) => {
     setDirection(index > currentIndex ? 1 : -1);
@@ -42,9 +94,13 @@ const PropertyGallery = ({ images = [] }) => {
   return (
     <>
       <div className={styles.gallery}>
-        <div className={styles.mainImage} onClick={() => setLightboxOpen(true)}>
+        <div
+          className={styles.mainImage}
+          onClick={() => !currentIsVideo && setLightboxOpen(true)}
+          style={currentIsVideo ? { cursor: 'default' } : undefined}
+        >
           <AnimatePresence custom={direction} mode="wait">
-            <motion.img
+            <GalleryMedia
               key={currentIndex}
               src={gallery[currentIndex]}
               alt={`Property view ${currentIndex + 1}`}
@@ -62,9 +118,11 @@ const PropertyGallery = ({ images = [] }) => {
             {currentIndex + 1} / {gallery.length}
           </div>
 
-          <button className={styles.expandBtn} aria-label="View fullscreen">
-            <Icon icon="mdi:fullscreen" />
-          </button>
+          {!currentIsVideo && (
+            <button className={styles.expandBtn} aria-label="View fullscreen">
+              <Icon icon="mdi:fullscreen" />
+            </button>
+          )}
 
           {gallery.length > 1 && (
             <>
@@ -93,9 +151,9 @@ const PropertyGallery = ({ images = [] }) => {
                 key={idx}
                 className={`${styles.thumb} ${idx === currentIndex ? styles.thumbActive : ''}`}
                 onClick={() => goTo(idx)}
-                aria-label={`View image ${idx + 1}`}
+                aria-label={`View ${isVideoUrl(img) ? 'video' : 'image'} ${idx + 1}`}
               >
-                <img src={img} alt={`Thumbnail ${idx + 1}`} loading="lazy" />
+                <ThumbnailMedia src={img} alt={`Thumbnail ${idx + 1}`} loading="lazy" />
               </button>
             ))}
           </div>
@@ -139,7 +197,7 @@ const PropertyGallery = ({ images = [] }) => {
 
             <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
               <AnimatePresence custom={direction} mode="wait">
-                <motion.img
+                <GalleryMedia
                   key={currentIndex}
                   src={gallery[currentIndex]}
                   alt={`Property view ${currentIndex + 1}`}

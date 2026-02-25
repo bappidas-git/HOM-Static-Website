@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, TextField, Button, IconButton, Paper, InputAdornment } from '@mui/material';
 import { Icon } from '@iconify/react';
+import ImageUrlHelperText from '../../../components/admin/ImageUrlHelperText';
 
 const FloorPlansTab = ({ formData, updateField, updateListItem, addListItem, removeListItem }) => {
   return (
@@ -86,14 +87,17 @@ const FloorPlansTab = ({ formData, updateField, updateListItem, addListItem, rem
               onChange={(e) => updateListItem('floorPlans', index, { ...fp, bathrooms: e.target.value })}
               sx={{ width: 100 }}
             />
-            <TextField
-              size="small"
-              label="Image URL"
-              value={fp.image}
-              onChange={(e) => updateListItem('floorPlans', index, { ...fp, image: e.target.value })}
-              sx={{ flex: '1 1 100%' }}
-              placeholder="https://placehold.co/600x400"
-            />
+            <Box sx={{ flex: '1 1 100%' }}>
+              <TextField
+                size="small"
+                label="Image URL"
+                value={fp.image}
+                onChange={(e) => updateListItem('floorPlans', index, { ...fp, image: e.target.value })}
+                fullWidth
+                placeholder="https://placehold.co/600x400"
+              />
+              <ImageUrlHelperText />
+            </Box>
           </Box>
         </Paper>
       ))}

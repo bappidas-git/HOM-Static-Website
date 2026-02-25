@@ -12,9 +12,21 @@ import {
   RadioGroup,
   FormLabel,
   InputAdornment,
+  Chip,
 } from '@mui/material';
+import { Icon } from '@iconify/react';
+import { TAG_OPTIONS } from './constants';
 
 const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSlugManuallyEdited }) => {
+  const toggleTag = (tag) => {
+    updateField(
+      'tags',
+      formData.tags.includes(tag)
+        ? formData.tags.filter((t) => t !== tag)
+        : [...formData.tags, tag]
+    );
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       <TextField
@@ -129,6 +141,37 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
         fullWidth
         placeholder="e.g., Dec 2026 or Ready to Move"
       />
+
+      {/* Property Tags */}
+      <Box>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 1 }}>
+          Property Tags
+        </Typography>
+        <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', mb: 1.5 }}>
+          Toggle tags to control property visibility in featured sections and search filters.
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          {TAG_OPTIONS.map((tag) => {
+            const selected = formData.tags.includes(tag.value);
+            return (
+              <Chip
+                key={tag.value}
+                icon={<Icon icon={tag.icon} style={{ fontSize: 16, color: selected ? tag.color : '#9CA3AF' }} />}
+                label={tag.label}
+                clickable
+                onClick={() => toggleTag(tag.value)}
+                sx={{
+                  fontWeight: 600,
+                  bgcolor: selected ? tag.bg : '#F3F4F6',
+                  color: selected ? tag.color : '#9CA3AF',
+                  border: selected ? `1px solid ${tag.color}` : '1px solid transparent',
+                  '&:hover': { opacity: 0.85 },
+                }}
+              />
+            );
+          })}
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Chip, InputAdornment, Paper } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { TAG_OPTIONS } from './constants';
+import ImageUrlHelperText from '../../../components/admin/ImageUrlHelperText';
+
+// Note: Tags are also available in Basic Info tab for quick access
 
 const SeoTagsTab = ({ formData, updateField }) => {
   const [keywordInput, setKeywordInput] = useState('');
@@ -141,14 +144,17 @@ const SeoTagsTab = ({ formData, updateField }) => {
             rows={2}
             placeholder="Defaults to SEO Description if empty"
           />
-          <TextField
-            label="OG Image URL"
-            size="small"
-            value={formData.ogImage || ''}
-            onChange={(e) => updateField('ogImage', e.target.value)}
-            fullWidth
-            placeholder="Defaults to first gallery image if empty"
-          />
+          <Box>
+            <TextField
+              label="OG Image URL"
+              size="small"
+              value={formData.ogImage || ''}
+              onChange={(e) => updateField('ogImage', e.target.value)}
+              fullWidth
+              placeholder="Defaults to first gallery image if empty"
+            />
+            <ImageUrlHelperText />
+          </Box>
         </Box>
       </Paper>
 
@@ -209,6 +215,7 @@ const SeoTagsTab = ({ formData, updateField }) => {
             return (
               <Chip
                 key={tag.value}
+                icon={<Icon icon={tag.icon} style={{ fontSize: 16, color: selected ? tag.color : '#9CA3AF' }} />}
                 label={tag.label}
                 clickable
                 onClick={() => toggleTag(tag.value)}

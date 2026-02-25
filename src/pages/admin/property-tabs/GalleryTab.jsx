@@ -1,9 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, TextField, Button, IconButton } from '@mui/material';
 import { Icon } from '@iconify/react';
+import ImageUrlHelperText from '../../../components/admin/ImageUrlHelperText';
+
+const getDefaultCoverUrl = (title) => {
+  const name = (title || 'Project_Name').replace(/\s+/g, '_');
+  return `https://placehold.co/800x600/goldenrod/white?text=${encodeURIComponent(name)}`;
+};
 
 const GalleryTab = ({ formData, updateField, updateListItem, addListItem, removeListItem }) => {
   const [dragIndex, setDragIndex] = useState(null);
+  const userEditedCover = useRef(false);
+
+  // Auto-set cover image default when property name changes and cover URL is empty or is a placeholder
+  useEffect(() => {
+    if (userEditedCover.current) return;
+    const currentCover = formData.gallery?.[0] || '';
+    const isPlaceholder = currentCover === '' || currentCover.startsWith('https://placehold.co/800x600/goldenrod/white?text=');
+    if (isPlaceholder && formData.title) {
+      const defaultUrl = getDefaultCoverUrl(formData.title);
+      if (formData.gallery?.length > 0) {
+        const updated = [...formData.gallery];
+        updated[0] = defaultUrl;
+        updateField('gallery', updated);
+      }
+    }
+  }, [formData.title]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleCoverChange = (value) => {
+    // Track if user manually entered a non-placeholder value
+    if (value && !value.startsWith('https://placehold.co/800x600/goldenrod/white?text=')) {
+      userEditedCover.current = true;
+    } else {
+      userEditedCover.current = false;
+    }
+    updateListItem('gallery', 0, value);
+  };
 
   const handleDragStart = (index) => setDragIndex(index);
 
@@ -78,8 +110,13 @@ const GalleryTab = ({ formData, updateField, updateListItem, addListItem, remove
               fullWidth
               placeholder="Image URL"
               value={url}
-              onChange={(e) => updateListItem('gallery', index, e.target.value)}
+              onChange={(e) =>
+                index === 0
+                  ? handleCoverChange(e.target.value)
+                  : updateListItem('gallery', index, e.target.value)
+              }
             />
+            <ImageUrlHelperText />
           </Box>
 
           {formData.gallery.length > 1 && (
