@@ -5,10 +5,12 @@ import { useInView } from 'react-intersection-observer';
 import styles from './FloorPlans.module.css';
 
 const formatPrice = (price, unit) => {
-  if (unit === 'per month') return `₹${price.toLocaleString('en-IN')}/mo`;
-  if (price >= 10000000) return `₹${(price / 10000000).toFixed(2)} Cr`;
-  if (price >= 100000) return `₹${(price / 100000).toFixed(2)} L`;
-  return `₹${price.toLocaleString('en-IN')}`;
+  if (price == null || isNaN(Number(price))) return 'Price on Request';
+  const numPrice = Number(price);
+  if (unit === 'per month') return `₹${numPrice.toLocaleString('en-IN')}/mo`;
+  if (numPrice >= 10000000) return `₹${(numPrice / 10000000).toFixed(2)} Cr`;
+  if (numPrice >= 100000) return `₹${(numPrice / 100000).toFixed(2)} L`;
+  return `₹${numPrice.toLocaleString('en-IN')}`;
 };
 
 const FloorPlans = ({
@@ -24,7 +26,8 @@ const FloorPlans = ({
 
   if (floorPlans.length === 0) return null;
 
-  const activePlan = floorPlans[activeTab];
+  const activePlan = floorPlans[activeTab] || floorPlans[0];
+  if (!activePlan) return null;
 
   const handleFloorPlanImageClick = () => {
     if (!isLeadCaptured && onFloorPlanImageClick) {
@@ -93,7 +96,7 @@ const FloorPlans = ({
               <div className={styles.planStat}>
                 <Icon icon="mdi:ruler-square" className={styles.statIcon} />
                 <span className={styles.statLabel}>Area</span>
-                <span className={styles.statValue}>{activePlan.area}</span>
+                <span className={styles.statValue}>{activePlan.area || '—'}</span>
               </div>
               <div className={styles.planStat}>
                 <Icon icon="mdi:currency-inr" className={styles.statIcon} />
@@ -106,12 +109,12 @@ const FloorPlans = ({
               <div className={styles.planStat}>
                 <Icon icon="mdi:bed-king-outline" className={styles.statIcon} />
                 <span className={styles.statLabel}>Bedrooms</span>
-                <span className={styles.statValue}>{activePlan.bedrooms}</span>
+                <span className={styles.statValue}>{activePlan.bedrooms || '—'}</span>
               </div>
               <div className={styles.planStat}>
                 <Icon icon="mdi:shower" className={styles.statIcon} />
                 <span className={styles.statLabel}>Bathrooms</span>
-                <span className={styles.statValue}>{activePlan.bathrooms}</span>
+                <span className={styles.statValue}>{activePlan.bathrooms || '—'}</span>
               </div>
             </div>
 

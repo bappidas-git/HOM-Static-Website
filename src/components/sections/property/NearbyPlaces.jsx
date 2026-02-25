@@ -46,7 +46,7 @@ const NearbyPlaces = ({ nearbyPlaces = [], location }) => {
     : nearbyPlaces;
 
   const mapSrc = hasValidCoords
-    ? `https://maps.google.com/maps?q=${location.lat},${location.lng}&z=15&output=embed`
+    ? `https://maps.google.com/maps?q=${encodeURIComponent(`${Number(location.lat)},${Number(location.lng)}`)}&z=15&output=embed`
     : null;
 
   return (
@@ -107,10 +107,10 @@ const NearbyPlaces = ({ nearbyPlaces = [], location }) => {
                   <Icon icon={config.icon} />
                 </div>
                 <div className={styles.placeInfo}>
-                  <span className={styles.placeName}>{place.name}</span>
-                  <span className={styles.placeType}>{typeConfig[place.type]?.label || place.type}</span>
+                  <span className={styles.placeName}>{place.name || 'Unknown Place'}</span>
+                  <span className={styles.placeType}>{typeConfig[place.type]?.label || place.type || 'Other'}</span>
                 </div>
-                <span className={styles.placeDistance}>{place.distance}</span>
+                <span className={styles.placeDistance}>{place.distance || '—'}</span>
               </motion.div>
             );
           })}

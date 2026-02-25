@@ -16,7 +16,7 @@ const DocCard = ({ doc, idx, inView, onDownloadClick }) => (
     <div className={styles.docIcon}>
       <Icon icon={doc.icon || 'mdi:file-document'} />
     </div>
-    <span className={styles.docName}>{doc.name}</span>
+    <span className={styles.docName}>{doc.name || 'Document'}</span>
     <div className={styles.docRight}>
       <div className={styles.docStatus}>
         <Icon icon="mdi:check-circle" className={styles.checkIcon} />
@@ -25,12 +25,12 @@ const DocCard = ({ doc, idx, inView, onDownloadClick }) => (
       <div className={styles.downloadBtnWrap}>
         <button
           className={styles.downloadBtn}
-          onClick={() => onDownloadClick && onDownloadClick(doc.name)}
-          aria-label={`Download ${doc.name}`}
+          onClick={() => onDownloadClick && onDownloadClick(doc.name || 'Document')}
+          aria-label={`Download ${doc.name || 'Document'}`}
         >
           <Icon icon="mdi:download" />
         </button>
-        <span className={styles.tooltip}>Download {doc.name}</span>
+        <span className={styles.tooltip}>Download {doc.name || 'Document'}</span>
       </div>
     </div>
   </motion.div>

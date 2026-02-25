@@ -153,9 +153,9 @@ const PropertyListing = ({ routePath }) => {
     // BHK filter
     if (filters.bhk && filters.bhk.length > 0) {
       result = result.filter((p) => {
-        if (!p.configuration) return false;
+        if (!Array.isArray(p.configuration)) return false;
         return filters.bhk.some((bhk) =>
-          p.configuration.some((c) => c.toLowerCase().includes(bhk.toLowerCase()))
+          p.configuration.some((c) => c && typeof c === 'string' && c.toLowerCase().includes(bhk.toLowerCase()))
         );
       });
     }
@@ -204,15 +204,17 @@ const PropertyListing = ({ routePath }) => {
     const sorted = [...filteredProperties];
     switch (sortBy) {
       case 'price-asc':
-        sorted.sort((a, b) => a.price - b.price);
+        sorted.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
         break;
       case 'price-desc':
-        sorted.sort((a, b) => b.price - a.price);
+        sorted.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
         break;
       case 'newest':
-        sorted.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
+        sorted.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+        });
         break;
       case 'possession':
         sorted.sort((a, b) => {

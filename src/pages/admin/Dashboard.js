@@ -242,11 +242,15 @@ const Dashboard = () => {
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const [allProperties, allLeads, allArticles] = await Promise.all([
+      const results = await Promise.allSettled([
         propertyService.getAll(),
         leadService.getAll(),
         articleService.getAll(),
       ]);
+
+      const allProperties = results[0].status === 'fulfilled' ? results[0].value : [];
+      const allLeads = results[1].status === 'fulfilled' ? results[1].value : [];
+      const allArticles = results[2].status === 'fulfilled' ? results[2].value : [];
 
       // Properties stats
       const activeProps = allProperties.filter((p) => p.isActive);
@@ -256,7 +260,7 @@ const Dashboard = () => {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const newLeads7 = allLeads.filter(
-        (l) => new Date(l.createdAt) >= sevenDaysAgo
+        (l) => l.createdAt && new Date(l.createdAt) >= sevenDaysAgo
       );
 
       // Article stats
@@ -276,12 +280,16 @@ const Dashboard = () => {
 
       setRecentLeads(
         [...allLeads]
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+          })
           .slice(0, 10)
       );
       setProperties(allProperties);
     } catch (err) {
-      // Dashboard data load failed — empty state shown
+      console.error('Dashboard data load failed:', err);
     } finally {
       setLoading(false);
     }

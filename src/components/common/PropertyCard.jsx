@@ -12,16 +12,18 @@ const tagMap = TAG_OPTIONS.reduce((acc, t) => {
 }, {});
 
 const formatPrice = (price, unit) => {
+  if (price == null || isNaN(Number(price))) return 'Price on Request';
+  const numPrice = Number(price);
   if (unit === 'per month') {
-    return `₹${price.toLocaleString('en-IN')}/mo`;
+    return `₹${numPrice.toLocaleString('en-IN')}/mo`;
   }
-  if (price >= 10000000) {
-    return `₹${(price / 10000000).toFixed(2)} Cr`;
+  if (numPrice >= 10000000) {
+    return `₹${(numPrice / 10000000).toFixed(2)} Cr`;
   }
-  if (price >= 100000) {
-    return `₹${(price / 100000).toFixed(2)} L`;
+  if (numPrice >= 100000) {
+    return `₹${(numPrice / 100000).toFixed(2)} L`;
   }
-  return `₹${price.toLocaleString('en-IN')}`;
+  return `₹${numPrice.toLocaleString('en-IN')}`;
 };
 
 const SWIPE_THRESHOLD = 80;
@@ -36,6 +38,33 @@ const PropertyCard = memo(({ property }) => {
 
   const dragX = useMotionValue(0);
   const swipeBgOpacity = useTransform(dragX, [-120, -60, 0, 60, 120], [1, 0.6, 0, 0.6, 1]);
+
+  const handleShare = useCallback(() => {
+    if (!property) return;
+    if (navigator.share) {
+      navigator.share({
+        title: property.title,
+        url: `${window.location.origin}/properties/${property.slug}`,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(
+        `${window.location.origin}/properties/${property.slug}`
+      );
+    }
+    setSwipeAction(null);
+  }, [property]);
+
+  const handleDragEnd = useCallback((_, info) => {
+    if (info.offset.x < -SWIPE_THRESHOLD) {
+      setSwipeAction('enquire');
+      // Auto-dismiss after 2s
+      setTimeout(() => setSwipeAction(null), 2000);
+    } else if (info.offset.x > SWIPE_THRESHOLD) {
+      handleShare();
+    }
+  }, [handleShare]);
+
+  if (!property) return null;
 
   const images = property.gallery?.length ? property.gallery : [
     'https://placehold.co/400x280/1B2A4A/white?text=Property',
@@ -61,30 +90,6 @@ const PropertyCard = memo(({ property }) => {
     e.stopPropagation();
     setLiked(!liked);
   };
-
-  const handleShare = useCallback(() => {
-    if (navigator.share) {
-      navigator.share({
-        title: property.title,
-        url: `${window.location.origin}/properties/${property.slug}`,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(
-        `${window.location.origin}/properties/${property.slug}`
-      );
-    }
-    setSwipeAction(null);
-  }, [property.title, property.slug]);
-
-  const handleDragEnd = useCallback((_, info) => {
-    if (info.offset.x < -SWIPE_THRESHOLD) {
-      setSwipeAction('enquire');
-      // Auto-dismiss after 2s
-      setTimeout(() => setSwipeAction(null), 2000);
-    } else if (info.offset.x > SWIPE_THRESHOLD) {
-      handleShare();
-    }
-  }, [handleShare]);
 
   const cardContent = (
     <>
@@ -167,14 +172,14 @@ const PropertyCard = memo(({ property }) => {
 
         <div className={styles.location}>
           <Icon icon="mdi:map-marker-outline" className={styles.locIcon} />
-          <span>{property.location?.area}, {property.location?.city}</span>
+          <span>{[property.location?.area, property.location?.city].filter(Boolean).join(', ') || '—'}</span>
         </div>
 
         <div className={styles.detailsGrid}>
           <div className={styles.detailItem}>
             <span className={styles.detailLabel}>Configuration</span>
             <span className={styles.detailValue}>
-              {property.configuration?.join(', ')}
+              {property.configuration?.join(', ') || '—'}
             </span>
           </div>
           <div className={styles.detailItem}>
@@ -187,7 +192,7 @@ const PropertyCard = memo(({ property }) => {
           </div>
           <div className={styles.detailItem}>
             <span className={styles.detailLabel}>Possession</span>
-            <span className={styles.detailValue}>{property.possession}</span>
+            <span className={styles.detailValue}>{property.possession || '—'}</span>
           </div>
         </div>
       </div>
