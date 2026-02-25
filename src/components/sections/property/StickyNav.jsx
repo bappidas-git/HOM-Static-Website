@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import styles from './StickyNav.module.css';
 
-const NAV_ITEMS = [
+const ALL_NAV_ITEMS = [
   { label: 'Overview', targetId: 'overview' },
   { label: 'Details', targetId: 'specifications' },
   { label: 'Highlights', targetId: 'specialities' },
@@ -16,7 +16,11 @@ const NAV_ITEMS = [
   { label: 'Similar', targetId: 'similar' },
 ];
 
-const StickyNav = () => {
+const StickyNav = ({ visibleSections }) => {
+  const navItems = useMemo(() => {
+    if (!visibleSections) return ALL_NAV_ITEMS;
+    return ALL_NAV_ITEMS.filter((item) => visibleSections.includes(item.targetId));
+  }, [visibleSections]);
   const [visible, setVisible] = useState(false);
   const [activeId, setActiveId] = useState('');
   const listRef = useRef(null);
@@ -24,7 +28,7 @@ const StickyNav = () => {
 
   // Combined scroll handler: show/hide + scroll spy
   useEffect(() => {
-    const sectionIds = NAV_ITEMS.map((item) => item.targetId);
+    const sectionIds = navItems.map((item) => item.targetId);
     let ticking = false;
 
     const handleScroll = () => {
@@ -62,7 +66,7 @@ const StickyNav = () => {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [navItems]);
 
   // Auto-scroll the nav list to keep active item visible
   useEffect(() => {
@@ -98,7 +102,7 @@ const StickyNav = () => {
 
   const handleKeyDown = useCallback(
     (e) => {
-      const items = NAV_ITEMS.map((item) => itemRefs.current[item.targetId]).filter(Boolean);
+      const items = navItems.map((item) => itemRefs.current[item.targetId]).filter(Boolean);
       const currentIndex = items.indexOf(e.currentTarget);
       let nextIndex;
 
@@ -131,7 +135,7 @@ const StickyNav = () => {
     >
       <div className={styles.navInner}>
         <ul className={styles.navList} ref={listRef} role="tablist" aria-label="Sections">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <li key={item.targetId} role="presentation">
               <a
                 href={`#${item.targetId}`}

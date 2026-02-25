@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -420,6 +420,55 @@ const PropertyDetails = () => {
     saveLeadToSession(formData, property?.id, 'child_form');
   }, [property?.id, saveLeadToSession]);
 
+  // Compute which sections have data for conditional rendering + sticky nav
+  // Must be called before early returns to maintain hook order
+  const sectionFlags = useMemo(() => {
+    if (!property) return {};
+    const hasSpecs = (() => {
+      if (Array.isArray(property.specificationsArray) && property.specificationsArray.some(s => s.key && s.value)) return true;
+      if (property.specifications && typeof property.specifications === 'object') {
+        return Object.values(property.specifications).some(v => v !== null && v !== undefined && v !== '' && v !== '—');
+      }
+      return false;
+    })();
+    const hasConstructionSpecs = (() => {
+      if (!property.constructionSpecs || typeof property.constructionSpecs !== 'object') return false;
+      return Object.values(property.constructionSpecs).some(
+        (arr) => Array.isArray(arr) && arr.length > 0 && arr.some(item => item.area?.trim() && item.spec?.trim())
+      );
+    })();
+    return {
+      hasOverview: Boolean(property.description),
+      hasSpecs,
+      hasSpecialities: property.specialities?.length > 0,
+      hasAmenities: property.amenities?.length > 0,
+      hasFloorPlans: property.floorPlans?.length > 0,
+      hasNearbyPlaces: property.nearbyPlaces?.length > 0,
+      hasDocuments: property.documents?.length > 0,
+      hasConstructionSpecs,
+      hasDeveloper: Boolean(property.developer),
+    };
+  }, [property]);
+
+  const visibleSections = useMemo(() => {
+    if (!property) return [];
+    const sections = [];
+    if (sectionFlags.hasOverview) sections.push('overview');
+    if (sectionFlags.hasSpecs) sections.push('specifications');
+    if (sectionFlags.hasSpecialities) sections.push('specialities');
+    if (sectionFlags.hasAmenities) sections.push('amenities');
+    if (sectionFlags.hasFloorPlans) sections.push('floor-plans');
+    sections.push('finance');
+    if (sectionFlags.hasNearbyPlaces) sections.push('nearby');
+    if (sectionFlags.hasDocuments) sections.push('documents');
+    if (sectionFlags.hasConstructionSpecs) sections.push('construction-specs');
+    sections.push('construction');
+    if (sectionFlags.hasDeveloper) sections.push('builder');
+    sections.push('faqs');
+    sections.push('similar');
+    return sections;
+  }, [property, sectionFlags]);
+
   // Loading skeleton
   if (loading) {
     return <PropertyDetailSkeleton />;
@@ -447,6 +496,11 @@ const PropertyDetails = () => {
       </div>
     );
   }
+
+  const {
+    hasOverview, hasSpecs, hasSpecialities, hasAmenities,
+    hasFloorPlans, hasNearbyPlaces, hasDocuments, hasConstructionSpecs, hasDeveloper,
+  } = sectionFlags;
 
   const badge = property.type === 'rent' ? 'For Rent' : 'For Sale';
   const badgeClass = property.type === 'rent' ? styles.badgeRent : styles.badgeSale;
@@ -1039,7 +1093,7 @@ const PropertyDetails = () => {
       )}
 
       {/* Secondary sticky navigation */}
-      <StickyNav />
+      <StickyNav visibleSections={visibleSections} />
 
       <div className={styles.page}>
         <div className={styles.container}>
@@ -1124,30 +1178,32 @@ const PropertyDetails = () => {
                 </div>
               </motion.div>
 
-              {/* Sections — ordered per mockup */}
-              <PropertyOverview property={property} />
-              <PropertySpecs specifications={property.specifications} specificationsArray={property.specificationsArray} propertyType={property.propertyType} />
-              <PropertySpecialities specialities={property.specialities} />
-              <PropertyAmenities amenities={property.amenities} />
-              <FloorPlans
-                floorPlans={property.floorPlans}
-                priceUnit={property.priceUnit}
-                onRequestDetails={openFloorPlanRequestModal}
-                onGetPricing={openPricingModal}
-                isLeadCaptured={leadCaptured}
-                onFloorPlanImageClick={openFloorPlanRequestModal}
-              />
+              {/* Sections — conditionally rendered based on data */}
+              {hasOverview && <PropertyOverview property={property} />}
+              {hasSpecs && <PropertySpecs specifications={property.specifications} specificationsArray={property.specificationsArray} propertyType={property.propertyType} />}
+              {hasSpecialities && <PropertySpecialities specialities={property.specialities} />}
+              {hasAmenities && <PropertyAmenities amenities={property.amenities} />}
+              {hasFloorPlans && (
+                <FloorPlans
+                  floorPlans={property.floorPlans}
+                  priceUnit={property.priceUnit}
+                  onRequestDetails={openFloorPlanRequestModal}
+                  onGetPricing={openPricingModal}
+                  isLeadCaptured={leadCaptured}
+                  onFloorPlanImageClick={openFloorPlanRequestModal}
+                />
+              )}
               <FinanceGuide
                 price={property.price}
                 property={property}
                 savedUserDetails={savedUserDetails}
                 onLeadCaptured={handleLeadCapturedFromChild}
               />
-              <NearbyPlaces nearbyPlaces={property.nearbyPlaces} />
-              <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />
-              <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
+              {hasNearbyPlaces && <NearbyPlaces nearbyPlaces={property.nearbyPlaces} location={property.location} />}
+              {hasDocuments && <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />}
+              {hasConstructionSpecs && <ConstructionSpecs constructionSpecs={property.constructionSpecs} />}
               <ConstructionStatus status={property.status} />
-              <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />
+              {hasDeveloper && <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />}
               <PropertyFaq property={property} />
             </div>
 
