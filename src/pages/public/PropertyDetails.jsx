@@ -28,10 +28,12 @@ import StickyNav from '../../components/sections/property/StickyNav';
 import styles from './PropertyDetails.module.css';
 
 const formatPrice = (price, unit) => {
-  if (unit === 'per month') return `₹${price.toLocaleString('en-IN')}/mo`;
-  if (price >= 10000000) return `₹${(price / 10000000).toFixed(2)} Cr`;
-  if (price >= 100000) return `₹${(price / 100000).toFixed(2)} L`;
-  return `₹${price.toLocaleString('en-IN')}`;
+  if (price == null || isNaN(Number(price))) return 'Price on Request';
+  const numPrice = Number(price);
+  if (unit === 'per month') return `₹${numPrice.toLocaleString('en-IN')}/mo`;
+  if (numPrice >= 10000000) return `₹${(numPrice / 10000000).toFixed(2)} Cr`;
+  if (numPrice >= 100000) return `₹${(numPrice / 100000).toFixed(2)} L`;
+  return `₹${numPrice.toLocaleString('en-IN')}`;
 };
 
 const modalVariants = {
@@ -1150,7 +1152,7 @@ const PropertyDetails = () => {
 
                 <div className={styles.locationRow}>
                   <Icon icon="mdi:map-marker" className={styles.locationIcon} />
-                  <span>{property.location?.area}, {property.location?.city}</span>
+                  <span>{[property.location?.area, property.location?.city].filter(Boolean).join(', ') || '—'}</span>
                 </div>
 
                 <div className={styles.quickChips}>
@@ -1165,9 +1167,11 @@ const PropertyDetails = () => {
                       {property.dimensionRange.min} - {property.dimensionRange.max} {property.dimensionRange.unit}
                     </span>
                   )}
-                  <span className={styles.chip}>
-                    <Icon icon="mdi:calendar-clock" /> {property.possession}
-                  </span>
+                  {property.possession && (
+                    <span className={styles.chip}>
+                      <Icon icon="mdi:calendar-clock" /> {property.possession}
+                    </span>
+                  )}
                 </div>
 
                 <div className={styles.headerActions}>

@@ -18,9 +18,15 @@ const BuilderOverview = ({ developer, developerInfo }) => {
   if (!developer) return null;
 
   // Use custom stats from API if available, otherwise fall back to defaults
-  const stats = (developerInfo?.stats && developerInfo.stats.length > 0)
+  const rawStats = (developerInfo?.stats && developerInfo.stats.length > 0)
     ? developerInfo.stats
     : DEFAULT_STATS;
+  const stats = rawStats.map((s) => ({
+    value: Number(s.value) || 0,
+    suffix: s.suffix || '',
+    label: s.label || 'Metric',
+    icon: s.icon || 'mdi:information',
+  }));
 
   const description = developerInfo?.description || null;
   const logo = developerInfo?.logo || null;

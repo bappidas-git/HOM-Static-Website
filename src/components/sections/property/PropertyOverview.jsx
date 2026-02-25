@@ -5,10 +5,12 @@ import { useInView } from 'react-intersection-observer';
 import styles from './PropertyOverview.module.css';
 
 const formatPrice = (price, unit) => {
-  if (unit === 'per month') return `₹${price.toLocaleString('en-IN')}/mo`;
-  if (price >= 10000000) return `₹${(price / 10000000).toFixed(2)} Cr`;
-  if (price >= 100000) return `₹${(price / 100000).toFixed(2)} L`;
-  return `₹${price.toLocaleString('en-IN')}`;
+  if (price == null || isNaN(Number(price))) return 'Price on Request';
+  const numPrice = Number(price);
+  if (unit === 'per month') return `₹${numPrice.toLocaleString('en-IN')}/mo`;
+  if (numPrice >= 10000000) return `₹${(numPrice / 10000000).toFixed(2)} Cr`;
+  if (numPrice >= 100000) return `₹${(numPrice / 100000).toFixed(2)} L`;
+  return `₹${numPrice.toLocaleString('en-IN')}`;
 };
 
 const INITIAL_VISIBLE_COUNT = 2;
@@ -60,7 +62,7 @@ const PropertyOverview = ({ property }) => {
       >
         <h2 className={styles.title}>Project Overview</h2>
 
-        <p className={styles.description}>{property.description}</p>
+        <p className={styles.description}>{property.description || 'No description available.'}</p>
 
         <div className={styles.detailsGrid}>
           {details.map((detail, idx) => (
@@ -75,7 +77,7 @@ const PropertyOverview = ({ property }) => {
         <div className={styles.developer}>
           <Icon icon="mdi:domain" className={styles.devIcon} />
           <span className={styles.devLabel}>Developer:</span>
-          <span className={styles.devName}>{property.developer}</span>
+          <span className={styles.devName}>{property.developer || '—'}</span>
         </div>
 
         {totalHighlights > 0 && (

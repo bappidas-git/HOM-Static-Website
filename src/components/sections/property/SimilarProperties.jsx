@@ -29,6 +29,10 @@ const SimilarProperties = ({ currentProperty }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   useEffect(() => {
+    if (!currentProperty?.type) {
+      setLoading(false);
+      return;
+    }
     const fetchSimilar = async () => {
       try {
         const data = await propertyService.getAll({
@@ -36,17 +40,18 @@ const SimilarProperties = ({ currentProperty }) => {
           isActive: true,
           _limit: 6,
         });
-        setProperties(data.filter((p) => p.id !== currentProperty.id).slice(0, 4));
+        const filtered = Array.isArray(data) ? data : [];
+        setProperties(filtered.filter((p) => p.id !== currentProperty.id).slice(0, 4));
       } catch {
         setProperties([]);
       } finally {
         setLoading(false);
       }
     };
-    if (currentProperty) fetchSimilar();
+    fetchSimilar();
   }, [currentProperty]);
 
-  if (loading || properties.length === 0) return null;
+  if (!currentProperty || loading || properties.length === 0) return null;
 
   const settings = {
     dots: true,

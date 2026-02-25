@@ -36,7 +36,7 @@ const PropertySpecialities = ({ specialities = [] }) => {
               <div className={styles.iconWrap}>
                 <Icon icon={item.icon || 'mdi:star'} className={styles.icon} />
               </div>
-              <span className={styles.name}>{item.name}</span>
+              <span className={styles.name}>{item.name || 'Feature'}</span>
             </motion.div>
           ))}
         </div>
