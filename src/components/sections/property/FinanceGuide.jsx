@@ -75,6 +75,7 @@ const occupationOptions = [
 ];
 
 const incomeRanges = [
+  { value: "exact", label: "Enter Exact Amount" },
   { value: "0-25000", label: "Below ₹25,000" },
   { value: "25000-50000", label: "₹25,000 - ₹50,000" },
   { value: "50000-100000", label: "₹50,000 - ₹1,00,000" },
@@ -131,10 +132,18 @@ const emiNumericValues = {
   "50000+": 75000,
 };
 
+/* ─── Helper: resolve monthly income (exact value or midpoint from range) ─── */
+const getMonthlyIncome = (data) => {
+  if (data.monthlyIncome === "exact") {
+    return parseInt(data.exactMonthlyIncome) || 0;
+  }
+  return monthlyIncomeValues[data.monthlyIncome] || 0;
+};
+
 /* ─── Score Calculation ─── */
 /* Formula: (60% of Monthly Income - Existing EMI) / (60% of Monthly Income) × 100 */
 const calculateFitScore = (data) => {
-  const monthlyIncome = monthlyIncomeValues[data.monthlyIncome] || 0;
+  const monthlyIncome = getMonthlyIncome(data);
   const existingEmi = emiNumericValues[data.existingEmi] || 0;
 
   const maxEmiCapacity = 0.6 * monthlyIncome;
@@ -148,7 +157,7 @@ const calculateFitScore = (data) => {
 
 /* Helper to compute eligible loan amount based on available EMI capacity */
 const computeEligibleLoan = (data, rate = 8.5, tenureYears = 20) => {
-  const monthlyIncome = monthlyIncomeValues[data.monthlyIncome] || 0;
+  const monthlyIncome = getMonthlyIncome(data);
   const existingEmi = emiNumericValues[data.existingEmi] || 0;
   const availableEmi = Math.max(0, 0.6 * monthlyIncome - existingEmi);
   const r = rate / 12 / 100;
@@ -228,6 +237,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
     email: "",
     occupation: "",
     monthlyIncome: "",
+    exactMonthlyIncome: "",
     employmentYears: "",
     existingEmi: "",
     emiTenure: "",
@@ -258,6 +268,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
     email: "",
     occupation: "",
     monthlyIncome: "",
+    exactMonthlyIncome: "",
     employmentYears: "",
     existingEmi: "",
     emiTenure: "",
@@ -314,6 +325,11 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
       errors.occupation = "Select your occupation";
     if (!assessmentData.monthlyIncome)
       errors.monthlyIncome = "Select your income range";
+    else if (assessmentData.monthlyIncome === "exact") {
+      const exactVal = parseInt(assessmentData.exactMonthlyIncome);
+      if (!assessmentData.exactMonthlyIncome || isNaN(exactVal) || exactVal <= 0)
+        errors.exactMonthlyIncome = "Enter a valid monthly income";
+    }
     if (!assessmentData.creditScore)
       errors.creditScore = "Select your credit score range";
     if (!assessmentData.existingEmi) errors.existingEmi = "Select existing EMI";
@@ -358,11 +374,12 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
           email: assessmentData.email || "",
           propertyId: property?.id || null,
           source: "financial-assessment",
-          message: `Financial Assessment Lead | Score: ${score}/100 | Occupation: ${assessmentData.occupation} | Monthly Income: ${assessmentData.monthlyIncome} | Credit: ${assessmentData.creditScore} | EMI: ${assessmentData.existingEmi}${assessmentData.emiTenure ? " (Tenure: " + assessmentData.emiTenure + ")" : ""} | Employment: ${assessmentData.employmentYears} yrs | Down Payment: ${assessmentData.downPayment}% | Co-applicant: ${assessmentData.hasCoApplicant || "No"}${assessmentData.coApplicantIncome ? " (Income: " + assessmentData.coApplicantIncome + ")" : ""}`,
+          message: `Financial Assessment Lead | Score: ${score}/100 | Occupation: ${assessmentData.occupation} | Monthly Income: ${assessmentData.monthlyIncome === "exact" ? "₹" + assessmentData.exactMonthlyIncome : assessmentData.monthlyIncome} | Credit: ${assessmentData.creditScore} | EMI: ${assessmentData.existingEmi}${assessmentData.emiTenure ? " (Tenure: " + assessmentData.emiTenure + ")" : ""} | Employment: ${assessmentData.employmentYears} yrs | Down Payment: ${assessmentData.downPayment}% | Co-applicant: ${assessmentData.hasCoApplicant || "No"}${assessmentData.coApplicantIncome ? " (Income: " + assessmentData.coApplicantIncome + ")" : ""}`,
           assessmentData: {
             score,
             occupation: assessmentData.occupation,
             monthlyIncome: assessmentData.monthlyIncome,
+            exactMonthlyIncome: assessmentData.exactMonthlyIncome || "",
             employmentYears: assessmentData.employmentYears,
             existingEmi: assessmentData.existingEmi,
             emiTenure: assessmentData.emiTenure,
@@ -398,6 +415,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
       email: savedUserDetails?.email || "",
       occupation: "",
       monthlyIncome: "",
+      exactMonthlyIncome: "",
       employmentYears: "",
       existingEmi: "",
       emiTenure: "",
@@ -436,6 +454,11 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
     if (!modalFormData.occupation) errors.occupation = "Select your occupation";
     if (!modalFormData.monthlyIncome)
       errors.monthlyIncome = "Select your income range";
+    else if (modalFormData.monthlyIncome === "exact") {
+      const exactVal = parseInt(modalFormData.exactMonthlyIncome);
+      if (!modalFormData.exactMonthlyIncome || isNaN(exactVal) || exactVal <= 0)
+        errors.exactMonthlyIncome = "Enter a valid monthly income";
+    }
     if (!modalFormData.creditScore)
       errors.creditScore = "Select your credit score range";
     if (!modalFormData.existingEmi) errors.existingEmi = "Select existing EMI";
@@ -463,12 +486,13 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
           email: modalFormData.email || "",
           propertyId: property?.id || null,
           source: "bank-eligibility-check",
-          message: `Bank Eligibility Check — ${eligibilityModal.bank?.name} | Score: ${score}/100 | Occupation: ${modalFormData.occupation} | Monthly Income: ${modalFormData.monthlyIncome} | Credit: ${modalFormData.creditScore} | EMI: ${modalFormData.existingEmi}${modalFormData.emiTenure ? " (Tenure: " + modalFormData.emiTenure + ")" : ""} | Employment: ${modalFormData.employmentYears} yrs | Down Payment: ${modalFormData.downPayment}% | Co-applicant: ${modalFormData.hasCoApplicant || "No"}${modalFormData.coApplicantIncome ? " (Income: " + modalFormData.coApplicantIncome + ")" : ""}`,
+          message: `Bank Eligibility Check — ${eligibilityModal.bank?.name} | Score: ${score}/100 | Occupation: ${modalFormData.occupation} | Monthly Income: ${modalFormData.monthlyIncome === "exact" ? "₹" + modalFormData.exactMonthlyIncome : modalFormData.monthlyIncome} | Credit: ${modalFormData.creditScore} | EMI: ${modalFormData.existingEmi}${modalFormData.emiTenure ? " (Tenure: " + modalFormData.emiTenure + ")" : ""} | Employment: ${modalFormData.employmentYears} yrs | Down Payment: ${modalFormData.downPayment}% | Co-applicant: ${modalFormData.hasCoApplicant || "No"}${modalFormData.coApplicantIncome ? " (Income: " + modalFormData.coApplicantIncome + ")" : ""}`,
           assessmentData: {
             score,
             bank: eligibilityModal.bank?.name,
             occupation: modalFormData.occupation,
             monthlyIncome: modalFormData.monthlyIncome,
+            exactMonthlyIncome: modalFormData.exactMonthlyIncome || "",
             employmentYears: modalFormData.employmentYears,
             existingEmi: modalFormData.existingEmi,
             emiTenure: modalFormData.emiTenure,
@@ -618,7 +642,12 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
             <select
               className={`${styles.formSelect} ${errors.monthlyIncome ? styles.formInputError : ""}`}
               value={data.monthlyIncome}
-              onChange={(e) => onChange("monthlyIncome", e.target.value)}
+              onChange={(e) => {
+                onChange("monthlyIncome", e.target.value);
+                if (e.target.value !== "exact") {
+                  onChange("exactMonthlyIncome", "");
+                }
+              }}
             >
               <option value="">Select income range</option>
               {incomeRanges.map((opt) => (
@@ -629,6 +658,22 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
             </select>
             {errors.monthlyIncome && (
               <span className={styles.fieldError}>{errors.monthlyIncome}</span>
+            )}
+            {data.monthlyIncome === "exact" && (
+              <div className={styles.exactIncomeWrap}>
+                <span className={styles.exactIncomePrefix}>₹</span>
+                <input
+                  type="number"
+                  className={`${styles.formInput} ${styles.exactIncomeInput} ${errors.exactMonthlyIncome ? styles.formInputError : ""}`}
+                  placeholder="e.g. 75000"
+                  value={data.exactMonthlyIncome}
+                  onChange={(e) => onChange("exactMonthlyIncome", e.target.value)}
+                  min="1"
+                />
+              </div>
+            )}
+            {errors.exactMonthlyIncome && (
+              <span className={styles.fieldError}>{errors.exactMonthlyIncome}</span>
             )}
           </div>
           <div className={styles.formField}>
@@ -1147,7 +1192,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                       <h4 className={styles.breakdownTitle}>Eligibility Breakdown</h4>
                       <div className={styles.breakdownGrid}>
                         {(() => {
-                          const mIncome = monthlyIncomeValues[assessmentData.monthlyIncome] || 0;
+                          const mIncome = getMonthlyIncome(assessmentData);
                           const eEmi = emiNumericValues[assessmentData.existingEmi] || 0;
                           const maxCapacity = Math.round(0.6 * mIncome);
                           const availableEmi = Math.max(0, maxCapacity - eEmi);
@@ -1716,7 +1761,7 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
                     >
                       {(() => {
                         const mScoreInfo = getScoreLabel(modalFitScore);
-                        const mIncome = monthlyIncomeValues[modalFormData.monthlyIncome] || 0;
+                        const mIncome = getMonthlyIncome(modalFormData);
                         const eEmi = emiNumericValues[modalFormData.existingEmi] || 0;
                         const availableEmi = Math.max(0, 0.6 * mIncome - eEmi);
                         const eligibleLoan = computeEligibleLoan(modalFormData, eligibilityModal.bank?.rate || 8.5);

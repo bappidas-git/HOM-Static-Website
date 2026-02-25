@@ -571,6 +571,43 @@
   margin-top: 2px;
 }
 
+/* ─── Exact Income Input ─── */
+.exactIncomeWrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 8px;
+  position: relative;
+}
+
+.exactIncomePrefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.exactIncomeInput {
+  padding-left: 30px !important;
+}
+
+/* Hide number input spinners */
+.exactIncomeInput::-webkit-outer-spin-button,
+.exactIncomeInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.exactIncomeInput[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* ─── Chip Selector ─── */
 .chipSelector {
   display: flex;
