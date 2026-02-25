@@ -1744,6 +1744,80 @@
       "notes": [],
       "createdAt": "2026-02-23T11:33:29.774Z",
       "updatedAt": "2026-02-23T11:33:29.774Z"
+    },
+    {
+      "id": "36c1",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "+919707112233",
+      "propertyId": "2",
+      "source": "brochure_download",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-23T15:08:07.543Z",
+      "updatedAt": "2026-02-23T15:08:07.543Z"
+    },
+    {
+      "id": "9f1e",
+      "name": "Bappi Das",
+      "phone": "7567568686",
+      "email": "mail4bappidas@gmail.com",
+      "propertyId": "2",
+      "source": "financial-assessment",
+      "message": "Financial Assessment Lead | Score: 95/100 | Occupation: salaried | Income: 50+ LPA | Credit: good | EMI: 0 | Employment: 10+ yrs | Down Payment: 30% | Co-applicant: yes (Income: 10-20)",
+      "assessmentData": {
+        "score": 95,
+        "occupation": "salaried",
+        "yearlyIncome": "50+",
+        "employmentYears": "10+",
+        "existingEmi": "0",
+        "creditScore": "good",
+        "downPayment": "30",
+        "hasCoApplicant": "yes",
+        "coApplicantIncome": "10-20",
+        "propertyPrice": 19500000
+      },
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-23T15:12:40.071Z",
+      "updatedAt": "2026-02-23T15:12:40.071Z"
+    },
+    {
+      "id": "e338",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "2313123213",
+      "propertyId": "2",
+      "source": "floorplan_download",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-25T03:51:55.315Z",
+      "updatedAt": "2026-02-25T03:51:55.315Z"
+    },
+    {
+      "id": "e310",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "2313123213",
+      "propertyId": "2",
+      "source": "brochure_download",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-25T03:53:03.171Z",
+      "updatedAt": "2026-02-25T03:53:03.171Z"
+    },
+    {
+      "id": "c6d6",
+      "name": "Bappi Das",
+      "email": "mail4bappidas@gmail.com",
+      "phone": "2313123213",
+      "message": "I'm interested in Mahindra Blossom",
+      "propertyId": "2",
+      "source": "property_enquiry",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-25T03:53:17.909Z",
+      "updatedAt": "2026-02-25T03:53:17.909Z"
     }
   ],
   "neighborhoods": [
@@ -2166,6 +2240,26 @@
       "isActive": true,
       "seoTitle": "North Bangalore Real Estate: India's Fastest Growing Corridor | H.O.M Advisory",
       "seoDescription": "Complete guide to North Bangalore's real estate growth story. Airport corridor, Aerospace SEZ, and investment opportunities."
+    },
+    {
+      "id": "8a37",
+      "title": "Test Article",
+      "slug": "test-article",
+      "category": "buying-guide",
+      "tags": [
+        "test",
+        "article",
+        "sample"
+      ],
+      "image": "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606789/main-sample.png",
+      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla condimentum metus arcu, sed tincidunt dui pharetra eu. Pellentesque quis tincidunt metus. Aenean nisi dolor, tincidunt a facilisis sed, blandit in justo. Fusce vel nisi ac diam sagittis auctor vel ut nisl. Sed pulvinar magna vitae dui posuere sagittis. Suspendisse facilisis eu turpis aliquam laoreet. In quis orci at felis commodo laoreet. Phasellus nec augue egestas, dignissim neque ut, vulputate mi. Curabitur gravida neque massa, non iaculis metus faucibus vitae.\n\nIn egestas massa quis lorem tincidunt, vel sollicitudin ante volutpat. Morbi vitae velit sodales, iaculis nulla ac, condimentum eros. Nullam mattis scelerisque dolor eu rutrum. Pellentesque efficitur eu lectus rhoncus efficitur. Nam dolor mauris, finibus efficitur augue sit amet, scelerisque aliquet arcu. Suspendisse potenti. Nam et lectus quis ipsum porttitor tempus. Phasellus tempus, quam nec placerat volutpat, quam erat sodales lectus, in convallis urna eros vel massa. Donec non turpis erat. Nulla facilisi. Vestibulum sed ligula ac lacus suscipit fermentum nec eu risus. In magna sem, fringilla in lacus vitae, vestibulum pulvinar nisi. Integer ullamcorper, diam id fermentum pellentesque, diam nulla rutrum lectus, vitae aliquam ipsum magna feugiat sapien. Nunc ac tincidunt neque, pulvinar commodo lectus. Etiam in justo in ligula tristique venenatis.\n\nAenean sit amet ex eleifend, posuere velit in, ultricies mi. Aliquam interdum, ipsum sit amet sodales commodo, nunc libero finibus lacus, vitae hendrerit sem tortor eget nisl. Duis eleifend eros eu aliquet accumsan. Praesent ornare purus libero, id egestas augue pellentesque vitae. Duis placerat sollicitudin justo, sit amet congue est fermentum eu. Ut laoreet rhoncus lorem, id imperdiet justo vulputate at. Mauris posuere a massa elementum consectetur. Nunc iaculis sapien sed ultricies venenatis.\n\nAenean non rhoncus risus. Aliquam lacus mi, eleifend ac dolor vitae, posuere interdum orci. Donec quis cursus leo, ut malesuada nulla. Pellentesque ultricies tellus a magna eleifend, blandit commodo metus pharetra. Quisque placerat turpis in iaculis hendrerit. Quisque facilisis dui ligula, a tempus mi interdum at. In vestibulum lorem eget sagittis fermentum. Nullam eget enim scelerisque nunc ornare dictum. Fusce felis ex, vehicula non interdum eu, convallis non risus. Etiam vestibulum at velit in porttitor. Nunc tincidunt condimentum arcu vitae tincidunt. Aenean ultricies pretium massa, quis tincidunt odio auctor vitae. Quisque consequat iaculis ullamcorper. Aenean eget enim at leo egestas lacinia. Nulla facilisi.\n\nMauris eleifend eleifend ipsum, ac bibendum est volutpat vel. Vestibulum ex mauris, dapibus eu interdum at, egestas ac risus. Nulla eget ultrices tortor. Quisque vel consequat dui. Cras quis euismod neque. Nunc et libero et ex interdum blandit. Phasellus sed sem eu neque ultrices molestie. Pellentesque ut nisl nec eros dignissim molestie vel et elit. Fusce vel sagittis turpis, porta tincidunt felis. Aenean dui enim, volutpat sit amet fringilla sit amet, ornare in felis. Phasellus sit amet tempus felis. Pellentesque in bibendum nibh. In id tellus id justo convallis interdum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+      "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla condimentum metus arcu, sed tincidunt dui pharetra eu. Pellentesque quis tincidunt metus. Aenean nisi dolor, tincidunt a facilisis sed, b",
+      "author": "H.O.M Advisory Team",
+      "readTime": 5,
+      "seoTitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "seoDescription": "",
+      "isActive": true,
+      "publishedAt": "2026-02-25T02:56:36.647Z"
     }
   ],
   "siteSettings": {
