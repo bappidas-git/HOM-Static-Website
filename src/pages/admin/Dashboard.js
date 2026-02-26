@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
-import { propertyService, leadService, articleService } from '../../services/api';
+import { propertyService, leadService, articleService, dashboardService } from '../../services/api';
 
 // Animated counter hook
 const useAnimatedCount = (target, duration = 1200) => {
@@ -42,73 +42,75 @@ const useAnimatedCount = (target, duration = 1200) => {
   return count;
 };
 
-// Stats Card Component
+// Stats Card Component — compact layout
 const StatsCard = ({ icon, iconColor, iconBg, label, value, subLabel, trend, trendUp, loading }) => {
   const animatedValue = useAnimatedCount(loading ? 0 : value);
 
   return (
     <Paper
       sx={{
-        p: 3,
-        borderRadius: 3,
+        p: 2.5,
+        borderRadius: 2.5,
         height: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        gap: 1.5,
+        alignItems: 'center',
+        gap: 2,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
           boxShadow: '0px 8px 24px rgba(0,0,0,0.08)',
         },
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Box
-          sx={{
-            width: 48,
-            height: 48,
-            borderRadius: 2,
-            bgcolor: iconBg,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Icon icon={icon} style={{ fontSize: 24, color: iconColor }} />
-        </Box>
-        {trend && (
-          <Chip
-            size="small"
-            icon={
-              <Icon
-                icon={trendUp ? 'mdi:trending-up' : 'mdi:trending-down'}
-                style={{ fontSize: 14 }}
-              />
-            }
-            label={trend}
-            sx={{
-              height: 24,
-              fontSize: '0.7rem',
-              fontWeight: 600,
-              bgcolor: trendUp ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
-              color: trendUp ? '#059669' : '#DC2626',
-              '& .MuiChip-icon': { color: 'inherit' },
-            }}
-          />
-        )}
+      <Box
+        sx={{
+          width: 44,
+          height: 44,
+          borderRadius: 2,
+          bgcolor: iconBg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}
+      >
+        <Icon icon={icon} style={{ fontSize: 22, color: iconColor }} />
       </Box>
-      <Box>
-        {loading ? (
-          <Skeleton width={60} height={40} />
-        ) : (
-          <Typography variant="h4" sx={{ fontWeight: 700, color: '#1B2A4A', fontFamily: 'DM Sans' }}>
-            {animatedValue.toLocaleString()}
-          </Typography>
-        )}
-        <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: 500 }}>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {loading ? (
+            <Skeleton width={50} height={32} />
+          ) : (
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#1B2A4A', fontFamily: 'DM Sans', lineHeight: 1.2 }}>
+              {animatedValue.toLocaleString()}
+            </Typography>
+          )}
+          {trend && (
+            <Chip
+              size="small"
+              icon={
+                <Icon
+                  icon={trendUp ? 'mdi:trending-up' : 'mdi:trending-down'}
+                  style={{ fontSize: 12 }}
+                />
+              }
+              label={trend}
+              sx={{
+                height: 20,
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                bgcolor: trendUp ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+                color: trendUp ? '#059669' : '#DC2626',
+                '& .MuiChip-icon': { color: 'inherit', ml: '4px' },
+                '& .MuiChip-label': { px: 0.5 },
+              }}
+            />
+          )}
+        </Box>
+        <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 500, lineHeight: 1.3 }}>
           {label}
         </Typography>
         {subLabel && (
-          <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
+          <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', fontSize: '0.675rem', lineHeight: 1.2 }}>
             {subLabel}
           </Typography>
         )}
@@ -236,12 +238,38 @@ const Dashboard = () => {
     totalArticles: 0,
     publishedArticles: 0,
     draftArticles: 0,
+    websiteVisits: 0,
   });
   const [recentLeads, setRecentLeads] = useState([]);
   const [properties, setProperties] = useState([]);
 
   const fetchDashboardData = useCallback(async () => {
     try {
+      // Try unified dashboard API first (production-ready)
+      try {
+        const dashData = await dashboardService.get();
+        if (dashData && dashData.totalProperties !== undefined) {
+          setStats({
+            totalProperties: dashData.totalProperties || 0,
+            activeProperties: dashData.activeProperties || 0,
+            inactiveProperties: dashData.inactiveProperties || 0,
+            totalLeads: dashData.totalLeads || 0,
+            newLeads7Days: dashData.newLeads7Days || 0,
+            totalArticles: dashData.totalArticles || 0,
+            publishedArticles: dashData.publishedArticles || 0,
+            draftArticles: dashData.draftArticles || 0,
+            websiteVisits: dashData.websiteVisits || 0,
+          });
+          setRecentLeads(dashData.recentLeads || []);
+          setProperties(dashData.propertiesByStatus || []);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Dashboard API not available — fallback to individual calls
+      }
+
+      // Fallback: fetch from individual endpoints
       const results = await Promise.allSettled([
         propertyService.getAll(),
         leadService.getAll(),
@@ -276,6 +304,7 @@ const Dashboard = () => {
         totalArticles: allArticles.length,
         publishedArticles: published.length,
         draftArticles: drafts.length,
+        websiteVisits: 0,
       });
 
       setRecentLeads(
@@ -339,100 +368,160 @@ const Dashboard = () => {
 
   return (
     <Box>
-      {/* Welcome Section */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: '#1B2A4A', mb: 0.5 }}>
-          Welcome back, {user?.name?.split(' ')[0] || 'Admin'}
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#6B7280' }}>
-          {today}
-        </Typography>
+      {/* Welcome + Quick Actions Row */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, flexWrap: 'wrap', gap: 1.5 }}>
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1B2A4A', lineHeight: 1.3 }}>
+            Welcome back, {user?.name?.split(' ')[0] || 'Admin'}
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
+            {today}
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Button
+            size="small"
+            variant="contained"
+            color="primary"
+            startIcon={<Icon icon="mdi:plus" style={{ fontSize: 16 }} />}
+            onClick={() => navigate('/admin/properties/add')}
+            sx={{ borderRadius: 1.5, fontSize: '0.8rem', textTransform: 'none', py: 0.75 }}
+          >
+            Add Property
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            color="primary"
+            startIcon={<Icon icon="mdi:pencil-outline" style={{ fontSize: 16 }} />}
+            onClick={() => navigate('/admin/articles/add')}
+            sx={{ borderRadius: 1.5, fontSize: '0.8rem', textTransform: 'none', py: 0.75, display: { xs: 'none', sm: 'inline-flex' } }}
+          >
+            Write Article
+          </Button>
+        </Box>
       </Box>
 
       {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} lg={3}>
+      <Grid container spacing={2} sx={{ mb: 2.5 }}>
+        <Grid item xs={6} md={3}>
           <StatsCard
             icon="mdi:home-city-outline"
             iconColor="#1B2A4A"
             iconBg="rgba(27,42,74,0.08)"
-            label="Total Properties"
+            label="Properties"
             value={stats.totalProperties}
-            subLabel={`${stats.activeProperties} active, ${stats.inactiveProperties} inactive`}
+            subLabel={`${stats.activeProperties} active`}
             trend="+12%"
             trendUp
             loading={loading}
           />
         </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        <Grid item xs={6} md={3}>
           <StatsCard
             icon="mdi:account-group-outline"
             iconColor="#3B82F6"
             iconBg="rgba(59,130,246,0.08)"
-            label="Total Leads"
+            label="Leads"
             value={stats.totalLeads}
-            subLabel={`${stats.newLeads7Days} new in last 7 days`}
+            subLabel={`${stats.newLeads7Days} this week`}
             trend="+8%"
             trendUp
             loading={loading}
           />
         </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        <Grid item xs={6} md={3}>
           <StatsCard
             icon="mdi:newspaper-variant-outline"
             iconColor="#10B981"
             iconBg="rgba(16,185,129,0.08)"
-            label="Total Articles"
+            label="Articles"
             value={stats.totalArticles}
-            subLabel={`${stats.publishedArticles} published, ${stats.draftArticles} drafts`}
+            subLabel={`${stats.publishedArticles} published`}
             trend="+5%"
             trendUp
             loading={loading}
           />
         </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        <Grid item xs={6} md={3}>
           <StatsCard
             icon="mdi:eye-outline"
             iconColor="#8B5CF6"
             iconBg="rgba(139,92,246,0.08)"
-            label="Website Visits"
-            value={12847}
-            subLabel="Last 30 days"
-            trend="+18%"
-            trendUp
+            label="Visits (30d)"
+            value={stats.websiteVisits || 0}
+            subLabel="Tracking pending"
             loading={loading}
           />
         </Grid>
       </Grid>
 
-      {/* Charts Row */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 2 }}>
+      {/* Charts + Recent Leads — 3-column layout on desktop */}
+      <Grid container spacing={2} sx={{ mb: 2.5 }}>
+        {/* Lead Sources */}
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2.5, borderRadius: 2.5, height: '100%' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 1.5 }}>
               Leads by Source
             </Typography>
             {sourceBarData.length > 0 ? (
-              <BarChart data={sourceBarData} />
+              <BarChart data={sourceBarData} maxHeight={100} />
             ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 150, color: '#9CA3AF' }}>
-                <Typography variant="body2">No lead data available</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: '#9CA3AF' }}>
+                <Typography variant="caption">No lead data</Typography>
               </Box>
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 2 }}>
+        {/* Property Status */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper sx={{ p: 2.5, borderRadius: 2.5, height: '100%' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 1.5 }}>
               Properties by Status
             </Typography>
             {properties.length > 0 ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1 }}>
-                <DonutChart data={propertyStatusData} />
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <DonutChart data={propertyStatusData} size={130} />
               </Box>
             ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 150, color: '#9CA3AF' }}>
-                <Typography variant="body2">No property data available</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: '#9CA3AF' }}>
+                <Typography variant="caption">No data</Typography>
+              </Box>
+            )}
+          </Paper>
+        </Grid>
+        {/* Lead Status Summary */}
+        <Grid item xs={12} sm={6} md={5}>
+          <Paper sx={{ p: 2.5, borderRadius: 2.5, height: '100%' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A' }}>
+                Lead Status Overview
+              </Typography>
+            </Box>
+            {recentLeads.length > 0 ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {Object.entries(leadStatusConfig).map(([key, cfg]) => {
+                  const count = recentLeads.filter((l) => l.status === key).length;
+                  const pct = recentLeads.length > 0 ? Math.round((count / recentLeads.length) * 100) : 0;
+                  return (
+                    <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: cfg.color, flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ color: '#6B7280', flex: 1, minWidth: 70 }}>
+                        {cfg.label}
+                      </Typography>
+                      <Box sx={{ flex: 2, height: 6, bgcolor: '#F3F4F6', borderRadius: 1, overflow: 'hidden' }}>
+                        <Box sx={{ width: `${pct}%`, height: '100%', bgcolor: cfg.color, borderRadius: 1, transition: 'width 0.6s ease' }} />
+                      </Box>
+                      <Typography variant="caption" sx={{ color: '#1B2A4A', fontWeight: 600, minWidth: 24, textAlign: 'right' }}>
+                        {count}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: '#9CA3AF' }}>
+                <Typography variant="caption">No lead data</Typography>
               </Box>
             )}
           </Paper>
@@ -440,17 +529,17 @@ const Dashboard = () => {
       </Grid>
 
       {/* Recent Leads Table */}
-      <Paper sx={{ borderRadius: 3, mb: 3, overflow: 'hidden' }}>
-        <Box sx={{ p: 3, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1B2A4A' }}>
+      <Paper sx={{ borderRadius: 2.5, overflow: 'hidden' }}>
+        <Box sx={{ px: 2.5, py: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1B2A4A' }}>
             Recent Leads
           </Typography>
           <Button
             size="small"
             variant="text"
             onClick={() => navigate('/admin/leads')}
-            endIcon={<Icon icon="mdi:arrow-right" />}
-            sx={{ color: '#6B7280', '&:hover': { color: '#1B2A4A' } }}
+            endIcon={<Icon icon="mdi:arrow-right" style={{ fontSize: 14 }} />}
+            sx={{ color: '#6B7280', fontSize: '0.75rem', '&:hover': { color: '#1B2A4A' } }}
           >
             View All
           </Button>
@@ -458,14 +547,14 @@ const Dashboard = () => {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem' }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem' }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem', display: { xs: 'none', sm: 'table-cell' } }}>Phone</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem', display: { xs: 'none', md: 'table-cell' } }}>Source</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem', display: { xs: 'none', lg: 'table-cell' } }}>Property</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem' }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.75rem', display: { xs: 'none', sm: 'table-cell' } }}>Date</TableCell>
+              <TableRow sx={{ '& th': { bgcolor: '#FAFAFA', py: 1 } }}>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>Email</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, display: { xs: 'none', sm: 'table-cell' } }}>Phone</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, display: { xs: 'none', md: 'table-cell' } }}>Source</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, display: { xs: 'none', lg: 'table-cell' } }}>Property</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6B7280', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, display: { xs: 'none', sm: 'table-cell' } }}>Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -513,8 +602,8 @@ const Dashboard = () => {
                           size="small"
                           label={statusCfg.label}
                           sx={{
-                            height: 22,
-                            fontSize: '0.6875rem',
+                            height: 20,
+                            fontSize: '0.65rem',
                             fontWeight: 600,
                             bgcolor: statusCfg.bg,
                             color: statusCfg.color,
@@ -525,7 +614,6 @@ const Dashboard = () => {
                         {new Date(lead.createdAt).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
-                          year: 'numeric',
                         })}
                       </TableCell>
                     </TableRow>
@@ -535,42 +623,6 @@ const Dashboard = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
-
-      {/* Quick Actions */}
-      <Paper sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1B2A4A', mb: 2 }}>
-          Quick Actions
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<Icon icon="mdi:plus" />}
-            onClick={() => navigate('/admin/properties/add')}
-            sx={{ borderRadius: 2 }}
-          >
-            Add New Property
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<Icon icon="mdi:account-group-outline" />}
-            onClick={() => navigate('/admin/leads')}
-            sx={{ borderRadius: 2 }}
-          >
-            View All Leads
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<Icon icon="mdi:pencil-outline" />}
-            onClick={() => navigate('/admin/articles/add')}
-            sx={{ borderRadius: 2 }}
-          >
-            Write Article
-          </Button>
-        </Box>
       </Paper>
     </Box>
   );

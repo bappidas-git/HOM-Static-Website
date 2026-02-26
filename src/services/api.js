@@ -642,4 +642,298 @@ export const adminService = {
   },
 };
 
+// === Dashboard Service (Unified API) ===
+// When Laravel backend is available, this calls GET /api/dashboard
+// which returns all dashboard data in a single request.
+// Fallback: the Dashboard component fetches individual endpoints.
+export const dashboardService = {
+  get: async () => {
+    try {
+      const response = await apiClient.get('/api/dashboard');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+};
+
+/*
+ * ══════════════════════════════════════════════════════════════
+ * Dashboard API Design (for Laravel backend implementation)
+ * ══════════════════════════════════════════════════════════════
+ *
+ * GET /api/dashboard
+ *
+ * Response Schema:
+ * {
+ *   "totalProperties": 42,
+ *   "activeProperties": 38,
+ *   "inactiveProperties": 4,
+ *   "totalLeads": 156,
+ *   "newLeads7Days": 12,
+ *   "totalArticles": 24,
+ *   "publishedArticles": 20,
+ *   "draftArticles": 4,
+ *   "websiteVisits": 12847,        // from visits table (last 30 days)
+ *   "leadsBySource": [
+ *     { "source": "property-detail-page", "count": 45 },
+ *     { "source": "homepage-contact-form", "count": 32 },
+ *     ...
+ *   ],
+ *   "propertiesByStatus": [
+ *     { "status": "ready-to-move", "count": 20 },
+ *     { "status": "under-construction", "count": 15 },
+ *     { "status": "pre-launch", "count": 7 }
+ *   ],
+ *   "recentLeads": [
+ *     {
+ *       "id": 1,
+ *       "name": "John Doe",
+ *       "email": "john@example.com",
+ *       "phone": "9876543210",
+ *       "source": "property-detail-page",
+ *       "propertyId": 5,
+ *       "status": "new",
+ *       "createdAt": "2026-02-25T10:30:00Z"
+ *     },
+ *     ... (up to 10 most recent)
+ *   ]
+ * }
+ *
+ * Laravel Controller:
+ * ─────────────────
+ * class DashboardController extends Controller
+ * {
+ *     public function index()
+ *     {
+ *         return response()->json([
+ *             'totalProperties'    => Property::count(),
+ *             'activeProperties'   => Property::where('is_active', true)->count(),
+ *             'inactiveProperties' => Property::where('is_active', false)->count(),
+ *             'totalLeads'         => Lead::count(),
+ *             'newLeads7Days'      => Lead::where('created_at', '>=', now()->subDays(7))->count(),
+ *             'totalArticles'      => Article::count(),
+ *             'publishedArticles'  => Article::where('is_active', true)->count(),
+ *             'draftArticles'      => Article::where('is_active', false)->count(),
+ *             'websiteVisits'      => Visit::where('visited_at', '>=', now()->subDays(30))
+ *                                         ->distinct('visitor_id')->count('visitor_id'),
+ *             'leadsBySource'      => Lead::select('source', DB::raw('count(*) as count'))
+ *                                         ->groupBy('source')->get(),
+ *             'propertiesByStatus' => Property::where('is_active', true)
+ *                                         ->select('status', DB::raw('count(*) as count'))
+ *                                         ->groupBy('status')->get(),
+ *             'recentLeads'        => Lead::with('property:id,title')
+ *                                         ->latest()->limit(10)->get(),
+ *         ]);
+ *     }
+ * }
+ *
+ * Route (api.php):
+ * ─────────────────
+ * Route::middleware('auth:sanctum')->group(function () {
+ *     Route::get('/dashboard', [DashboardController::class, 'index']);
+ * });
+ */
+
+// === Visit Tracking Service ===
+// Records visitor sessions for website analytics.
+// See visitTrackingStrategy below for full design.
+export const visitService = {
+  record: async (data = {}) => {
+    try {
+      const response = await apiClient.post('/api/visits', data);
+      return response.data;
+    } catch {
+      // Silently fail — visit tracking should never block UX
+    }
+  },
+};
+
+/*
+ * ══════════════════════════════════════════════════════════════
+ * TASK 3C — Website Visits Tracking Strategy
+ * ══════════════════════════════════════════════════════════════
+ *
+ * GOAL: Track unique website visits accurately without third-party
+ * analytics, in a Laravel/MySQL production environment.
+ *
+ * ─── 1. How Visits SHOULD Be Counted ───────────────────────
+ *
+ * A "visit" = one unique session per visitor per time window.
+ * NOT page views (which inflate on refresh/navigation).
+ *
+ * Counting logic:
+ * - Generate a visitor_id (UUID stored in localStorage)
+ * - On each page load, send visitor_id + metadata to API
+ * - Server deduplicates by visitor_id + session window (30 min TTL)
+ * - Only one "visit" recorded per visitor per 30-minute window
+ *
+ * ─── 2. Client-Side Implementation ────────────────────────
+ *
+ * On app mount (e.g., in App.js or a useEffect hook):
+ *
+ *   const getVisitorId = () => {
+ *     let vid = localStorage.getItem('hom_visitor_id');
+ *     if (!vid) {
+ *       vid = crypto.randomUUID();
+ *       localStorage.setItem('hom_visitor_id', vid);
+ *     }
+ *     return vid;
+ *   };
+ *
+ *   // Check session window — don't send if last ping < 30 min ago
+ *   const lastVisit = sessionStorage.getItem('hom_last_visit');
+ *   const now = Date.now();
+ *   if (!lastVisit || now - parseInt(lastVisit) > 30 * 60 * 1000) {
+ *     visitService.record({
+ *       visitor_id: getVisitorId(),
+ *       page: window.location.pathname,
+ *       referrer: document.referrer || null,
+ *       user_agent: navigator.userAgent,
+ *     });
+ *     sessionStorage.setItem('hom_last_visit', now.toString());
+ *   }
+ *
+ * ─── 3. Laravel/MySQL Database Design ─────────────────────
+ *
+ * Migration:
+ *
+ *   Schema::create('visits', function (Blueprint $table) {
+ *       $table->id();
+ *       $table->string('visitor_id', 64)->index();
+ *       $table->string('session_id', 64)->nullable()->index();
+ *       $table->ipAddress('ip_address')->nullable();
+ *       $table->string('page', 500)->nullable();
+ *       $table->string('referrer', 500)->nullable();
+ *       $table->string('user_agent', 500)->nullable();
+ *       $table->string('device_type', 20)->nullable();    // desktop/mobile/tablet
+ *       $table->string('country', 2)->nullable();         // from IP geolocation
+ *       $table->timestamp('visited_at')->useCurrent()->index();
+ *
+ *       // Composite index for dedup check
+ *       $table->index(['visitor_id', 'visited_at']);
+ *   });
+ *
+ *   // Optional: daily aggregation table for fast dashboard queries
+ *   Schema::create('visit_daily_stats', function (Blueprint $table) {
+ *       $table->id();
+ *       $table->date('date')->unique();
+ *       $table->unsignedInteger('unique_visitors')->default(0);
+ *       $table->unsignedInteger('total_visits')->default(0);
+ *       $table->unsignedInteger('mobile_visits')->default(0);
+ *       $table->unsignedInteger('desktop_visits')->default(0);
+ *       $table->timestamps();
+ *   });
+ *
+ * ─── 4. Server-Side Deduplication (Controller) ────────────
+ *
+ *   class VisitController extends Controller
+ *   {
+ *       public function store(Request $request)
+ *       {
+ *           $visitorId = $request->input('visitor_id');
+ *           $ip = $request->ip();
+ *
+ *           // TTL-based dedup: skip if same visitor visited in last 30 min
+ *           $recentVisit = Visit::where('visitor_id', $visitorId)
+ *               ->where('visited_at', '>=', now()->subMinutes(30))
+ *               ->exists();
+ *
+ *           if ($recentVisit) {
+ *               return response()->json(['recorded' => false], 200);
+ *           }
+ *
+ *           Visit::create([
+ *               'visitor_id'  => $visitorId,
+ *               'session_id'  => Str::random(32),
+ *               'ip_address'  => $ip,
+ *               'page'        => Str::limit($request->input('page', '/'), 500),
+ *               'referrer'    => Str::limit($request->input('referrer'), 500),
+ *               'user_agent'  => Str::limit($request->input('user_agent'), 500),
+ *               'device_type' => $this->detectDevice($request->userAgent()),
+ *               'visited_at'  => now(),
+ *           ]);
+ *
+ *           return response()->json(['recorded' => true], 201);
+ *       }
+ *
+ *       private function detectDevice($ua)
+ *       {
+ *           if (preg_match('/mobile/i', $ua)) return 'mobile';
+ *           if (preg_match('/tablet|ipad/i', $ua)) return 'tablet';
+ *           return 'desktop';
+ *       }
+ *   }
+ *
+ * ─── 5. Bot Filtering ────────────────────────────────────
+ *
+ * Add middleware to reject known bots:
+ *
+ *   class FilterBotVisits
+ *   {
+ *       public function handle($request, Closure $next)
+ *       {
+ *           $ua = strtolower($request->userAgent() ?? '');
+ *           $bots = ['bot', 'crawler', 'spider', 'scraper',
+ *                    'curl', 'wget', 'python', 'headless'];
+ *
+ *           foreach ($bots as $bot) {
+ *               if (str_contains($ua, $bot)) {
+ *                   return response()->json(['filtered' => true], 200);
+ *               }
+ *           }
+ *           return $next($request);
+ *       }
+ *   }
+ *
+ * ─── 6. Aggregation Strategy ─────────────────────────────
+ *
+ * Run a daily scheduled command to pre-aggregate stats:
+ *
+ *   // app/Console/Commands/AggregateVisitStats.php
+ *   // Schedule: $schedule->command('visits:aggregate')->dailyAt('02:00');
+ *
+ *   $date = Carbon::yesterday();
+ *   VisitDailyStat::updateOrCreate(
+ *       ['date' => $date->toDateString()],
+ *       [
+ *           'unique_visitors' => Visit::whereDate('visited_at', $date)
+ *               ->distinct('visitor_id')->count('visitor_id'),
+ *           'total_visits'    => Visit::whereDate('visited_at', $date)->count(),
+ *           'mobile_visits'   => Visit::whereDate('visited_at', $date)
+ *               ->where('device_type', 'mobile')->count(),
+ *           'desktop_visits'  => Visit::whereDate('visited_at', $date)
+ *               ->where('device_type', 'desktop')->count(),
+ *       ]
+ *   );
+ *
+ * ─── 7. Dashboard Query (Fast) ───────────────────────────
+ *
+ *   // For dashboard "Website Visits (last 30 days)" card:
+ *   $visits30d = VisitDailyStat::where('date', '>=', now()->subDays(30))
+ *       ->sum('unique_visitors');
+ *
+ *   // For charts: daily trend
+ *   $dailyTrend = VisitDailyStat::where('date', '>=', now()->subDays(30))
+ *       ->orderBy('date')
+ *       ->get(['date', 'unique_visitors', 'total_visits']);
+ *
+ * ─── 8. Summary ──────────────────────────────────────────
+ *
+ *   ┌──────────────────┬──────────────────────────────────┐
+ *   │ Concern          │ Solution                         │
+ *   ├──────────────────┼──────────────────────────────────┤
+ *   │ Unique visitors  │ localStorage UUID (visitor_id)   │
+ *   │ Session window   │ 30-min TTL dedup (server-side)   │
+ *   │ Reload inflation │ Client + server dedup prevents   │
+ *   │ Bot filtering    │ User-agent middleware             │
+ *   │ Storage          │ visits table + daily aggregation  │
+ *   │ Performance      │ Composite indexes + pre-aggregation│
+ *   │ Privacy          │ No PII stored, IP optional       │
+ *   │ Scalability      │ Partition by month if needed     │
+ *   └──────────────────┴──────────────────────────────────┘
+ *
+ * ══════════════════════════════════════════════════════════════
+ */
+
 export default apiClient;

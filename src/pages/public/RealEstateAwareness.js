@@ -288,21 +288,23 @@ const RealEstateAwareness = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
                 >
                   <div className={styles.eduHeader}>
                     <div className={styles.eduIconWrap}>
                       <Icon icon={section.icon} />
                     </div>
-                    <h3 className={styles.eduTitle}>{section.title}</h3>
-                    <p className={styles.eduSummary}>{section.summary}</p>
-                    <button
-                      className={styles.eduToggle}
-                      onClick={() => toggleSection(section.id)}
-                    >
-                      {expandedSection === section.id ? 'Show Less' : 'Learn More'}
-                      <Icon icon={expandedSection === section.id ? 'mdi:chevron-up' : 'mdi:chevron-down'} />
-                    </button>
+                    <div className={styles.eduHeaderText}>
+                      <h3 className={styles.eduTitle}>{section.title}</h3>
+                      <p className={styles.eduSummary}>{section.summary}</p>
+                      <button
+                        className={styles.eduToggle}
+                        onClick={() => toggleSection(section.id)}
+                      >
+                        {expandedSection === section.id ? 'Show Less' : 'Learn More'}
+                        <Icon icon={expandedSection === section.id ? 'mdi:chevron-up' : 'mdi:chevron-down'} />
+                      </button>
+                    </div>
                   </div>
                   <AnimatePresence initial={false}>
                     {expandedSection === section.id && (
