@@ -89,22 +89,7 @@
     padding: 48px 0;
   }
 
-  .grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 16px;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .grid::-webkit-scrollbar {
-    display: none;
-  }
-
   .card {
-    min-width: 280px;
-    scroll-snap-align: start;
-    flex-shrink: 0;
+    padding: 24px 20px;
   }
 }
