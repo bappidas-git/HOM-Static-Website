@@ -1904,28 +1904,27 @@
         "3",
         "4"
       ],
-      "seoTitle": "Test Property",
-      "seoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem ex, maximus ut turpis sit amet, mattis rutrum elit. Etiam tincidunt congue augue.",
+      "seoTitle": "Test Property | 1 BHK, 2 BHK, 3 BHK in Khanapara, Guwahati",
+      "seoDescription": "Test Property by Assam Digital in Khanapara, Guwahati. 1 BHK, 2 BHK, 3 BHK apartments from 1200-3500 sqft. Possession: Dec 2032.",
       "seoKeywords": [
-        "test",
-        "keyword",
-        "guwhati",
-        "mero",
-        "best property"
+        "test property",
+        "khanapara apartments",
+        "assam digital guwahati",
+        "buy guwahati"
       ],
       "ogTitle": "",
       "ogDescription": "",
       "ogImage": "",
       "twitterCard": "summary_large_image",
       "canonicalUrl": "",
-      "schemaMarkup": "",
+      "schemaMarkup": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Residence\",\n  \"name\": \"Test Property\",\n  \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem ex, maximus ut turpis sit amet, mattis rutrum elit. Etiam tincidunt congue augue, ut finibus tortor hendrerit ac. Cras quis dolor ut\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"addressLocality\": \"Khanapara\",\n    \"addressRegion\": \"Guwahati\"\n  }\n}",
       "tags": [
         "featured"
       ],
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-26T05:21:16.906Z"
+      "updatedAt": "2026-02-26T05:54:45.315Z"
     }
   ],
   "leads": [
@@ -2345,7 +2344,7 @@
       "id": "1",
       "name": "Electronic City",
       "image": "https://placehold.co/400x300/goldenrod/white?text=Electronic+City",
-      "propertyCount": 52,
+      "propertyCount": 1,
       "city": "Bangalore",
       "isActive": true
     },
@@ -2796,10 +2795,10 @@
     },
     "newsletterText": "Get latest real estate updates in your inbox",
     "heroText": {
-      "title": "Find Your Dream Home with Us!",
+      "title": "Find Your Dream Home",
       "subtitle": "Discover the perfect property from our exclusive collection!!!",
-      "backgroundMedia": "https://placehold.co/1920x800/1B2A4A/white?text=Luxury+Property",
-      "backgroundImage": ""
+      "backgroundMedia": "https://video.gumlet.io/688f392c0f894537edc335ad/68a7315019535c52efc9edc9/download.mp4",
+      "backgroundImage": "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606781/samples/balloons.jpg"
     },
     "tagline": "ELEVATING EVERY EXPERIENCE IN REAL ESTATE",
     "companyName": "H.O.M Advisory",
