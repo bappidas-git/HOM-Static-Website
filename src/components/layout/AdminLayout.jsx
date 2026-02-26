@@ -61,6 +61,11 @@ const navItems = [
     path: '/admin/faqs',
   },
   {
+    label: 'Neighborhoods',
+    icon: 'mdi:map-marker-radius-outline',
+    path: '/admin/neighborhoods',
+  },
+  {
     label: 'Site Settings',
     icon: 'mdi:cog-outline',
     path: '/admin/settings',
@@ -77,6 +82,7 @@ const pageTitles = {
   '/admin/articles/add': 'New Article',
   '/admin/seo': 'SEO Manager',
   '/admin/faqs': 'FAQ Manager',
+  '/admin/neighborhoods': 'Neighborhoods',
   '/admin/settings': 'Site Settings',
 };
 

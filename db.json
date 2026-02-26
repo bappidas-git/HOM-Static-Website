@@ -2797,7 +2797,9 @@
     "newsletterText": "Get latest real estate updates in your inbox",
     "heroText": {
       "title": "Find Your Dream Home with Us!",
-      "subtitle": "Discover the perfect property from our exclusive collection!!!"
+      "subtitle": "Discover the perfect property from our exclusive collection!!!",
+      "backgroundMedia": "https://placehold.co/1920x800/1B2A4A/white?text=Luxury+Property",
+      "backgroundImage": ""
     },
     "tagline": "ELEVATING EVERY EXPERIENCE IN REAL ESTATE",
     "companyName": "H.O.M Advisory",

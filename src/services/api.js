@@ -101,10 +101,15 @@ export const propertyService = {
   getFeatured: async () => {
     try {
       const response = await apiClient.get('/properties', {
-        params: { tags_like: 'featured', isActive: true },
+        params: { isActive: true },
       });
-      // Ensure array response for safety
-      return Array.isArray(response.data) ? response.data : [];
+      const data = normalizeListResponse(response.data);
+      // Client-side filter for 'featured' tag to remain backend-agnostic.
+      // When migrating to Laravel, replace with a dedicated /properties/featured endpoint
+      // or server-side tag filtering.
+      return data.filter(
+        (p) => Array.isArray(p.tags) && p.tags.includes('featured')
+      );
     } catch (error) {
       throw error;
     }
@@ -312,10 +317,9 @@ export const neighborhoodService = {
 export const partnerService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/partners', {
-        params: { _sort: 'order', _order: 'asc', ...params },
-      });
-      return normalizeListResponse(response.data);
+      const response = await apiClient.get('/partners', { params });
+      const data = normalizeListResponse(response.data);
+      return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     } catch (error) {
       throw error;
     }
@@ -333,9 +337,10 @@ export const partnerService = {
   getActive: async () => {
     try {
       const response = await apiClient.get('/partners', {
-        params: { isActive: true, _sort: 'order', _order: 'asc' },
+        params: { isActive: true },
       });
-      return normalizeListResponse(response.data);
+      const data = normalizeListResponse(response.data);
+      return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     } catch (error) {
       throw error;
     }
@@ -373,10 +378,9 @@ export const partnerService = {
 export const faqService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/faqs', {
-        params: { _sort: 'order', _order: 'asc', ...params },
-      });
-      return normalizeListResponse(response.data);
+      const response = await apiClient.get('/faqs', { params });
+      const data = normalizeListResponse(response.data);
+      return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     } catch (error) {
       throw error;
     }
@@ -394,9 +398,10 @@ export const faqService = {
   getByCategory: async (category) => {
     try {
       const response = await apiClient.get('/faqs', {
-        params: { category, isActive: true, _sort: 'order', _order: 'asc' },
+        params: { category, isActive: true },
       });
-      return normalizeListResponse(response.data);
+      const data = normalizeListResponse(response.data);
+      return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     } catch (error) {
       throw error;
     }
@@ -434,10 +439,11 @@ export const faqService = {
 export const articleService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/articles', {
-        params: { _sort: 'publishedAt', _order: 'desc', ...params },
-      });
-      return normalizeListResponse(response.data);
+      const response = await apiClient.get('/articles', { params });
+      const data = normalizeListResponse(response.data);
+      return data.sort(
+        (a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
+      );
     } catch (error) {
       throw error;
     }

@@ -6,6 +6,8 @@ import { useInView } from 'react-intersection-observer';
 import { neighborhoodService } from '../../../services/api';
 import styles from './ExploreNeighborhoods.module.css';
 
+const FALLBACK_IMAGE = 'https://placehold.co/400x300/1B2A4A/white?text=Neighborhood';
+
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: (i) => ({
@@ -18,13 +20,14 @@ const cardVariants = {
 const ExploreNeighborhoods = () => {
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imgErrors, setImgErrors] = useState({});
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await neighborhoodService.getActive();
-        setNeighborhoods(data.slice(0, 3));
+        setNeighborhoods(Array.isArray(data) ? data : []);
       } catch {
         setNeighborhoods([]);
       } finally {
@@ -34,6 +37,11 @@ const ExploreNeighborhoods = () => {
     fetchData();
   }, []);
 
+  const handleImgError = (id) => {
+    setImgErrors((prev) => ({ ...prev, [id]: true }));
+  };
+
+  // Don't render the section if loading or no neighborhoods
   if (loading) return null;
   if (!neighborhoods.length) return null;
 
@@ -66,18 +74,21 @@ const ExploreNeighborhoods = () => {
                 className={styles.card}
               >
                 <img
-                  src={item.image}
+                  src={imgErrors[item.id] ? FALLBACK_IMAGE : (item.image || FALLBACK_IMAGE)}
                   alt={item.name}
                   className={styles.cardImage}
                   loading="lazy"
+                  onError={() => handleImgError(item.id)}
                 />
                 <div className={styles.cardOverlay} />
                 <div className={styles.cardContent}>
                   <h3 className={styles.cardName}>{item.name}</h3>
-                  <span className={styles.cardCount}>
-                    <Icon icon="mdi:home-group" className={styles.countIcon} />
-                    {item.propertyCount} Properties
-                  </span>
+                  {item.propertyCount != null && (
+                    <span className={styles.cardCount}>
+                      <Icon icon="mdi:home-group" className={styles.countIcon} />
+                      {item.propertyCount} Properties
+                    </span>
+                  )}
                 </div>
               </Link>
             </motion.div>
