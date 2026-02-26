@@ -65,7 +65,18 @@ const PropertyListing = ({ routePath }) => {
   const [searchParams] = useSearchParams();
 
   const currentPath = routePath || location.pathname;
-  const config = ROUTE_CONFIG[currentPath] || ROUTE_CONFIG['/properties'];
+  const baseConfig = ROUTE_CONFIG[currentPath] || ROUTE_CONFIG['/properties'];
+
+  // Dynamic config override based on URL type param (for homepage category card links)
+  const TYPE_LABELS = {
+    sale: { title: 'Properties for Sale', subtitle: 'Explore premium properties available for purchase', seoTitle: 'Properties for Sale | H.O.M Advisory' },
+    rent: { title: 'Properties for Rent', subtitle: 'Find rental properties with flexible terms and premium amenities', seoTitle: 'Properties for Rent | H.O.M Advisory' },
+    lease: { title: 'Commercial Spaces for Lease', subtitle: 'Discover premium commercial and office spaces for your business', seoTitle: 'Office Spaces for Lease | H.O.M Advisory' },
+  };
+
+  const urlType = searchParams.get('type');
+  const typeOverride = urlType && !baseConfig.preFilters.type ? TYPE_LABELS[urlType] : null;
+  const config = typeOverride ? { ...baseConfig, ...typeOverride, preFilters: baseConfig.preFilters } : baseConfig;
 
   const [allProperties, setAllProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +124,12 @@ const PropertyListing = ({ routePath }) => {
       }
       if (config.preFilters.propertyType) {
         params.propertyType = config.preFilters.propertyType;
+      }
+
+      // Apply type filter from URL param (used by category cards on homepage)
+      const urlType = searchParams.get('type');
+      if (urlType && !config.preFilters.type) {
+        params.type = urlType;
       }
 
       // Search query from URL
