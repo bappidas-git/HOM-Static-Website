@@ -1919,11 +1919,13 @@
       "twitterCard": "summary_large_image",
       "canonicalUrl": "",
       "schemaMarkup": "",
-      "tags": [],
+      "tags": [
+        "featured"
+      ],
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-25T15:28:34.806Z"
+      "updatedAt": "2026-02-25T16:14:26.233Z"
     }
   ],
   "leads": [
@@ -2324,6 +2326,18 @@
       "notes": [],
       "createdAt": "2026-02-25T05:54:28.325Z",
       "updatedAt": "2026-02-25T05:54:28.325Z"
+    },
+    {
+      "id": "c031",
+      "email": "mail4bappidas@gmail.com",
+      "name": "",
+      "phone": "",
+      "source": "newsletter",
+      "message": "Newsletter subscription",
+      "status": "new",
+      "notes": [],
+      "createdAt": "2026-02-26T05:10:50.633Z",
+      "updatedAt": "2026-02-26T05:10:50.633Z"
     }
   ],
   "neighborhoods": [
