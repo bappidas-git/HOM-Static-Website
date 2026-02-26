@@ -5,8 +5,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   background-color: #1B2A4A;
+}
+
+/* Clips parallax background without hiding the suggestions dropdown */
+.bgClip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
 }
 
 .bgImage {
@@ -305,5 +312,9 @@
   .bgImage,
   .bgVideoWrapper {
     inset: -40px 0 0 0;
+  }
+
+  .bgClip {
+    inset: 0;
   }
 }
