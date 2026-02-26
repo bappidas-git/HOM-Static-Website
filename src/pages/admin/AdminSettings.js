@@ -11,6 +11,7 @@ import {
   Alert,
   Skeleton,
   Divider,
+  IconButton,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { siteSettingsService } from '../../services/api';
@@ -545,11 +546,156 @@ const AdminSettings = () => {
               />
             </FieldGroup>
 
+            <Divider sx={{ my: 3 }} />
+
+            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A', mb: 2 }}>
+              Footer Gallery Images
+            </Typography>
+            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 2 }}>
+              Add image URLs for the footer image collage. Recommended: 5 images for best layout.
+            </Typography>
+
+            {(settings?.footerGallery || []).map((url, idx) => (
+              <Box key={idx} sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={url}
+                  onChange={(e) => {
+                    const updated = [...(settings?.footerGallery || [])];
+                    updated[idx] = e.target.value;
+                    updateField('footerGallery', updated);
+                  }}
+                  placeholder={`Image URL ${idx + 1}`}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    const updated = (settings?.footerGallery || []).filter((_, i) => i !== idx);
+                    updateField('footerGallery', updated);
+                  }}
+                  sx={{ color: '#EF4444' }}
+                >
+                  <Icon icon="mdi:close" style={{ fontSize: 18 }} />
+                </IconButton>
+              </Box>
+            ))}
+            <Button
+              size="small"
+              startIcon={<Icon icon="mdi:plus" />}
+              onClick={() => {
+                const updated = [...(settings?.footerGallery || []), ''];
+                updateField('footerGallery', updated);
+              }}
+              sx={{ textTransform: 'none', mt: 1, color: '#1B2A4A' }}
+            >
+              Add Image
+            </Button>
+
+            <Divider sx={{ my: 3 }} />
+
+            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A', mb: 2 }}>
+              Footer Link Groups
+            </Typography>
+            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 2 }}>
+              Manage the link columns shown in the footer. Each group has a title and a set of links.
+            </Typography>
+
+            {(settings?.footerLinkGroups || []).map((group, gIdx) => (
+              <Paper key={gIdx} variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
+                <Box sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
+                  <TextField
+                    size="small"
+                    label="Group Title"
+                    value={group.title || ''}
+                    onChange={(e) => {
+                      const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
+                      updated[gIdx].title = e.target.value;
+                      updateField('footerLinkGroups', updated);
+                    }}
+                    sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      const updated = (settings?.footerLinkGroups || []).filter((_, i) => i !== gIdx);
+                      updateField('footerLinkGroups', updated);
+                    }}
+                    sx={{ color: '#EF4444' }}
+                  >
+                    <Icon icon="mdi:delete-outline" style={{ fontSize: 18 }} />
+                  </IconButton>
+                </Box>
+                {(group.links || []).map((link, lIdx) => (
+                  <Box key={lIdx} sx={{ display: 'flex', gap: 1, mb: 1, pl: 2 }}>
+                    <TextField
+                      size="small"
+                      label="Label"
+                      value={link.label || ''}
+                      onChange={(e) => {
+                        const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
+                        updated[gIdx].links[lIdx].label = e.target.value;
+                        updateField('footerLinkGroups', updated);
+                      }}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    />
+                    <TextField
+                      size="small"
+                      label="Path"
+                      value={link.path || ''}
+                      onChange={(e) => {
+                        const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
+                        updated[gIdx].links[lIdx].path = e.target.value;
+                        updateField('footerLinkGroups', updated);
+                      }}
+                      sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
+                        updated[gIdx].links = updated[gIdx].links.filter((_, i) => i !== lIdx);
+                        updateField('footerLinkGroups', updated);
+                      }}
+                      sx={{ color: '#EF4444' }}
+                    >
+                      <Icon icon="mdi:close" style={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Button
+                  size="small"
+                  startIcon={<Icon icon="mdi:plus" />}
+                  onClick={() => {
+                    const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
+                    updated[gIdx].links = [...(updated[gIdx].links || []), { label: '', path: '/' }];
+                    updateField('footerLinkGroups', updated);
+                  }}
+                  sx={{ textTransform: 'none', ml: 2, mt: 0.5, fontSize: '0.75rem' }}
+                >
+                  Add Link
+                </Button>
+              </Paper>
+            ))}
+            <Button
+              size="small"
+              startIcon={<Icon icon="mdi:plus" />}
+              onClick={() => {
+                const updated = [...(settings?.footerLinkGroups || []), { title: '', links: [] }];
+                updateField('footerLinkGroups', updated);
+              }}
+              sx={{ textTransform: 'none', color: '#1B2A4A' }}
+            >
+              Add Link Group
+            </Button>
+
+            <Divider sx={{ my: 3 }} />
+
             {/* Preview */}
             <Paper
               variant="outlined"
               sx={{
-                mt: 3,
                 p: 3,
                 borderRadius: 2,
                 bgcolor: '#1B2A4A',
