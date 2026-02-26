@@ -86,15 +86,14 @@ const Footer = () => {
     ? settings.footerLinkGroups
     : DEFAULT_LINK_GROUPS;
 
-  // Gallery images from API
-  const galleryImages = Array.isArray(settings?.footerGallery) ? settings.footerGallery : [];
+  // Gallery images from API — exactly 6 images for consistent 3x2 grid layout
+  const rawGallery = Array.isArray(settings?.footerGallery) ? settings.footerGallery : [];
+  const galleryImages = rawGallery.slice(0, 6);
 
   const [imgErrors, setImgErrors] = useState({});
   const handleImgError = (idx) => {
     setImgErrors((prev) => ({ ...prev, [idx]: true }));
   };
-
-  const visibleImages = galleryImages.filter((_, idx) => !imgErrors[idx]);
 
   return (
     <footer className={styles.footer}>
@@ -122,20 +121,23 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Image Collage — only render if images exist */}
+        {/* Image Collage — render exactly 6 images in a 3x2 grid */}
         {galleryImages.length > 0 && (
           <div className={styles.imageCollage}>
             {galleryImages.map((src, index) => (
-              !imgErrors[index] && (
-                <img
-                  key={index}
-                  src={src}
-                  alt={`Property ${index + 1}`}
-                  className={styles.collageImage}
-                  loading="lazy"
-                  onError={() => handleImgError(index)}
-                />
-              )
+              <div key={index} className={styles.collageCell}>
+                {imgErrors[index] ? (
+                  <div className={styles.collageFallback} />
+                ) : (
+                  <img
+                    src={src}
+                    alt={`Property ${index + 1}`}
+                    className={styles.collageImage}
+                    loading="lazy"
+                    onError={() => handleImgError(index)}
+                  />
+                )}
+              </div>
             ))}
           </div>
         )}

@@ -41,6 +41,7 @@ const AdminArticles = lazy(() => import('../pages/admin/AdminArticles'));
 const ArticleForm = lazy(() => import('../pages/admin/ArticleForm'));
 const FaqManager = lazy(() => import('../pages/admin/FaqManager'));
 const AdminNeighborhoods = lazy(() => import('../pages/admin/AdminNeighborhoods'));
+const AdminPartners = lazy(() => import('../pages/admin/AdminPartners'));
 const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
 
 // Public layout wrapper
@@ -109,6 +110,7 @@ const AppRoutes = () => {
           <Route path="articles/edit/:id" element={<ArticleForm />} />
           <Route path="faqs" element={<FaqManager />} />
           <Route path="neighborhoods" element={<AdminNeighborhoods />} />
+          <Route path="partners" element={<AdminPartners />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 

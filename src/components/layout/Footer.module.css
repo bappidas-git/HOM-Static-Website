@@ -79,26 +79,33 @@
   background-color: rgba(201, 168, 108, 0.1);
 }
 
-/* Image Collage */
+/* Image Collage — 3x2 uniform grid for exactly 6 images */
 .imageCollage {
   flex-shrink: 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 1fr;
+  grid-template-rows: repeat(2, 1fr);
   gap: 6px;
   width: 380px;
 }
 
-.collageImage {
-  width: 100%;
+.collageCell {
   aspect-ratio: 4 / 3;
-  object-fit: cover;
+  overflow: hidden;
   border-radius: var(--radius-sm);
 }
 
-.collageImage:first-child {
-  grid-column: 1 / 3;
-  grid-row: 1 / 2;
+.collageImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.collageFallback {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* Bottom Columns */

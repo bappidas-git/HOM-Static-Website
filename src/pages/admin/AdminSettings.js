@@ -552,11 +552,11 @@ const AdminSettings = () => {
               Footer Gallery Images
             </Typography>
             <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 2 }}>
-              Add image URLs for the footer image collage. Recommended: 5 images for best layout.
+              Add image URLs for the footer image collage. Recommended: 6 images for best layout.
             </Typography>
 
             {(settings?.footerGallery || []).map((url, idx) => (
-              <Box key={idx} sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
+              <Box key={idx} sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'flex-start' }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -567,6 +567,7 @@ const AdminSettings = () => {
                     updateField('footerGallery', updated);
                   }}
                   placeholder={`Image URL ${idx + 1}`}
+                  helperText="Aspect ratio: 4:3 (e.g. 400×300px). Min resolution: 400×300px."
                   sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                 />
                 <IconButton
@@ -575,23 +576,25 @@ const AdminSettings = () => {
                     const updated = (settings?.footerGallery || []).filter((_, i) => i !== idx);
                     updateField('footerGallery', updated);
                   }}
-                  sx={{ color: '#EF4444' }}
+                  sx={{ color: '#EF4444', mt: 0.5 }}
                 >
                   <Icon icon="mdi:close" style={{ fontSize: 18 }} />
                 </IconButton>
               </Box>
             ))}
-            <Button
-              size="small"
-              startIcon={<Icon icon="mdi:plus" />}
-              onClick={() => {
-                const updated = [...(settings?.footerGallery || []), ''];
-                updateField('footerGallery', updated);
-              }}
-              sx={{ textTransform: 'none', mt: 1, color: '#1B2A4A' }}
-            >
-              Add Image
-            </Button>
+            {(settings?.footerGallery || []).length < 6 && (
+              <Button
+                size="small"
+                startIcon={<Icon icon="mdi:plus" />}
+                onClick={() => {
+                  const updated = [...(settings?.footerGallery || []), ''];
+                  updateField('footerGallery', updated);
+                }}
+                sx={{ textTransform: 'none', mt: 1, color: '#1B2A4A' }}
+              >
+                Add Image ({6 - (settings?.footerGallery || []).length} remaining)
+              </Button>
+            )}
 
             <Divider sx={{ my: 3 }} />
 

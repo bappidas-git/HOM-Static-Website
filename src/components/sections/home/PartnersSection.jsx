@@ -44,7 +44,9 @@ const PartnersSection = () => {
     animationId = requestAnimationFrame(scroll);
 
     const handleHover = () => cancelAnimationFrame(animationId);
-    const handleLeave = () => { animationId = requestAnimationFrame(scroll); };
+    const handleLeave = () => {
+      animationId = requestAnimationFrame(scroll);
+    };
 
     el.addEventListener('mouseenter', handleHover);
     el.addEventListener('mouseleave', handleLeave);
@@ -83,23 +85,38 @@ const PartnersSection = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className={styles.marqueeTrack}>
-            {displayPartners.map((partner, idx) => (
-              <a
-                key={`${partner.id}-${idx}`}
-                href={partner.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.partnerCard}
-              >
-                <img
-                  src={partner.logo}
-                  alt={partner.name}
-                  className={styles.partnerLogo}
-                  loading="lazy"
-                />
-                <span className={styles.partnerName}>{partner.name}</span>
-              </a>
-            ))}
+            {displayPartners.map((partner, idx) => {
+              const content = (
+                <>
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className={styles.partnerLogo}
+                    loading="lazy"
+                  />
+                  <span className={styles.partnerName}>{partner.name}</span>
+                </>
+              );
+
+              return partner.website ? (
+                <a
+                  key={`${partner.id}-${idx}`}
+                  href={partner.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.partnerCard}
+                >
+                  {content}
+                </a>
+              ) : (
+                <div
+                  key={`${partner.id}-${idx}`}
+                  className={styles.partnerCard}
+                >
+                  {content}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       </div>
