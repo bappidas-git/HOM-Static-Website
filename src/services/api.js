@@ -501,6 +501,20 @@ export const articleService = {
     }
   },
 
+  getByIds: async (ids) => {
+    if (!ids || ids.length === 0) return [];
+    try {
+      // JSON Server supports ?id=1&id=2 for multiple IDs.
+      // For Laravel, replace with POST /articles/by-ids or similar endpoint.
+      const params = new URLSearchParams();
+      ids.forEach((id) => params.append('id', id));
+      const response = await apiClient.get('/articles', { params });
+      return normalizeListResponse(response.data);
+    } catch (error) {
+      throw error;
+    }
+  },
+
   getByCategory: async (category, params = {}) => {
     try {
       const response = await apiClient.get('/articles', {

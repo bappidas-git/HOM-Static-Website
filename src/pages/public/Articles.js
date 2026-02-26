@@ -133,10 +133,24 @@ const Articles = () => {
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
-  const trendingArticles = useMemo(
-    () => [...articles].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)).slice(0, 4),
-    [articles]
-  );
+  const [trendingArticles, setTrendingArticles] = useState([]);
+
+  useEffect(() => {
+    const fetchTrending = async () => {
+      try {
+        const data = await articleService.getTrending();
+        setTrendingArticles(data.slice(0, 4));
+      } catch {
+        // Fallback: use latest articles if trending fetch fails
+        if (articles.length > 0) {
+          setTrendingArticles(
+            [...articles].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)).slice(0, 4)
+          );
+        }
+      }
+    };
+    fetchTrending();
+  }, [articles]);
 
   const handleLoadMore = () => setVisibleCount((prev) => prev + ARTICLES_PER_PAGE);
 

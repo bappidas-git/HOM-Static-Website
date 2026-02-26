@@ -223,17 +223,20 @@ const ArticleDetail = () => {
         const data = await articleService.getBySlug(slug);
         setArticle(data);
         if (data) {
-          const all = await articleService.getAll({ isActive: true });
-          const related = all
-            .filter((a) => a.id !== data.id && a.category === data.category)
-            .slice(0, 3);
-          if (related.length < 3) {
-            const extra = all
-              .filter((a) => a.id !== data.id && !related.find((r) => r.id === a.id))
-              .slice(0, 3 - related.length);
-            related.push(...extra);
+          // Use admin-selected related articles if available
+          if (data.relatedArticleIds && data.relatedArticleIds.length > 0) {
+            try {
+              const selected = await articleService.getByIds(data.relatedArticleIds);
+              const activeRelated = selected.filter((a) => a.isActive !== false);
+              setRelatedArticles(activeRelated.slice(0, 3));
+            } catch {
+              // Fallback to category-based if getByIds fails
+              setRelatedArticles(await getFallbackRelated(data));
+            }
+          } else {
+            // Fallback: auto-suggest based on category
+            setRelatedArticles(await getFallbackRelated(data));
           }
-          setRelatedArticles(related);
         }
       } catch (err) {
         // Article fetch failed — UI shows error state
@@ -241,6 +244,21 @@ const ArticleDetail = () => {
         setLoading(false);
       }
     };
+
+    const getFallbackRelated = async (data) => {
+      const all = await articleService.getAll({ isActive: true });
+      const related = all
+        .filter((a) => a.id !== data.id && a.category === data.category)
+        .slice(0, 3);
+      if (related.length < 3) {
+        const extra = all
+          .filter((a) => a.id !== data.id && !related.find((r) => r.id === a.id))
+          .slice(0, 3 - related.length);
+        related.push(...extra);
+      }
+      return related;
+    };
+
     fetchArticle();
     window.scrollTo(0, 0);
   }, [slug]);
