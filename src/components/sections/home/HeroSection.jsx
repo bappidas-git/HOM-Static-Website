@@ -83,7 +83,7 @@ const HeroSection = () => {
           .slice(0, MAX_SUGGESTIONS);
 
         setSuggestions(results);
-        setShowSuggestions(results.length > 0);
+        setShowSuggestions(true);
         setHighlightIndex(-1);
       } catch {
         if (!cancelled) {
@@ -135,6 +135,11 @@ const HeroSection = () => {
   };
 
   const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      return;
+    }
+
     if (!showSuggestions || suggestions.length === 0) return;
 
     if (e.key === 'ArrowDown') {
@@ -150,13 +155,11 @@ const HeroSection = () => {
     } else if (e.key === 'Enter' && highlightIndex >= 0) {
       e.preventDefault();
       handleSuggestionClick(suggestions[highlightIndex]);
-    } else if (e.key === 'Escape') {
-      setShowSuggestions(false);
     }
   };
 
   const handleInputFocus = () => {
-    if (suggestions.length > 0 && searchQuery.trim().length >= 2) {
+    if (searchQuery.trim().length >= 2 && !suggestionsLoading) {
       setShowSuggestions(true);
     }
   };
@@ -178,45 +181,48 @@ const HeroSection = () => {
 
   return (
     <section className={styles.hero}>
-      {/* Background Media Layer */}
-      {isVideo && mediaUrl && !mediaError ? (
-        <motion.div className={styles.bgVideoWrapper} style={{ y: bgY }}>
-          <video
-            ref={videoRef}
-            className={styles.bgVideo}
-            src={mediaUrl}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            onLoadedData={handleMediaLoad}
-            onError={handleMediaError}
-          />
-        </motion.div>
-      ) : (
-        <motion.div
-          className={styles.bgImage}
-          style={{
-            y: bgY,
-            backgroundImage:
-              mediaUrl && !mediaError ? `url(${mediaUrl})` : 'none',
-            backgroundColor: !mediaUrl || mediaError ? FALLBACK_BG : undefined,
-          }}
-        >
-          {mediaUrl && !mediaError && !mediaLoaded && (
-            <img
+      {/* Background clip wrapper — clips parallax overflow without hiding suggestions */}
+      <div className={styles.bgClip}>
+        {/* Background Media Layer */}
+        {isVideo && mediaUrl && !mediaError ? (
+          <motion.div className={styles.bgVideoWrapper} style={{ y: bgY }}>
+            <video
+              ref={videoRef}
+              className={styles.bgVideo}
               src={mediaUrl}
-              alt=""
-              style={{ display: 'none' }}
-              onLoad={handleMediaLoad}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onLoadedData={handleMediaLoad}
               onError={handleMediaError}
             />
-          )}
-        </motion.div>
-      )}
+          </motion.div>
+        ) : (
+          <motion.div
+            className={styles.bgImage}
+            style={{
+              y: bgY,
+              backgroundImage:
+                mediaUrl && !mediaError ? `url(${mediaUrl})` : 'none',
+              backgroundColor: !mediaUrl || mediaError ? FALLBACK_BG : undefined,
+            }}
+          >
+            {mediaUrl && !mediaError && !mediaLoaded && (
+              <img
+                src={mediaUrl}
+                alt=""
+                style={{ display: 'none' }}
+                onLoad={handleMediaLoad}
+                onError={handleMediaError}
+              />
+            )}
+          </motion.div>
+        )}
 
-      <div className={styles.overlay} />
+        <div className={styles.overlay} />
+      </div>
 
       <div className={styles.content}>
         <motion.h1
@@ -274,7 +280,7 @@ const HeroSection = () => {
 
           {/* Suggestions Dropdown */}
           <AnimatePresence>
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && searchQuery.trim().length >= 2 && (
               <motion.ul
                 className={styles.suggestions}
                 initial={{ opacity: 0, y: -4 }}
@@ -323,7 +329,9 @@ const HeroSection = () => {
                     className={styles.suggestionViewAll}
                     onClick={() => setShowSuggestions(false)}
                   >
-                    View all results
+                    {suggestions.length > 0
+                      ? 'View all results'
+                      : `View all results for "${searchQuery.trim()}"`}
                     <Icon icon="mdi:arrow-right" />
                   </Link>
                 </li>

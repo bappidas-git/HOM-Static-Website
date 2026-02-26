@@ -64,12 +64,36 @@ const normalizeListResponse = (data) => {
   return [];
 };
 
+// json-server v1 does not reliably support ?q= for full-text search
+// (see https://github.com/typicode/json-server/issues/1633).
+// This helper filters results in the service layer as a workaround.
+// When migrating to Laravel, remove this and use server-side search.
+const filterByQuery = (items, query) => {
+  if (!query || !query.trim()) return items;
+  const q = query.trim().toLowerCase();
+  return items.filter((p) => {
+    const title = (p.title || '').toLowerCase();
+    const area = (p.location?.area || '').toLowerCase();
+    const city = (p.location?.city || '').toLowerCase();
+    const developer = (p.developer || '').toLowerCase();
+    return (
+      title.includes(q) ||
+      area.includes(q) ||
+      city.includes(q) ||
+      developer.includes(q)
+    );
+  });
+};
+
 // === Property Service ===
 export const propertyService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/properties', { params });
-      return normalizeListResponse(response.data);
+      // Extract q param — json-server v1 ignores it, so we filter client-side
+      const { q, ...serverParams } = params;
+      const response = await apiClient.get('/properties', { params: serverParams });
+      const data = normalizeListResponse(response.data);
+      return filterByQuery(data, q);
     } catch (error) {
       throw error;
     }
@@ -138,14 +162,7 @@ export const propertyService = {
   },
 
   search: async (query, params = {}) => {
-    try {
-      const response = await apiClient.get('/properties', {
-        params: { q: query, isActive: true, ...params },
-      });
-      return normalizeListResponse(response.data);
-    } catch (error) {
-      throw error;
-    }
+    return propertyService.getAll({ q: query, isActive: true, ...params });
   },
 
   create: async (data) => {
