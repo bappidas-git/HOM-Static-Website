@@ -653,12 +653,6 @@ const AdminLeads = () => {
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
-                                cursor: 'pointer',
-                                '&:hover': { textDecoration: 'underline' },
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/admin/properties/edit/${lead.propertyId}`);
                               }}
                             >
                               {propTitle}

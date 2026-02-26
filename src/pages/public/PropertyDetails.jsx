@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { propertyService, leadService } from '../../services/api';
 import { PropertyDetailSkeleton } from '../../components/common/SkeletonLoaders';
 import { useToast } from '../../components/common/ToastProvider';
+import { validateLeadForm } from '../../utils/validators';
 import { leadStorage } from '../../utils/leadStorage';
 import PropertyGallery from '../../components/sections/property/PropertyGallery';
 import PropertyOverview from '../../components/sections/property/PropertyOverview';
@@ -102,6 +103,7 @@ const PropertyDetails = () => {
   const [downloadSubmitting, setDownloadSubmitting] = useState(false);
   const [downloadSubmitted, setDownloadSubmitted] = useState(false);
   const [downloadError, setDownloadError] = useState('');
+  const [downloadErrors, setDownloadErrors] = useState({});
 
   // Document download lead capture modal state
   const [docModal, setDocModal] = useState({ open: false, docName: '' });
@@ -109,6 +111,7 @@ const PropertyDetails = () => {
   const [docSubmitting, setDocSubmitting] = useState(false);
   const [docSubmitted, setDocSubmitted] = useState(false);
   const [docError, setDocError] = useState('');
+  const [docErrors, setDocErrors] = useState({});
 
   // Pricing modal state
   const [pricingModal, setPricingModal] = useState({ open: false, config: '' });
@@ -116,6 +119,7 @@ const PropertyDetails = () => {
   const [pricingSubmitting, setPricingSubmitting] = useState(false);
   const [pricingSubmitted, setPricingSubmitted] = useState(false);
   const [pricingError, setPricingError] = useState('');
+  const [pricingErrors, setPricingErrors] = useState({});
 
   // Floor plan request modal state (separate from Contact Agent)
   const [floorPlanRequestModal, setFloorPlanRequestModal] = useState({ open: false });
@@ -123,6 +127,7 @@ const PropertyDetails = () => {
   const [floorPlanRequestSubmitting, setFloorPlanRequestSubmitting] = useState(false);
   const [floorPlanRequestSubmitted, setFloorPlanRequestSubmitted] = useState(false);
   const [floorPlanRequestError, setFloorPlanRequestError] = useState('');
+  const [floorPlanRequestErrors, setFloorPlanRequestErrors] = useState({});
 
   // Helper: save lead to sessionStorage and update state
   const saveLeadToSession = useCallback((formData, propertyId, source) => {
@@ -223,6 +228,7 @@ const PropertyDetails = () => {
     setDownloadModal({ open: true, type });
     setDownloadSubmitted(false);
     setDownloadError('');
+    setDownloadErrors({});
     setDownloadFormData(prefilled);
   }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
@@ -230,19 +236,22 @@ const PropertyDetails = () => {
     setDownloadModal({ open: false, type: '' });
     setDownloadSubmitted(false);
     setDownloadError('');
+    setDownloadErrors({});
   }, []);
 
   const handleDownloadFormChange = useCallback((e) => {
     const { name, value } = e.target;
     setDownloadFormData((prev) => ({ ...prev, [name]: value }));
+    setDownloadErrors((prev) => ({ ...prev, [name]: '' }));
   }, []);
 
   const handleDownloadSubmit = useCallback(async (e) => {
     e.preventDefault();
     setDownloadError('');
 
-    if (!downloadFormData.name.trim() || !downloadFormData.phone.trim()) {
-      setDownloadError('Name and phone are required');
+    const { valid, errors: vErrors } = validateLeadForm(downloadFormData);
+    if (!valid) {
+      setDownloadErrors(vErrors);
       return;
     }
 
@@ -274,6 +283,7 @@ const PropertyDetails = () => {
     setDocModal({ open: true, docName });
     setDocSubmitted(false);
     setDocError('');
+    setDocErrors({});
     setDocFormData(prefilled);
   }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
@@ -281,19 +291,22 @@ const PropertyDetails = () => {
     setDocModal({ open: false, docName: '' });
     setDocSubmitted(false);
     setDocError('');
+    setDocErrors({});
   }, []);
 
   const handleDocFormChange = useCallback((e) => {
     const { name, value } = e.target;
     setDocFormData((prev) => ({ ...prev, [name]: value }));
+    setDocErrors((prev) => ({ ...prev, [name]: '' }));
   }, []);
 
   const handleDocSubmit = useCallback(async (e) => {
     e.preventDefault();
     setDocError('');
 
-    if (!docFormData.name.trim() || !docFormData.phone.trim()) {
-      setDocError('Name and phone are required');
+    const { valid, errors: vErrors } = validateLeadForm(docFormData);
+    if (!valid) {
+      setDocErrors(vErrors);
       return;
     }
 
@@ -325,6 +338,7 @@ const PropertyDetails = () => {
     setPricingModal({ open: true, config });
     setPricingSubmitted(false);
     setPricingError('');
+    setPricingErrors({});
     setPricingFormData(prefilled);
   }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
@@ -332,19 +346,22 @@ const PropertyDetails = () => {
     setPricingModal({ open: false, config: '' });
     setPricingSubmitted(false);
     setPricingError('');
+    setPricingErrors({});
   }, []);
 
   const handlePricingFormChange = useCallback((e) => {
     const { name, value } = e.target;
     setPricingFormData((prev) => ({ ...prev, [name]: value }));
+    setPricingErrors((prev) => ({ ...prev, [name]: '' }));
   }, []);
 
   const handlePricingSubmit = useCallback(async (e) => {
     e.preventDefault();
     setPricingError('');
 
-    if (!pricingFormData.name.trim() || !pricingFormData.phone.trim()) {
-      setPricingError('Name and phone are required');
+    const { valid, errors: vErrors } = validateLeadForm(pricingFormData);
+    if (!valid) {
+      setPricingErrors(vErrors);
       return;
     }
 
@@ -376,6 +393,7 @@ const PropertyDetails = () => {
     setFloorPlanRequestModal({ open: true });
     setFloorPlanRequestSubmitted(false);
     setFloorPlanRequestError('');
+    setFloorPlanRequestErrors({});
     setFloorPlanRequestFormData(prefilled);
   }, [leadCaptured, showLeadCapturedAlert, getPrefilledData]);
 
@@ -383,19 +401,22 @@ const PropertyDetails = () => {
     setFloorPlanRequestModal({ open: false });
     setFloorPlanRequestSubmitted(false);
     setFloorPlanRequestError('');
+    setFloorPlanRequestErrors({});
   }, []);
 
   const handleFloorPlanRequestFormChange = useCallback((e) => {
     const { name, value } = e.target;
     setFloorPlanRequestFormData((prev) => ({ ...prev, [name]: value }));
+    setFloorPlanRequestErrors((prev) => ({ ...prev, [name]: '' }));
   }, []);
 
   const handleFloorPlanRequestSubmit = useCallback(async (e) => {
     e.preventDefault();
     setFloorPlanRequestError('');
 
-    if (!floorPlanRequestFormData.name.trim() || !floorPlanRequestFormData.phone.trim()) {
-      setFloorPlanRequestError('Name and phone are required');
+    const { valid, errors: vErrors } = validateLeadForm(floorPlanRequestFormData);
+    if (!valid) {
+      setFloorPlanRequestErrors(vErrors);
       return;
     }
 
@@ -621,32 +642,39 @@ const PropertyDetails = () => {
                 <>
                   <h3 className={styles.modalTitle}>{downloadModalTitle}</h3>
                   <form onSubmit={handleDownloadSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name *"
-                      value={downloadFormData.name}
-                      onChange={handleDownloadFormChange}
-                      required
-                      style={inputStyle}
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      value={downloadFormData.email}
-                      onChange={handleDownloadFormChange}
-                      style={inputStyle}
-                    />
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone Number *"
-                      value={downloadFormData.phone}
-                      onChange={handleDownloadFormChange}
-                      required
-                      style={inputStyle}
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name *"
+                        value={downloadFormData.name}
+                        onChange={handleDownloadFormChange}
+                        style={downloadErrors.name ? inputErrorStyle : inputStyle}
+                      />
+                      {downloadErrors.name && <span style={fieldErrorTextStyle}>{downloadErrors.name}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        value={downloadFormData.email}
+                        onChange={handleDownloadFormChange}
+                        style={downloadErrors.email ? inputErrorStyle : inputStyle}
+                      />
+                      {downloadErrors.email && <span style={fieldErrorTextStyle}>{downloadErrors.email}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Phone Number *"
+                        value={downloadFormData.phone}
+                        onChange={handleDownloadFormChange}
+                        style={downloadErrors.phone ? inputErrorStyle : inputStyle}
+                      />
+                      {downloadErrors.phone && <span style={fieldErrorTextStyle}>{downloadErrors.phone}</span>}
+                    </div>
                     {downloadError && (
                       <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
                         {downloadError}
@@ -734,32 +762,39 @@ const PropertyDetails = () => {
                     Please share your details to receive the document.
                   </p>
                   <form onSubmit={handleDocSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name *"
-                      value={docFormData.name}
-                      onChange={handleDocFormChange}
-                      required
-                      style={inputStyle}
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      value={docFormData.email}
-                      onChange={handleDocFormChange}
-                      style={inputStyle}
-                    />
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone Number *"
-                      value={docFormData.phone}
-                      onChange={handleDocFormChange}
-                      required
-                      style={inputStyle}
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name *"
+                        value={docFormData.name}
+                        onChange={handleDocFormChange}
+                        style={docErrors.name ? inputErrorStyle : inputStyle}
+                      />
+                      {docErrors.name && <span style={fieldErrorTextStyle}>{docErrors.name}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        value={docFormData.email}
+                        onChange={handleDocFormChange}
+                        style={docErrors.email ? inputErrorStyle : inputStyle}
+                      />
+                      {docErrors.email && <span style={fieldErrorTextStyle}>{docErrors.email}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Phone Number *"
+                        value={docFormData.phone}
+                        onChange={handleDocFormChange}
+                        style={docErrors.phone ? inputErrorStyle : inputStyle}
+                      />
+                      {docErrors.phone && <span style={fieldErrorTextStyle}>{docErrors.phone}</span>}
+                    </div>
                     {docError && (
                       <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
                         {docError}
@@ -855,32 +890,39 @@ const PropertyDetails = () => {
                     Please share your details to receive the complete pricing breakdown including all charges and payment plans.
                   </p>
                   <form onSubmit={handlePricingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name *"
-                      value={pricingFormData.name}
-                      onChange={handlePricingFormChange}
-                      required
-                      style={inputStyle}
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      value={pricingFormData.email}
-                      onChange={handlePricingFormChange}
-                      style={inputStyle}
-                    />
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone Number *"
-                      value={pricingFormData.phone}
-                      onChange={handlePricingFormChange}
-                      required
-                      style={inputStyle}
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name *"
+                        value={pricingFormData.name}
+                        onChange={handlePricingFormChange}
+                        style={pricingErrors.name ? inputErrorStyle : inputStyle}
+                      />
+                      {pricingErrors.name && <span style={fieldErrorTextStyle}>{pricingErrors.name}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        value={pricingFormData.email}
+                        onChange={handlePricingFormChange}
+                        style={pricingErrors.email ? inputErrorStyle : inputStyle}
+                      />
+                      {pricingErrors.email && <span style={fieldErrorTextStyle}>{pricingErrors.email}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Phone Number *"
+                        value={pricingFormData.phone}
+                        onChange={handlePricingFormChange}
+                        style={pricingErrors.phone ? inputErrorStyle : inputStyle}
+                      />
+                      {pricingErrors.phone && <span style={fieldErrorTextStyle}>{pricingErrors.phone}</span>}
+                    </div>
                     {pricingError && (
                       <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
                         {pricingError}
@@ -976,32 +1018,39 @@ const PropertyDetails = () => {
                     Please share your details to receive the complete floor plan with dimensions and layout details.
                   </p>
                   <form onSubmit={handleFloorPlanRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name *"
-                      value={floorPlanRequestFormData.name}
-                      onChange={handleFloorPlanRequestFormChange}
-                      required
-                      style={inputStyle}
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      value={floorPlanRequestFormData.email}
-                      onChange={handleFloorPlanRequestFormChange}
-                      style={inputStyle}
-                    />
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone Number *"
-                      value={floorPlanRequestFormData.phone}
-                      onChange={handleFloorPlanRequestFormChange}
-                      required
-                      style={inputStyle}
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name *"
+                        value={floorPlanRequestFormData.name}
+                        onChange={handleFloorPlanRequestFormChange}
+                        style={floorPlanRequestErrors.name ? inputErrorStyle : inputStyle}
+                      />
+                      {floorPlanRequestErrors.name && <span style={fieldErrorTextStyle}>{floorPlanRequestErrors.name}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        value={floorPlanRequestFormData.email}
+                        onChange={handleFloorPlanRequestFormChange}
+                        style={floorPlanRequestErrors.email ? inputErrorStyle : inputStyle}
+                      />
+                      {floorPlanRequestErrors.email && <span style={fieldErrorTextStyle}>{floorPlanRequestErrors.email}</span>}
+                    </div>
+                    <div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Phone Number *"
+                        value={floorPlanRequestFormData.phone}
+                        onChange={handleFloorPlanRequestFormChange}
+                        style={floorPlanRequestErrors.phone ? inputErrorStyle : inputStyle}
+                      />
+                      {floorPlanRequestErrors.phone && <span style={fieldErrorTextStyle}>{floorPlanRequestErrors.phone}</span>}
+                    </div>
                     {floorPlanRequestError && (
                       <p style={{ color: '#dc2626', fontSize: '0.8rem', fontFamily: '"DM Sans", sans-serif' }}>
                         {floorPlanRequestError}
@@ -1247,6 +1296,19 @@ const inputStyle = {
   color: '#1B2A4A',
   outline: 'none',
   background: '#fff',
+};
+
+const inputErrorStyle = {
+  ...inputStyle,
+  border: '1.5px solid #dc2626',
+};
+
+const fieldErrorTextStyle = {
+  color: '#dc2626',
+  fontSize: '0.75rem',
+  fontFamily: '"DM Sans", sans-serif',
+  marginTop: '4px',
+  display: 'block',
 };
 
 const shareOptionStyle = {

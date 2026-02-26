@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../../services/api';
 import { useToast } from '../../common/ToastProvider';
+import { validateLeadForm, sanitizeInput } from '../../../utils/validators';
 import styles from './EnquiryForm.module.css';
 
 const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptured }) => {
@@ -15,6 +16,7 @@ const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptu
   const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
   const [error, setError] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -33,14 +35,18 @@ const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptu
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!formData.name || !formData.phone) {
-      setError('Name and phone are required');
+    const { valid, errors: validationErrors } = validateLeadForm(formData);
+    if (!valid) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -102,9 +108,9 @@ const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptu
           placeholder="Your Name *"
           value={formData.name}
           onChange={handleChange}
-          className={styles.input}
-          required
+          className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
         />
+        {errors.name && <span className={styles.errorText}>{errors.name}</span>}
       </div>
 
       <div className={styles.field}>
@@ -114,8 +120,9 @@ const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptu
           placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
-          className={styles.input}
+          className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
         />
+        {errors.email && <span className={styles.errorText}>{errors.email}</span>}
       </div>
 
       <div className={styles.field}>
@@ -125,9 +132,9 @@ const EnquiryForm = ({ property, isMobile = false, savedUserDetails, onLeadCaptu
           placeholder="Phone Number *"
           value={formData.phone}
           onChange={handleChange}
-          className={styles.input}
-          required
+          className={`${styles.input} ${errors.phone ? styles.inputError : ''}`}
         />
+        {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
       </div>
 
       <div className={styles.field}>
