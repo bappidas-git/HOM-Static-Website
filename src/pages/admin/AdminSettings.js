@@ -256,43 +256,109 @@ const AdminSettings = () => {
               />
             </FieldGroup>
 
-            <FieldGroup label="Hero Background Image URL">
+            <Divider sx={{ my: 3 }} />
+
+            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A', mb: 2 }}>
+              Background Media
+            </Typography>
+
+            <FieldGroup label="Background Media URL (Image or Video)">
+              <TextField
+                fullWidth
+                size="small"
+                value={settings?.heroText?.backgroundMedia || ''}
+                onChange={(e) => updateField('heroText.backgroundMedia', e.target.value)}
+                placeholder="https://example.com/hero-bg.jpg or .mp4"
+                helperText="Supports images (.jpg, .png, .webp) and videos (.mp4, .webm). Type is auto-detected from URL."
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+            </FieldGroup>
+
+            {(() => {
+              const mediaUrl = settings?.heroText?.backgroundMedia || settings?.heroText?.backgroundImage || '';
+              const isVideo = mediaUrl && ['.mp4', '.webm', '.ogg', '.mov'].some((ext) => mediaUrl.toLowerCase().includes(ext));
+              if (!mediaUrl) return null;
+              return (
+                <Box sx={{ mb: 2 }}>
+                  <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Icon icon={isVideo ? 'mdi:video-outline' : 'mdi:image-outline'} style={{ fontSize: 16 }} />
+                    Detected: {isVideo ? 'Video' : 'Image'}
+                  </Typography>
+                </Box>
+              );
+            })()}
+
+            <FieldGroup label="Fallback Background Image URL (optional)">
               <TextField
                 fullWidth
                 size="small"
                 value={settings?.heroText?.backgroundImage || ''}
                 onChange={(e) => updateField('heroText.backgroundImage', e.target.value)}
-                placeholder="https://example.com/hero-bg.jpg"
+                placeholder="https://example.com/hero-fallback.jpg"
+                helperText="Used as fallback if the primary media URL fails to load."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
             </FieldGroup>
 
             {/* Preview */}
-            <Paper
-              variant="outlined"
-              sx={{
-                mt: 3,
-                p: 4,
-                borderRadius: 2,
-                bgcolor: '#1B2A4A',
-                textAlign: 'center',
-                backgroundImage: settings?.heroText?.backgroundImage
-                  ? `linear-gradient(rgba(27,42,74,0.7), rgba(27,42,74,0.85)), url(${settings.heroText.backgroundImage})`
-                  : 'none',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <Typography sx={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.5)', mb: 1 }}>
-                Hero Preview
-              </Typography>
-              <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', mb: 0.5 }}>
-                {settings?.heroText?.title || 'Hero Title'}
-              </Typography>
-              <Typography sx={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
-                {settings?.heroText?.subtitle || 'Hero subtitle text'}
-              </Typography>
-            </Paper>
+            {(() => {
+              const mediaUrl = settings?.heroText?.backgroundMedia || settings?.heroText?.backgroundImage || '';
+              const isVideo = mediaUrl && ['.mp4', '.webm', '.ogg', '.mov'].some((ext) => mediaUrl.toLowerCase().includes(ext));
+              return (
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    mt: 3,
+                    p: 4,
+                    borderRadius: 2,
+                    bgcolor: '#1B2A4A',
+                    textAlign: 'center',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minHeight: 160,
+                    ...(!isVideo && mediaUrl ? {
+                      backgroundImage: `linear-gradient(rgba(27,42,74,0.7), rgba(27,42,74,0.85)), url(${mediaUrl})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    } : {}),
+                  }}
+                >
+                  {isVideo && mediaUrl && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 0,
+                        '& video': {
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        },
+                        '&::after': {
+                          content: '""',
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'rgba(27,42,74,0.7)',
+                        },
+                      }}
+                    >
+                      <video src={mediaUrl} autoPlay muted loop playsInline />
+                    </Box>
+                  )}
+                  <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Typography sx={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.5)', mb: 1 }}>
+                      Hero Preview
+                    </Typography>
+                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', mb: 0.5 }}>
+                      {settings?.heroText?.title || 'Hero Title'}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
+                      {settings?.heroText?.subtitle || 'Hero subtitle text'}
+                    </Typography>
+                  </Box>
+                </Paper>
+              );
+            })()}
           </TabPanel>
 
           {/* Social Links Tab */}
