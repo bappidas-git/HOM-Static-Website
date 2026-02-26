@@ -1726,22 +1726,22 @@
       "nearbyPlaces": [
         {
           "name": "Tech Park",
-          "distance": "5",
+          "distance": "5 KM",
           "type": "workplace"
         },
         {
           "name": "Hosptal",
-          "distance": "1",
+          "distance": "1 KM",
           "type": "hospital"
         },
         {
           "name": "City Center",
-          "distance": "10",
+          "distance": "10 KM",
           "type": "shopping"
         },
         {
           "name": "GHY Airport",
-          "distance": "25",
+          "distance": "25 KM",
           "type": "transport"
         }
       ],
@@ -1924,7 +1924,7 @@
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-26T05:54:45.315Z"
+      "updatedAt": "2026-02-26T08:25:42.026Z"
     }
   ],
   "leads": [
@@ -2325,18 +2325,6 @@
       "notes": [],
       "createdAt": "2026-02-25T05:54:28.325Z",
       "updatedAt": "2026-02-25T05:54:28.325Z"
-    },
-    {
-      "id": "c031",
-      "email": "mail4bappidas@gmail.com",
-      "name": "",
-      "phone": "",
-      "source": "newsletter",
-      "message": "Newsletter subscription",
-      "status": "new",
-      "notes": [],
-      "createdAt": "2026-02-26T05:10:50.633Z",
-      "updatedAt": "2026-02-26T05:10:50.633Z"
     }
   ],
   "neighborhoods": [
@@ -2450,7 +2438,7 @@
     },
     {
       "id": "2",
-      "question": "How do I schedule a property viewing?",
+      "question": "How do I schedule a property viewing??",
       "answer": "You can schedule a property viewing by: 1) Clicking the 'Schedule Visit' button on any property page, 2) Calling us at (555) 123-4567, 3) Filling out the contact form on our website, or 4) Sending us an email at info@homadvisory.com. Our team will confirm and arrange the visit at your convenience.",
       "category": "general",
       "order": 2,
@@ -2901,7 +2889,8 @@
       "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop"
-    ]
+    ],
+    "newsletterSubtitle": "Subscribe & Stay Updated"
   },
   "adminUsers": [
     {
