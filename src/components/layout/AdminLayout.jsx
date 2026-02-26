@@ -66,6 +66,11 @@ const navItems = [
     path: '/admin/neighborhoods',
   },
   {
+    label: 'Partners',
+    icon: 'mdi:handshake-outline',
+    path: '/admin/partners',
+  },
+  {
     label: 'Site Settings',
     icon: 'mdi:cog-outline',
     path: '/admin/settings',
