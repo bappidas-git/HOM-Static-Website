@@ -22,7 +22,7 @@ const TrendingTopics = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const data = await articleService.getAll({ _limit: 3 });
+        const data = await articleService.getTrending();
         setArticles(data);
       } catch {
         setArticles([]);

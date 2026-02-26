@@ -472,6 +472,18 @@ export const articleService = {
     }
   },
 
+  getTrending: async () => {
+    try {
+      const response = await apiClient.get('/articles', {
+        params: { isActive: true, isTrending: true },
+      });
+      const data = normalizeListResponse(response.data);
+      return data.sort((a, b) => (a.trendingOrder ?? 999) - (b.trendingOrder ?? 999));
+    } catch (error) {
+      throw error;
+    }
+  },
+
   getByCategory: async (category, params = {}) => {
     try {
       const response = await apiClient.get('/articles', {

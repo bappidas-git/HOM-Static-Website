@@ -125,6 +125,27 @@ const AdminArticles = () => {
     }
   };
 
+  const handleToggleTrending = async (article) => {
+    const nowTrending = !article.isTrending;
+    // When marking as trending, assign next order; when unmarking, clear order
+    const trendingOrder = nowTrending
+      ? (Math.max(0, ...articles.filter((a) => a.isTrending).map((a) => a.trendingOrder ?? 0)) + 1)
+      : null;
+    try {
+      await articleService.update(article.id, { isTrending: nowTrending, trendingOrder });
+      setArticles((prev) =>
+        prev.map((a) => (a.id === article.id ? { ...a, isTrending: nowTrending, trendingOrder } : a))
+      );
+      setSnackbar({
+        open: true,
+        message: nowTrending ? 'Article marked as trending' : 'Article removed from trending',
+        severity: 'success',
+      });
+    } catch {
+      setSnackbar({ open: true, message: 'Failed to update trending status', severity: 'error' });
+    }
+  };
+
   const handleDelete = async () => {
     const { article } = deleteDialog;
     if (!article) return;
@@ -273,12 +294,19 @@ const AdminArticles = () => {
                       }}
                     />
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
                     <Chip
                       label={article.category?.replace(/-/g, ' ')}
                       size="small"
                       sx={{ fontSize: '0.625rem', height: 20, bgcolor: catStyle.bg, color: catStyle.color, textTransform: 'capitalize' }}
                     />
+                    {article.isTrending && (
+                      <Chip
+                        label={`Trending #${article.trendingOrder ?? ''}`}
+                        size="small"
+                        sx={{ fontSize: '0.625rem', height: 20, bgcolor: '#FFFBEB', color: '#F59E0B' }}
+                      />
+                    )}
                     <Typography sx={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>
                       {article.author}
                     </Typography>
@@ -286,7 +314,7 @@ const AdminArticles = () => {
                       {new Date(article.publishedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     <Button
                       size="small"
                       startIcon={<Icon icon="mdi:pencil-outline" />}
@@ -301,6 +329,13 @@ const AdminArticles = () => {
                       sx={{ textTransform: 'none', fontSize: '0.75rem' }}
                     >
                       {article.isActive ? 'Unpublish' : 'Publish'}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => handleToggleTrending(article)}
+                      sx={{ textTransform: 'none', fontSize: '0.75rem', color: article.isTrending ? '#F59E0B' : undefined }}
+                    >
+                      {article.isTrending ? 'Untrend' : 'Trend'}
                     </Button>
                     <Button
                       size="small"
@@ -324,6 +359,7 @@ const AdminArticles = () => {
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>Title</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>Category</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Status</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Trending</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>Author</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>Date</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Actions</TableCell>
@@ -373,6 +409,20 @@ const AdminArticles = () => {
                           {article.isActive ? 'Published' : 'Draft'}
                         </Typography>
                       </TableCell>
+                      <TableCell align="center">
+                        <Switch
+                          checked={!!article.isTrending}
+                          onChange={() => handleToggleTrending(article)}
+                          size="small"
+                          sx={{
+                            '& .MuiSwitch-switchBase.Mui-checked': { color: '#F59E0B' },
+                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#F59E0B' },
+                          }}
+                        />
+                        <Typography sx={{ fontSize: '0.625rem', color: article.isTrending ? '#F59E0B' : '#9CA3AF' }}>
+                          {article.isTrending ? `#${article.trendingOrder ?? ''}` : 'No'}
+                        </Typography>
+                      </TableCell>
                       <TableCell>
                         <Typography sx={{ fontSize: '0.8125rem', color: '#374151' }}>
                           {article.author}
@@ -408,7 +458,7 @@ const AdminArticles = () => {
                 })}
                 {paginated.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                    <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
                       <Icon icon="mdi:newspaper-variant-outline" style={{ fontSize: 40, color: '#D1D5DB' }} />
                       <Typography sx={{ color: '#9CA3AF', mt: 1 }}>
                         {hasFilters ? 'No articles match your filters' : 'No articles yet'}
