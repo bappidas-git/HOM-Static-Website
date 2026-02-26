@@ -122,10 +122,7 @@ const PropertyListing = ({ routePath }) => {
       }
 
       // Area filter from URL (from neighborhood links)
-      const area = searchParams.get('area');
-      if (area) {
-        params['location.area_like'] = area;
-      }
+      // Handled via client-side filtering for backend-agnostic compatibility
 
       const data = await propertyService.getAll(params);
       setAllProperties(data);
@@ -149,6 +146,14 @@ const PropertyListing = ({ routePath }) => {
   // Client-side filtering
   const filteredProperties = useMemo(() => {
     let result = [...allProperties];
+
+    // Area filter from URL (from neighborhood links) — client-side for backend-agnostic compatibility
+    const area = searchParams.get('area');
+    if (area) {
+      result = result.filter((p) =>
+        p.location?.area?.toLowerCase().includes(area.toLowerCase())
+      );
+    }
 
     // BHK filter
     if (filters.bhk && filters.bhk.length > 0) {
@@ -197,7 +202,7 @@ const PropertyListing = ({ routePath }) => {
     }
 
     return result;
-  }, [allProperties, filters, config.preFilters]);
+  }, [allProperties, filters, config.preFilters, searchParams]);
 
   // Sorting
   const sortedProperties = useMemo(() => {
