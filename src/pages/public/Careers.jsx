@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../services/api';
 import { useToast } from '../../components/common/ToastProvider';
+import { getNameErrorMessage, getEmailErrorMessage, getMobileErrorMessage } from '../../utils/validators';
 import styles from './Careers.module.css';
 
 /* ── Animated section wrapper ──────────────────── */
@@ -107,17 +108,12 @@ const Careers = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Enter a valid email';
-    }
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!/^[+]?[\d\s()-]{10,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Enter a valid phone number';
-    }
+    const nameErr = getNameErrorMessage(formData.name);
+    if (nameErr) newErrors.name = nameErr;
+    const emailErr = getEmailErrorMessage(formData.email, true);
+    if (emailErr) newErrors.email = emailErr;
+    const phoneErr = getMobileErrorMessage(formData.phone);
+    if (phoneErr) newErrors.phone = phoneErr;
     if (!formData.position) newErrors.position = 'Position is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

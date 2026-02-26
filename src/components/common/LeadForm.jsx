@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { leadService } from '../../services/api';
 import { useToast } from './ToastProvider';
+import { getNameErrorMessage, getEmailErrorMessage, getMobileErrorMessage, sanitizeInput } from '../../utils/validators';
 import styles from './LeadForm.module.css';
 
 const LeadForm = ({
@@ -34,17 +35,10 @@ const LeadForm = ({
   const [submitError, setSubmitError] = useState('');
 
   const validateField = (field, value) => {
-    if (field.required && !value.trim()) {
-      return `${field.label} is required`;
-    }
-    if (field.type === 'email' && value.trim()) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) return 'Enter a valid email address';
-    }
-    if (field.type === 'tel' && value.trim()) {
-      const phoneRegex = /^[+]?[\d\s()-]{10,15}$/;
-      if (!phoneRegex.test(value)) return 'Enter a valid phone number';
-    }
+    if (field.name === 'name') return getNameErrorMessage(value);
+    if (field.type === 'email') return getEmailErrorMessage(value, field.required);
+    if (field.type === 'tel') return getMobileErrorMessage(value);
+    if (field.required && !sanitizeInput(value)) return `${field.label} is required`;
     return '';
   };
 

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { useInView } from "react-intersection-observer";
 import { leadService } from "../../../services/api";
+import { getNameErrorMessage, getEmailErrorMessage, getMobileErrorMessage } from "../../../utils/validators";
 import styles from "./FinanceGuide.module.css";
 
 const formatCurrency = (val) => {
@@ -312,15 +313,12 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
 
   const validateAssessment = useCallback(() => {
     const errors = {};
-    if (!assessmentData.name.trim()) errors.name = "Name is required";
-    if (!assessmentData.phone.trim()) errors.phone = "Phone is required";
-    else if (!/^[6-9]\d{9}$/.test(assessmentData.phone.trim()))
-      errors.phone = "Enter a valid 10-digit phone number";
-    if (
-      assessmentData.email &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(assessmentData.email)
-    )
-      errors.email = "Enter a valid email";
+    const nameErr = getNameErrorMessage(assessmentData.name);
+    if (nameErr) errors.name = nameErr;
+    const phoneErr = getMobileErrorMessage(assessmentData.phone);
+    if (phoneErr) errors.phone = phoneErr;
+    const emailErr = getEmailErrorMessage(assessmentData.email, false);
+    if (emailErr) errors.email = emailErr;
     if (!assessmentData.occupation)
       errors.occupation = "Select your occupation";
     if (!assessmentData.monthlyIncome)
@@ -442,15 +440,12 @@ const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCapt
 
   const validateModalForm = useCallback(() => {
     const errors = {};
-    if (!modalFormData.name.trim()) errors.name = "Name is required";
-    if (!modalFormData.phone.trim()) errors.phone = "Phone is required";
-    else if (!/^[6-9]\d{9}$/.test(modalFormData.phone.trim()))
-      errors.phone = "Enter a valid 10-digit phone number";
-    if (
-      modalFormData.email &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(modalFormData.email)
-    )
-      errors.email = "Enter a valid email";
+    const nameErr = getNameErrorMessage(modalFormData.name);
+    if (nameErr) errors.name = nameErr;
+    const phoneErr = getMobileErrorMessage(modalFormData.phone);
+    if (phoneErr) errors.phone = phoneErr;
+    const emailErr = getEmailErrorMessage(modalFormData.email, false);
+    if (emailErr) errors.email = emailErr;
     if (!modalFormData.occupation) errors.occupation = "Select your occupation";
     if (!modalFormData.monthlyIncome)
       errors.monthlyIncome = "Select your income range";

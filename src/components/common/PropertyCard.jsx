@@ -1,10 +1,22 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, useRef, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { useMediaQuery, useTheme } from '@mui/material';
 import styles from './PropertyCard.module.css';
 import { TAG_OPTIONS } from '../../pages/admin/property-tabs/constants';
+
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov'];
+
+const isVideoUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    return VIDEO_EXTENSIONS.some((ext) => pathname.endsWith(ext));
+  } catch {
+    return VIDEO_EXTENSIONS.some((ext) => url.toLowerCase().includes(ext));
+  }
+};
 
 const tagMap = TAG_OPTIONS.reduce((acc, t) => {
   acc[t.value] = t;
@@ -33,6 +45,7 @@ const PropertyCard = memo(({ property }) => {
   const [liked, setLiked] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [swipeAction, setSwipeAction] = useState(null); // 'enquire' | 'share'
+  const videoRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -91,22 +104,39 @@ const PropertyCard = memo(({ property }) => {
     setLiked(!liked);
   };
 
+  const currentMediaUrl = images[currentImg];
+  const currentIsVideo = isVideoUrl(currentMediaUrl);
+
   const cardContent = (
     <>
       <div className={styles.imageWrapper}>
-        {/* Image with fade-in on load */}
-        <img
-          src={images[currentImg]}
-          alt={property.title}
-          className={styles.image}
-          loading="lazy"
-          style={{
-            opacity: imageLoaded ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-          }}
-          onLoad={() => setImageLoaded(true)}
-        />
-        {!imageLoaded && <div className={styles.imagePlaceholder} />}
+        {/* Render video or image based on media type */}
+        {currentIsVideo ? (
+          <video
+            ref={videoRef}
+            src={currentMediaUrl}
+            className={styles.image}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            onLoadedData={() => setImageLoaded(true)}
+          />
+        ) : (
+          <img
+            src={currentMediaUrl}
+            alt={property.title}
+            className={styles.image}
+            loading="lazy"
+            style={{
+              opacity: imageLoaded ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+            }}
+            onLoad={() => setImageLoaded(true)}
+          />
+        )}
+        {!imageLoaded && !currentIsVideo && <div className={styles.imagePlaceholder} />}
 
         <span className={`${styles.badge} ${badgeClass}`}>{badge}</span>
 

@@ -62,6 +62,18 @@
   min-height: 72px;
 }
 
+.inputError {
+  border-color: #dc2626;
+}
+
+.errorText {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 4px;
+  display: block;
+}
+
 .error {
   font-family: var(--font-body);
   font-size: 0.8rem;
