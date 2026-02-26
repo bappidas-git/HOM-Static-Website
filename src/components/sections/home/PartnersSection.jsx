@@ -1,13 +1,41 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { partnerService } from '../../../services/api';
 import styles from './PartnersSection.module.css';
 
+const PartnerCard = ({ partner }) => {
+  const content = (
+    <>
+      <img
+        src={partner.logo}
+        alt={partner.name}
+        className={styles.partnerLogo}
+        loading="lazy"
+      />
+      <span className={styles.partnerName}>{partner.name}</span>
+    </>
+  );
+
+  if (partner.website) {
+    return (
+      <a
+        href={partner.website}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.partnerCard}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return <div className={styles.partnerCard}>{content}</div>;
+};
+
 const PartnersSection = () => {
   const [partners, setPartners] = useState([]);
   const [loading, setLoading] = useState(true);
-  const scrollRef = useRef(null);
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 });
 
   useEffect(() => {
@@ -24,44 +52,10 @@ const PartnersSection = () => {
     fetchPartners();
   }, []);
 
-  // Auto-scroll marquee effect
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || partners.length === 0) return;
-
-    let animationId;
-    let scrollPos = 0;
-
-    const scroll = () => {
-      scrollPos += 0.5;
-      if (scrollPos >= el.scrollWidth / 2) {
-        scrollPos = 0;
-      }
-      el.scrollLeft = scrollPos;
-      animationId = requestAnimationFrame(scroll);
-    };
-
-    animationId = requestAnimationFrame(scroll);
-
-    const handleHover = () => cancelAnimationFrame(animationId);
-    const handleLeave = () => {
-      animationId = requestAnimationFrame(scroll);
-    };
-
-    el.addEventListener('mouseenter', handleHover);
-    el.addEventListener('mouseleave', handleLeave);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      el.removeEventListener('mouseenter', handleHover);
-      el.removeEventListener('mouseleave', handleLeave);
-    };
-  }, [partners]);
-
   if (loading) return null;
   if (!partners.length) return null;
 
-  // Duplicate for seamless marquee
+  // Duplicate partners for seamless infinite marquee loop
   const displayPartners = [...partners, ...partners];
 
   return (
@@ -79,44 +73,14 @@ const PartnersSection = () => {
 
         <motion.div
           className={styles.marqueeWrapper}
-          ref={scrollRef}
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className={styles.marqueeTrack}>
-            {displayPartners.map((partner, idx) => {
-              const content = (
-                <>
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className={styles.partnerLogo}
-                    loading="lazy"
-                  />
-                  <span className={styles.partnerName}>{partner.name}</span>
-                </>
-              );
-
-              return partner.website ? (
-                <a
-                  key={`${partner.id}-${idx}`}
-                  href={partner.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.partnerCard}
-                >
-                  {content}
-                </a>
-              ) : (
-                <div
-                  key={`${partner.id}-${idx}`}
-                  className={styles.partnerCard}
-                >
-                  {content}
-                </div>
-              );
-            })}
+            {displayPartners.map((partner, idx) => (
+              <PartnerCard key={`${partner.id}-${idx}`} partner={partner} />
+            ))}
           </div>
         </motion.div>
       </div>

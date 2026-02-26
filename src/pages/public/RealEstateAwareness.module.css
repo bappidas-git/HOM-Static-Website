@@ -141,9 +141,11 @@
 
 /* ── Education Cards ──────────────────────────── */
 .educationGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 .eduCard {
@@ -151,24 +153,30 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   overflow: hidden;
-  transition: box-shadow var(--transition-base);
+  transition: box-shadow var(--transition-base), border-color var(--transition-base);
 }
 
 .eduCard:hover {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(201, 168, 108, 0.3);
 }
 
 .eduCardExpanded {
   border-color: var(--color-secondary);
+  box-shadow: var(--shadow-md);
 }
 
 .eduHeader {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-md);
 }
 
 .eduIconWrap {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
   background: rgba(201, 168, 108, 0.1);
   display: flex;
@@ -176,41 +184,50 @@
   justify-content: center;
   font-size: 1.5rem;
   color: var(--color-secondary);
-  margin-bottom: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.eduHeaderText {
+  flex: 1;
+  min-width: 0;
 }
 
 .eduTitle {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-text-primary);
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 .eduSummary {
   font-family: var(--font-body);
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin-bottom: var(--spacing-md);
+  line-height: 1.7;
+  margin-bottom: var(--spacing-sm);
+  width: 100%;
 }
 
 .eduToggle {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 0;
-  background: none;
-  border: none;
+  gap: 6px;
+  padding: 6px 16px;
+  background: rgba(201, 168, 108, 0.08);
+  border: 1px solid rgba(201, 168, 108, 0.2);
+  border-radius: 100px;
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-secondary-dark);
-  transition: gap var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .eduToggle:hover {
+  background: rgba(201, 168, 108, 0.15);
+  border-color: rgba(201, 168, 108, 0.4);
   gap: 8px;
 }
 
@@ -219,9 +236,10 @@
 }
 
 .eduContentInner {
-  padding: 0 var(--spacing-xl) var(--spacing-xl);
+  padding: 0 var(--spacing-2xl) var(--spacing-xl);
   border-top: 1px solid var(--color-border);
   padding-top: var(--spacing-lg);
+  margin: 0 var(--spacing-md);
 }
 
 .eduContentInner p {
@@ -617,12 +635,17 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .educationGrid {
+  .ctaSection {
     grid-template-columns: 1fr;
   }
 
-  .ctaSection {
-    grid-template-columns: 1fr;
+  .eduHeader {
+    padding: var(--spacing-lg);
+  }
+
+  .eduContentInner {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    margin: 0;
   }
 }
 
@@ -672,5 +695,25 @@
 
   .checklistCard {
     padding: var(--spacing-lg);
+  }
+
+  .eduHeader {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .eduIconWrap {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+
+  .eduTitle {
+    font-size: 1.1rem;
+  }
+
+  .eduContentInner {
+    padding: 0 var(--spacing-md) var(--spacing-md);
+    margin: 0;
   }
 }
