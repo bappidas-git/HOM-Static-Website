@@ -28,77 +28,21 @@
   color: var(--color-text-secondary);
 }
 
-/* Horizontal scroll layout */
-.scrollWrapper {
+/* Auto-scroll carousel */
+.carouselViewport {
+  overflow: hidden;
   position: relative;
 }
 
-.scrollRow {
+.carouselTrack {
   display: flex;
   gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;
-}
-
-/* Hide scrollbar for a cleaner look, still scrollable */
-.scrollRow::-webkit-scrollbar {
-  height: 4px;
-}
-
-.scrollRow::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollRow::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
-}
-
-.scrollRow::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-light);
+  will-change: transform;
 }
 
 .scrollItem {
   flex: 0 0 380px;
-  scroll-snap-align: start;
   min-width: 0;
-}
-
-/* Scroll arrows */
-.scrollArrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #fff;
-  border: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 3;
-  font-size: 24px;
-  color: var(--color-text-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.scrollArrow:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  border-color: var(--color-secondary);
-}
-
-.scrollArrowLeft {
-  left: -8px;
-}
-
-.scrollArrowRight {
-  right: -8px;
 }
 
 /* Loading */
@@ -169,9 +113,6 @@
   .scrollItem {
     flex: 0 0 320px;
   }
-
-  .scrollArrowLeft { left: 4px; }
-  .scrollArrowRight { right: 4px; }
 }
 
 @media (max-width: 600px) {
@@ -185,10 +126,5 @@
 
   .scrollItem {
     flex: 0 0 300px;
-  }
-
-  /* Hide arrows on mobile — native scroll is the UX */
-  .scrollArrow {
-    display: none;
   }
 }
