@@ -15,6 +15,10 @@ import {
   Alert,
   Skeleton,
   Divider,
+  Dialog,
+  DialogContent,
+  IconButton,
+  Autocomplete,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { articleService } from '../../services/api';
@@ -56,7 +60,92 @@ const emptyForm = {
   seoDescription: '',
   isActive: false,
   publishedAt: new Date().toISOString(),
+  relatedArticleIds: [],
 };
+
+const MarkdownHelpModal = ({ open, onClose }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    maxWidth="md"
+    fullWidth
+    PaperProps={{
+      sx: { borderRadius: 3, maxHeight: '90vh' },
+    }}
+  >
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2.5, pb: 1.5, borderBottom: '1px solid #E5E7EB' }}>
+      <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: '#1B2A4A' }}>
+        Markdown Writing Guide
+      </Typography>
+      <IconButton onClick={onClose} size="small" sx={{ color: '#6B7280' }}>
+        <Icon icon="mdi:close" />
+      </IconButton>
+    </Box>
+    <DialogContent sx={{ p: 3 }}>
+      <Box sx={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '0.9rem', color: '#374151', lineHeight: 1.7, '& h3': { fontSize: '1.05rem', fontWeight: 700, color: '#1B2A4A', mt: 3, mb: 1 }, '& h4': { fontSize: '0.95rem', fontWeight: 600, color: '#1B2A4A', mt: 2, mb: 0.75 }, '& code': { bgcolor: '#F3F4F6', px: 0.75, py: 0.25, borderRadius: 1, fontSize: '0.8rem', fontFamily: 'monospace', color: '#D97706' }, '& pre': { bgcolor: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 2, p: 2, overflow: 'auto', fontSize: '0.8rem', fontFamily: 'monospace', lineHeight: 1.6, mb: 2, '& code': { bgcolor: 'transparent', p: 0, color: '#374151' } }, '& table': { width: '100%', borderCollapse: 'collapse', mb: 2, '& th': { bgcolor: '#F3F4F6', p: 1, textAlign: 'left', fontSize: '0.8rem', fontWeight: 600, borderBottom: '2px solid #E5E7EB' }, '& td': { p: 1, fontSize: '0.8rem', borderBottom: '1px solid #F3F4F6' } } }}>
+
+        <Typography variant="body2" sx={{ color: '#6B7280', mb: 3 }}>
+          This editor supports Markdown syntax. Use the following formatting options to create rich article content.
+        </Typography>
+
+        <h3>Headings</h3>
+        <p>Use <code>#</code> symbols to create headings. Headings with <code>##</code> appear in the Table of Contents automatically.</p>
+        <pre><code>{`## Section Heading (H2 — appears in TOC)\n### Subsection Heading (H3)`}</code></pre>
+
+        <h3>Text Formatting</h3>
+        <table>
+          <thead><tr><th>Format</th><th>Syntax</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Bold</td><td><code>**bold text**</code></td><td><strong>bold text</strong></td></tr>
+            <tr><td>Italic</td><td><code>*italic text*</code></td><td><em>italic text</em></td></tr>
+            <tr><td>Underline</td><td><code>{'<u>underlined</u>'}</code></td><td><u>underlined</u></td></tr>
+          </tbody>
+        </table>
+
+        <h3>Lists</h3>
+        <h4>Bullet List</h4>
+        <pre><code>{`- First item\n- Second item\n- Third item`}</code></pre>
+
+        <h4>Numbered List</h4>
+        <pre><code>{`1. First item\n2. Second item\n3. Third item`}</code></pre>
+
+        <h3>Links</h3>
+        <pre><code>{`[Link Text](https://example.com)`}</code></pre>
+
+        <h3>Images</h3>
+        <pre><code>{`![Alt text](https://example.com/image.jpg)`}</code></pre>
+
+        <h3>Tables</h3>
+        <p>Create tables using pipes <code>|</code> and dashes <code>-</code>:</p>
+        <pre><code>{`| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Data 1   | Data 2   | Data 3   |\n| Data 4   | Data 5   | Data 6   |`}</code></pre>
+
+        <h3>Blockquotes</h3>
+        <pre><code>{`> This is a blockquote.\n> It can span multiple lines.`}</code></pre>
+
+        <h3>Horizontal Rule</h3>
+        <pre><code>{`---`}</code></pre>
+
+        <h3>Line Breaks</h3>
+        <p>Press <strong>Enter</strong> twice for a new paragraph. Use a blank line between blocks of content for proper spacing.</p>
+
+        <Divider sx={{ my: 3 }} />
+
+        <h3>Best Writing Practices</h3>
+        <Box component="ul" sx={{ pl: 2.5, '& li': { mb: 1 } }}>
+          <li>Start with a compelling introduction that hooks the reader.</li>
+          <li>Use <code>##</code> headings to break content into scannable sections.</li>
+          <li>Keep paragraphs short (3-4 sentences max) for readability.</li>
+          <li>Use bullet points for lists of features, benefits, or steps.</li>
+          <li>Include tables for comparison data (e.g., price ranges, area stats).</li>
+          <li>Bold <strong>key terms</strong> and important numbers for emphasis.</li>
+          <li>End with a clear "Key Takeaways" or conclusion section.</li>
+          <li>Aim for 800-1500 words for optimal SEO and engagement.</li>
+          <li>Add relevant tags after writing to improve discoverability.</li>
+        </Box>
+      </Box>
+    </DialogContent>
+  </Dialog>
+);
 
 const GooglePreview = ({ title, description }) => (
   <Paper
@@ -110,6 +199,9 @@ const ArticleForm = () => {
   const [saving, setSaving] = useState(false);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [markdownHelpOpen, setMarkdownHelpOpen] = useState(false);
+  const [allArticles, setAllArticles] = useState([]);
+  const [selectedRelatedArticles, setSelectedRelatedArticles] = useState([]);
 
   const fetchArticle = useCallback(async () => {
     if (!id) return;
@@ -130,6 +222,7 @@ const ArticleForm = () => {
         seoDescription: data.seoDescription || '',
         isActive: data.isActive ?? false,
         publishedAt: data.publishedAt || new Date().toISOString(),
+        relatedArticleIds: data.relatedArticleIds || [],
       });
       setSlugManuallyEdited(true);
     } catch {
@@ -139,9 +232,28 @@ const ArticleForm = () => {
     }
   }, [id]);
 
+  // Fetch all articles for the Related Articles selector
+  const fetchAllArticles = useCallback(async () => {
+    try {
+      const data = await articleService.getAll();
+      setAllArticles(data);
+    } catch {
+      // Silently fail — related articles selector will be empty
+    }
+  }, []);
+
   useEffect(() => {
     fetchArticle();
-  }, [fetchArticle]);
+    fetchAllArticles();
+  }, [fetchArticle, fetchAllArticles]);
+
+  // Sync selectedRelatedArticles when form and allArticles are ready
+  useEffect(() => {
+    if (allArticles.length > 0 && form.relatedArticleIds?.length > 0) {
+      const selected = allArticles.filter((a) => form.relatedArticleIds.includes(a.id));
+      setSelectedRelatedArticles(selected);
+    }
+  }, [allArticles, form.relatedArticleIds]);
 
   const updateField = (field, value) => {
     setForm((prev) => {
@@ -188,6 +300,7 @@ const ArticleForm = () => {
         excerpt: form.excerpt || generateExcerpt(form.content),
         isActive: publish ? true : form.isActive,
         publishedAt: publish && !form.isActive ? new Date().toISOString() : form.publishedAt,
+        relatedArticleIds: selectedRelatedArticles.map((a) => a.id),
       };
 
       if (isEditing) {
@@ -360,9 +473,25 @@ const ArticleForm = () => {
 
         {/* Content */}
         <Box sx={{ mb: 2.5 }}>
-          <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151', mb: 0.75 }}>
-            Content * <Typography component="span" sx={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>(Markdown supported)</Typography>
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75 }}>
+            <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151' }}>
+              Content * <Typography component="span" sx={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>(Markdown supported)</Typography>
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={() => setMarkdownHelpOpen(true)}
+              title="Markdown syntax guide"
+              sx={{
+                width: 22,
+                height: 22,
+                bgcolor: '#EEF2FF',
+                color: '#4F46E5',
+                '&:hover': { bgcolor: '#E0E7FF' },
+              }}
+            >
+              <Icon icon="mdi:help-circle-outline" width={16} />
+            </IconButton>
+          </Box>
           <TextField
             fullWidth
             multiline
@@ -396,6 +525,66 @@ const ArticleForm = () => {
             sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
           />
         </Box>
+      </Paper>
+
+      {/* Related Articles */}
+      <Paper elevation={0} sx={{ p: 3, borderRadius: 2, border: '1px solid #F3F4F6', mb: 3 }}>
+        <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A', mb: 0.5 }}>
+          Related Articles
+        </Typography>
+        <Typography sx={{ fontSize: '0.75rem', color: '#9CA3AF', mb: 2 }}>
+          Select articles to show in the "Related Articles" section. If none selected, the system will auto-suggest based on category.
+        </Typography>
+        <Autocomplete
+          multiple
+          options={allArticles.filter((a) => a.id !== id)}
+          getOptionLabel={(option) => option.title || ''}
+          value={selectedRelatedArticles}
+          onChange={(_, newValue) => setSelectedRelatedArticles(newValue)}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              size="small"
+              placeholder="Search and select articles..."
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+            />
+          )}
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => {
+              const { key, ...rest } = getTagProps({ index });
+              return (
+                <Chip
+                  key={key}
+                  {...rest}
+                  label={option.title}
+                  size="small"
+                  sx={{ fontSize: '0.75rem', bgcolor: '#F3F4F6', maxWidth: 280 }}
+                />
+              );
+            })
+          }
+          renderOption={(props, option) => {
+            const { key, ...rest } = props;
+            return (
+              <Box key={key} component="li" {...rest} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start !important', gap: 0.25, py: 1 }}>
+                <Typography sx={{ fontSize: '0.8125rem', fontWeight: 500, color: '#374151' }}>
+                  {option.title}
+                </Typography>
+                <Typography sx={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>
+                  {option.category ? option.category.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : ''} {option.publishedAt ? `• ${new Date(option.publishedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
+                </Typography>
+              </Box>
+            );
+          }}
+          noOptionsText="No articles available"
+          sx={{ mb: 1 }}
+        />
+        {selectedRelatedArticles.length > 0 && (
+          <Typography sx={{ fontSize: '0.6875rem', color: '#6B7280' }}>
+            {selectedRelatedArticles.length} article{selectedRelatedArticles.length !== 1 ? 's' : ''} selected
+          </Typography>
+        )}
       </Paper>
 
       {/* SEO Section */}
@@ -485,6 +674,9 @@ const ArticleForm = () => {
           </Button>
         </Box>
       </Paper>
+
+      {/* Markdown Help Modal */}
+      <MarkdownHelpModal open={markdownHelpOpen} onClose={() => setMarkdownHelpOpen(false)} />
 
       {/* Snackbar */}
       <Snackbar

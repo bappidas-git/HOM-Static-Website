@@ -1,7 +1,10 @@
 /* ── Page ──────────────────────────────────────── */
 .page {
   width: 100%;
-  overflow-x: hidden;
+  /* overflow-x: hidden breaks position: sticky on children.
+     Use overflow-x: clip instead which clips overflow without
+     creating a new scroll container. */
+  overflow-x: clip;
 }
 
 /* ── Loading & Not Found ──────────────────────── */
@@ -141,6 +144,9 @@
 .tocSidebar {
   position: sticky;
   top: 100px;
+  align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .tocCard {
