@@ -3060,18 +3060,29 @@
   "adminUsers": [
     {
       "id": "1",
-      "name": "Admin User",
+      "name": "Super Admin",
       "email": "admin@homadvisory.com",
-      "password": "admin123",
-      "role": "super-admin",
+      "password": "admin@123",
+      "role": "admin",
+      "isActive": true,
       "avatar": null
     },
     {
       "id": "2",
-      "name": "Content Manager",
-      "email": "content@homadvisory.com",
-      "password": "content123",
-      "role": "editor",
+      "name": "Manager User",
+      "email": "manager@homadvisory.com",
+      "password": "manager@123",
+      "role": "manager",
+      "isActive": true,
+      "avatar": null
+    },
+    {
+      "id": "3",
+      "name": "Sales Executive",
+      "email": "sales@homadvisory.com",
+      "password": "sales@123",
+      "role": "sales",
+      "isActive": true,
       "avatar": null
     }
   ]

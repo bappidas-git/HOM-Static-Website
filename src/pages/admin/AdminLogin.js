@@ -30,13 +30,15 @@ const AdminLogin = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const from = location.state?.from?.pathname || '/admin/dashboard';
+  // Ensure we never redirect back to login page itself
+  const redirectTo = from === '/admin/login' ? '/admin/dashboard' : from;
 
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate(from, { replace: true });
+      navigate(redirectTo, { replace: true });
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, navigate, redirectTo]);
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -54,9 +56,10 @@ const AdminLogin = () => {
 
     try {
       await login(formData.email, formData.password, formData.remember);
-      navigate(from, { replace: true });
+      navigate(redirectTo, { replace: true });
     } catch (err) {
-      setError('Invalid email or password. Please try again.');
+      const message = err?.message || 'Invalid email or password. Please try again.';
+      setError(message);
     } finally {
       setSubmitting(false);
     }
@@ -207,14 +210,21 @@ const AdminLogin = () => {
           </Button>
         </Box>
 
-        {/* Footer Hint */}
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', textAlign: 'center', mt: 3 }}
-        >
-          Demo credentials: admin@homadvisory.com / admin123
-        </Typography>
+        {/* Footer Hint — Demo Credentials */}
+        <Box sx={{ mt: 3, textAlign: 'center' }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>
+            Demo Credentials
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.8 }}>
+            Admin: admin@homadvisory.com / admin@123
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.8 }}>
+            Manager: manager@homadvisory.com / manager@123
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.8 }}>
+            Sales: sales@homadvisory.com / sales@123
+          </Typography>
+        </Box>
       </Paper>
     </Box>
   );

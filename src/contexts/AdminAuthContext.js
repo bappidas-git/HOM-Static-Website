@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { adminService } from '../services/api';
+import { authService } from '../services/api';
+import { hasRouteAccess, getDefaultRoute } from '../config/rbac';
 
 const AdminAuthContext = createContext(null);
 
@@ -15,59 +16,61 @@ export const AdminAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Restore session on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('adminUser');
     const token = localStorage.getItem('authToken');
     if (storedUser && token) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        // Validate that user object has required fields
+        if (parsed && parsed.id && parsed.email && parsed.role) {
+          setUser(parsed);
+        } else {
+          authService.logout();
+        }
       } catch {
-        localStorage.removeItem('adminUser');
-        localStorage.removeItem('authToken');
+        authService.logout();
       }
     }
     setLoading(false);
   }, []);
 
   const login = useCallback(async (email, password, remember = false) => {
-    const response = await adminService.login(email, password);
-    const { token } = response;
-
-    // Verify password against the simulated backend
-    const users = await adminService.getAll({ email });
-    const matchedUser = users.find(u => u.email === email && u.password === password);
-
-    if (!matchedUser) {
-      throw new Error('Invalid email or password');
-    }
-
-    const safeUser = {
-      id: matchedUser.id,
-      name: matchedUser.name,
-      email: matchedUser.email,
-      role: matchedUser.role,
-      avatar: matchedUser.avatar,
-    };
+    const response = await authService.login(email, password);
+    const { user: userData, token, tokenExpiry } = response;
 
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem('authToken', token);
-    storage.setItem('adminUser', JSON.stringify(safeUser));
+    storage.setItem('adminUser', JSON.stringify(userData));
 
-    // Also keep in localStorage for the interceptor
+    // Always keep in localStorage for the axios interceptor
     localStorage.setItem('authToken', token);
-    localStorage.setItem('adminUser', JSON.stringify(safeUser));
+    localStorage.setItem('adminUser', JSON.stringify(userData));
+    if (tokenExpiry) {
+      localStorage.setItem('tokenExpiry', tokenExpiry);
+    }
 
-    setUser(safeUser);
-    return safeUser;
+    setUser(userData);
+    return userData;
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('adminUser');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('adminUser');
+    authService.logout();
   }, []);
+
+  /**
+   * Check if the current user's role can access a given route.
+   * Uses centralized RBAC config — no hardcoded checks needed in components.
+   */
+  const canAccess = useCallback(
+    (pathname) => {
+      if (!user?.role) return false;
+      return hasRouteAccess(user.role, pathname);
+    },
+    [user]
+  );
 
   const value = {
     user,
@@ -75,6 +78,9 @@ export const AdminAuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user,
+    role: user?.role || null,
+    canAccess,
+    getDefaultRoute: () => getDefaultRoute(user?.role),
   };
 
   return (
