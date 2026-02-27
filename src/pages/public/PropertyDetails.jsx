@@ -541,28 +541,42 @@ const PropertyDetails = () => {
   return (
     <>
       <Helmet>
+        {/* Primary Meta Tags */}
         <title>{property.seoTitle || property.title}</title>
-        <meta name="description" content={property.seoDescription || property.description} />
+        <meta name="description" content={property.seoDescription || property.description?.slice(0, 160)} />
         {property.seoKeywords?.length > 0 && (
           <meta name="keywords" content={property.seoKeywords.join(', ')} />
         )}
-        {property.canonicalUrl && (
-          <link rel="canonical" href={property.canonicalUrl} />
-        )}
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+        {/* Canonical URL — always set to prevent duplicate content */}
+        <link rel="canonical" href={property.canonicalUrl || `${window.location.origin}/properties/${property.slug}`} />
+
         {/* Open Graph tags */}
         <meta property="og:title" content={property.ogTitle || property.seoTitle || property.title} />
-        <meta property="og:description" content={property.ogDescription || property.seoDescription || property.description} />
+        <meta property="og:description" content={property.ogDescription || property.seoDescription || property.description?.slice(0, 160)} />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={property.canonicalUrl || `${window.location.origin}/properties/${property.slug}`} />
+        <meta property="og:site_name" content="HOM Advisory" />
         {(property.ogImage || property.gallery?.[0]) && (
           <meta property="og:image" content={property.ogImage || property.gallery[0]} />
         )}
+        {(property.ogImage || property.gallery?.[0]) && (
+          <meta property="og:image:alt" content={`${property.title} — Property Image`} />
+        )}
+
         {/* Twitter Card tags */}
         <meta name="twitter:card" content={property.twitterCard || 'summary_large_image'} />
         <meta name="twitter:title" content={property.ogTitle || property.seoTitle || property.title} />
-        <meta name="twitter:description" content={property.ogDescription || property.seoDescription || property.description} />
+        <meta name="twitter:description" content={property.ogDescription || property.seoDescription || property.description?.slice(0, 160)} />
         {(property.ogImage || property.gallery?.[0]) && (
           <meta name="twitter:image" content={property.ogImage || property.gallery[0]} />
         )}
+        {(property.ogImage || property.gallery?.[0]) && (
+          <meta name="twitter:image:alt" content={`${property.title} — Property Image`} />
+        )}
+
+        {/* JSON-LD Schema Markup — supports single object or array of schemas */}
         {property.schemaMarkup && (
           <script type="application/ld+json">{property.schemaMarkup}</script>
         )}

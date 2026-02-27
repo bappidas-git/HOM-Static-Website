@@ -26,63 +26,19 @@ import {
   InputAdornment,
   IconButton,
   Tooltip,
+  Collapse,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { propertyService } from '../../services/api';
+import seoService from '../../services/seoService';
+import { calculateSeoScore, getQuickScore, SEO_LIMITS } from '../../utils/seoScoring';
+import { generateSeoData } from '../../utils/seoGenerator';
+import SeoGuidelines from '../../components/admin/SeoGuidelines';
 
-// Calculate SEO score based on completeness
-const calculateSeoScore = (property) => {
-  let score = 0;
-  const total = 4;
-  if (property.seoTitle && property.seoTitle.trim()) score++;
-  if (property.seoDescription && property.seoDescription.trim()) score++;
-  if (property.seoKeywords && property.seoKeywords.length > 0) score++;
-  if (property.schemaMarkup && property.schemaMarkup.trim()) score++;
-  return Math.round((score / total) * 100);
-};
-
-// Generate SEO data from property info
-const generateSeoData = (property) => {
-  const configs = property.configuration ? property.configuration.join(', ') : '';
-  const area = property.location?.area || '';
-  const city = property.location?.city || '';
-  const developer = property.developer || '';
-
-  const seoTitle = `${property.title} | ${configs} in ${area}, ${city}`;
-  const seoDescription = `${property.title} by ${developer} in ${area}, ${city}. ${configs} apartments${
-    property.dimensionRange
-      ? ` from ${property.dimensionRange.min}-${property.dimensionRange.max} ${property.dimensionRange.unit}`
-      : ''
-  }. ${property.status === 'ready-to-move' ? 'Ready to move.' : `Possession: ${property.possession}.`}`;
-  const seoKeywords = [
-    property.title.toLowerCase(),
-    `${area.toLowerCase()} apartments`,
-    `${developer.toLowerCase()} ${city.toLowerCase()}`,
-    `${property.type === 'rent' ? 'rent' : 'buy'} ${city.toLowerCase()}`,
-  ];
-  const schemaMarkup = JSON.stringify(
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Residence',
-      name: property.title,
-      description: property.description?.slice(0, 200),
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: area,
-        addressRegion: city,
-      },
-    },
-    null,
-    2
-  );
-
-  return { seoTitle, seoDescription, seoKeywords, schemaMarkup };
-};
-
-const SeoScoreBar = ({ score }) => {
-  const color = score >= 75 ? '#10B981' : score >= 50 ? '#F59E0B' : '#EF4444';
+// ─── Score Bar Component ──────────────────────────────────────
+const SeoScoreBar = ({ score, grade }) => {
+  const color = score >= 80 ? '#10B981' : score >= 60 ? '#F59E0B' : '#EF4444';
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 100 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 120 }}>
       <LinearProgress
         variant="determinate"
         value={score}
@@ -94,13 +50,14 @@ const SeoScoreBar = ({ score }) => {
           '& .MuiLinearProgress-bar': { bgcolor: color, borderRadius: 3 },
         }}
       />
-      <Typography sx={{ fontSize: '0.75rem', fontWeight: 600, color, minWidth: 32 }}>
-        {score}%
+      <Typography sx={{ fontSize: '0.75rem', fontWeight: 600, color, minWidth: 40 }}>
+        {score}%{grade ? ` ${grade}` : ''}
       </Typography>
     </Box>
   );
 };
 
+// ─── Status Dot Component ─────────────────────────────────────
 const StatusDot = ({ hasValue, label }) => (
   <Tooltip title={hasValue ? `${label} set` : `${label} missing`} arrow>
     <Box
@@ -115,6 +72,7 @@ const StatusDot = ({ hasValue, label }) => (
   </Tooltip>
 );
 
+// ─── Google Preview Component ─────────────────────────────────
 const GooglePreview = ({ title, description, slug }) => (
   <Paper
     variant="outlined"
@@ -168,6 +126,78 @@ const GooglePreview = ({ title, description, slug }) => (
   </Paper>
 );
 
+// ─── SEO Score Breakdown Component ────────────────────────────
+const SeoScoreBreakdown = ({ scoreData }) => {
+  if (!scoreData) return null;
+
+  return (
+    <Paper
+      variant="outlined"
+      sx={{ p: 2, borderRadius: 2, border: '1px solid #E5E7EB' }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151' }}>
+          SEO Score Breakdown
+        </Typography>
+        <Chip
+          label={`${scoreData.totalScore}/100 — Grade ${scoreData.grade}`}
+          size="small"
+          sx={{
+            fontWeight: 700,
+            fontSize: '0.6875rem',
+            bgcolor: scoreData.totalScore >= 80 ? '#ECFDF5' : scoreData.totalScore >= 60 ? '#FFFBEB' : '#FEF2F2',
+            color: scoreData.totalScore >= 80 ? '#059669' : scoreData.totalScore >= 60 ? '#D97706' : '#DC2626',
+          }}
+        />
+      </Box>
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {scoreData.checks.map((check, idx) => (
+          <Box key={idx}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.25 }}>
+              <Typography sx={{ fontSize: '0.75rem', color: '#4B5563' }}>
+                {check.label}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  color: check.score === check.maxScore ? '#10B981' : check.score > 0 ? '#F59E0B' : '#EF4444',
+                }}
+              >
+                {check.score}/{check.maxScore}
+              </Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={check.maxScore > 0 ? (check.score / check.maxScore) * 100 : 0}
+              sx={{
+                height: 4,
+                borderRadius: 2,
+                bgcolor: '#F3F4F6',
+                '& .MuiLinearProgress-bar': {
+                  borderRadius: 2,
+                  bgcolor: check.score === check.maxScore ? '#10B981' : check.score > 0 ? '#F59E0B' : '#EF4444',
+                },
+              }}
+            />
+            {check.issues.length > 0 && (
+              <Box sx={{ mt: 0.5 }}>
+                {check.issues.map((issue, issueIdx) => (
+                  <Typography key={issueIdx} sx={{ fontSize: '0.6875rem', color: '#9CA3AF', pl: 1 }}>
+                    — {issue}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+          </Box>
+        ))}
+      </Box>
+    </Paper>
+  );
+};
+
+// ─── Main AdminSeo Component ──────────────────────────────────
 const AdminSeo = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -183,17 +213,24 @@ const AdminSeo = () => {
     seoTitle: '',
     seoDescription: '',
     seoKeywords: [],
+    canonicalUrl: '',
+    ogTitle: '',
+    ogDescription: '',
+    ogImage: '',
+    twitterCard: 'summary_large_image',
     schemaMarkup: '',
   });
   const [keywordInput, setKeywordInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [bulkGenerating, setBulkGenerating] = useState(false);
+  const [showGuidelines, setShowGuidelines] = useState(false);
 
+  // ─── Fetch Properties via SEO Service ─────────────────────
   const fetchProperties = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await propertyService.getAll();
+      const data = await seoService.getAllProperties();
       setProperties(Array.isArray(data) ? data : []);
     } catch {
       setSnackbar({ open: true, message: 'Failed to load properties', severity: 'error' });
@@ -206,6 +243,7 @@ const AdminSeo = () => {
     fetchProperties();
   }, [fetchProperties]);
 
+  // ─── Filtered & Paginated Data ────────────────────────────
   const filtered = useMemo(() => {
     if (!search.trim()) return properties;
     const q = search.toLowerCase();
@@ -213,7 +251,8 @@ const AdminSeo = () => {
       (p) =>
         p.title?.toLowerCase().includes(q) ||
         p.seoTitle?.toLowerCase().includes(q) ||
-        p.location?.area?.toLowerCase().includes(q)
+        p.location?.area?.toLowerCase().includes(q) ||
+        p.location?.city?.toLowerCase().includes(q)
     );
   }, [properties, search]);
 
@@ -222,24 +261,36 @@ const AdminSeo = () => {
     [filtered, page, rowsPerPage]
   );
 
+  // ─── Stats Calculation ────────────────────────────────────
   const stats = useMemo(() => {
     const total = properties.length;
-    const complete = properties.filter((p) => calculateSeoScore(p) === 100).length;
-    const partial = properties.filter((p) => {
-      const s = calculateSeoScore(p);
-      return s > 0 && s < 100;
-    }).length;
-    const missing = properties.filter((p) => calculateSeoScore(p) === 0).length;
-    const avgScore = total > 0 ? Math.round(properties.reduce((acc, p) => acc + calculateSeoScore(p), 0) / total) : 0;
+    const scores = properties.map((p) => getQuickScore(p));
+    const complete = scores.filter((s) => s >= 90).length;
+    const partial = scores.filter((s) => s > 0 && s < 90).length;
+    const missing = scores.filter((s) => s === 0).length;
+    const avgScore = total > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / total) : 0;
     return { total, complete, partial, missing, avgScore };
   }, [properties]);
 
+  // ─── Live Score for Edit Form ─────────────────────────────
+  const editScoreData = useMemo(() => {
+    if (!editProperty) return null;
+    const merged = { ...editProperty, ...editForm };
+    return calculateSeoScore(merged);
+  }, [editProperty, editForm]);
+
+  // ─── Edit Dialog Handlers ─────────────────────────────────
   const handleOpenEdit = (property) => {
     setEditProperty(property);
     setEditForm({
       seoTitle: property.seoTitle || '',
       seoDescription: property.seoDescription || '',
       seoKeywords: property.seoKeywords || [],
+      canonicalUrl: property.canonicalUrl || '',
+      ogTitle: property.ogTitle || '',
+      ogDescription: property.ogDescription || '',
+      ogImage: property.ogImage || '',
+      twitterCard: property.twitterCard || 'summary_large_image',
       schemaMarkup: property.schemaMarkup || '',
     });
     setKeywordInput('');
@@ -250,17 +301,10 @@ const AdminSeo = () => {
     if (!editProperty) return;
     setSaving(true);
     try {
-      await propertyService.update(editProperty.id, {
-        seoTitle: editForm.seoTitle,
-        seoDescription: editForm.seoDescription,
-        seoKeywords: editForm.seoKeywords,
-        schemaMarkup: editForm.schemaMarkup,
-      });
+      await seoService.updatePropertySeo(editProperty.id, editForm);
       setProperties((prev) =>
         prev.map((p) =>
-          p.id === editProperty.id
-            ? { ...p, ...editForm }
-            : p
+          p.id === editProperty.id ? { ...p, ...editForm } : p
         )
       );
       setSnackbar({ open: true, message: 'SEO data saved successfully', severity: 'success' });
@@ -296,37 +340,26 @@ const AdminSeo = () => {
     }));
   };
 
+  // ─── Bulk Auto-Generate ───────────────────────────────────
   const handleBulkAutoGenerate = async () => {
-    const incomplete = properties.filter((p) => calculateSeoScore(p) < 100);
-    if (incomplete.length === 0) {
-      setSnackbar({ open: true, message: 'All properties already have complete SEO data', severity: 'info' });
-      return;
-    }
     setBulkGenerating(true);
     try {
-      const updates = [];
-      for (const prop of incomplete) {
-        const generated = generateSeoData(prop);
-        const merged = {
-          seoTitle: prop.seoTitle?.trim() ? prop.seoTitle : generated.seoTitle,
-          seoDescription: prop.seoDescription?.trim() ? prop.seoDescription : generated.seoDescription,
-          seoKeywords: prop.seoKeywords?.length > 0 ? prop.seoKeywords : generated.seoKeywords,
-          schemaMarkup: prop.schemaMarkup?.trim() ? prop.schemaMarkup : generated.schemaMarkup,
-        };
-        await propertyService.update(prop.id, merged);
-        updates.push({ id: prop.id, ...merged });
+      const updates = await seoService.bulkAutoGenerate(properties, calculateSeoScore, generateSeoData);
+      if (updates.length === 0) {
+        setSnackbar({ open: true, message: 'All properties already have complete SEO data', severity: 'info' });
+      } else {
+        setProperties((prev) =>
+          prev.map((p) => {
+            const u = updates.find((upd) => upd.id === p.id);
+            return u ? { ...p, ...u } : p;
+          })
+        );
+        setSnackbar({
+          open: true,
+          message: `Auto-generated SEO for ${updates.length} properties`,
+          severity: 'success',
+        });
       }
-      setProperties((prev) =>
-        prev.map((p) => {
-          const u = updates.find((upd) => upd.id === p.id);
-          return u ? { ...p, ...u } : p;
-        })
-      );
-      setSnackbar({
-        open: true,
-        message: `Auto-generated SEO for ${updates.length} properties`,
-        severity: 'success',
-      });
     } catch {
       setSnackbar({ open: true, message: 'Failed to auto-generate SEO data', severity: 'error' });
     } finally {
@@ -334,6 +367,21 @@ const AdminSeo = () => {
     }
   };
 
+  // ─── Title / Description length color helpers ─────────────
+  const getTitleLenColor = (len) => {
+    if (len >= SEO_LIMITS.TITLE_OPTIMAL_MIN && len <= SEO_LIMITS.TITLE_OPTIMAL_MAX) return '#10B981';
+    if (len > 0 && len <= SEO_LIMITS.TITLE_MAX_LENGTH) return '#F59E0B';
+    if (len > SEO_LIMITS.TITLE_MAX_LENGTH) return '#EF4444';
+    return '#9CA3AF';
+  };
+  const getDescLenColor = (len) => {
+    if (len >= SEO_LIMITS.DESC_OPTIMAL_MIN && len <= SEO_LIMITS.DESC_OPTIMAL_MAX) return '#10B981';
+    if (len > 0 && len <= SEO_LIMITS.DESC_MAX_LENGTH) return '#F59E0B';
+    if (len > SEO_LIMITS.DESC_MAX_LENGTH) return '#EF4444';
+    return '#9CA3AF';
+  };
+
+  // ─── Stat Cards ───────────────────────────────────────────
   const statCards = [
     { label: 'Total Properties', value: stats.total, icon: 'mdi:home-city-outline', color: '#3B82F6', bg: '#EFF6FF' },
     { label: 'SEO Complete', value: stats.complete, icon: 'mdi:check-circle-outline', color: '#10B981', bg: '#ECFDF5' },
@@ -353,22 +401,45 @@ const AdminSeo = () => {
             Manage SEO metadata for all property listings
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<Icon icon="mdi:auto-fix" />}
-          onClick={handleBulkAutoGenerate}
-          disabled={bulkGenerating || loading}
-          sx={{
-            bgcolor: '#1B2A4A',
-            textTransform: 'none',
-            borderRadius: 2,
-            px: 3,
-            '&:hover': { bgcolor: '#2d3f63' },
-          }}
-        >
-          {bulkGenerating ? 'Generating...' : 'Auto-Generate Missing SEO'}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Button
+            variant="outlined"
+            startIcon={<Icon icon="mdi:school-outline" />}
+            onClick={() => setShowGuidelines((prev) => !prev)}
+            sx={{
+              textTransform: 'none',
+              borderRadius: 2,
+              borderColor: '#D1D5DB',
+              color: '#374151',
+              '&:hover': { borderColor: '#C9A86C', color: '#C9A86C' },
+            }}
+          >
+            {showGuidelines ? 'Hide Guide' : 'SEO Guide'}
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<Icon icon="mdi:auto-fix" />}
+            onClick={handleBulkAutoGenerate}
+            disabled={bulkGenerating || loading}
+            sx={{
+              bgcolor: '#1B2A4A',
+              textTransform: 'none',
+              borderRadius: 2,
+              px: 3,
+              '&:hover': { bgcolor: '#2d3f63' },
+            }}
+          >
+            {bulkGenerating ? 'Generating...' : 'Auto-Generate Missing SEO'}
+          </Button>
+        </Box>
       </Box>
+
+      {/* SEO Guidelines Panel (Collapsible) */}
+      <Collapse in={showGuidelines}>
+        <Box sx={{ mb: 3 }}>
+          <SeoGuidelines />
+        </Box>
+      </Collapse>
 
       {/* Stats */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
@@ -408,7 +479,7 @@ const AdminSeo = () => {
         <TextField
           fullWidth
           size="small"
-          placeholder="Search properties by name or location..."
+          placeholder="Search properties by name, location, or city..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(0); }}
           InputProps={{
@@ -434,7 +505,7 @@ const AdminSeo = () => {
           /* Mobile Card View */
           <Box sx={{ p: 2 }}>
             {paginated.map((property) => {
-              const score = calculateSeoScore(property);
+              const scoreData = calculateSeoScore(property);
               return (
                 <Paper
                   key={property.id}
@@ -448,9 +519,22 @@ const AdminSeo = () => {
                   }}
                   onClick={() => handleOpenEdit(property)}
                 >
-                  <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A', mb: 1 }}>
-                    {property.title}
-                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                    <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2A4A', flex: 1 }}>
+                      {property.title}
+                    </Typography>
+                    <Chip
+                      label={scoreData.grade}
+                      size="small"
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '0.625rem',
+                        height: 20,
+                        bgcolor: scoreData.totalScore >= 80 ? '#ECFDF5' : scoreData.totalScore >= 60 ? '#FFFBEB' : '#FEF2F2',
+                        color: scoreData.totalScore >= 80 ? '#059669' : scoreData.totalScore >= 60 ? '#D97706' : '#DC2626',
+                      }}
+                    />
+                  </Box>
                   <Box sx={{ display: 'flex', gap: 2, mb: 1.5, flexWrap: 'wrap' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <StatusDot hasValue={!!property.seoTitle?.trim()} label="Title" />
@@ -470,8 +554,12 @@ const AdminSeo = () => {
                       <StatusDot hasValue={!!property.schemaMarkup?.trim()} label="Schema" />
                       <Typography sx={{ fontSize: '0.75rem', color: '#6B7280' }}>Schema</Typography>
                     </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <StatusDot hasValue={!!property.canonicalUrl?.trim()} label="Canonical" />
+                      <Typography sx={{ fontSize: '0.75rem', color: '#6B7280' }}>Canonical</Typography>
+                    </Box>
                   </Box>
-                  <SeoScoreBar score={score} />
+                  <SeoScoreBar score={scoreData.totalScore} grade={scoreData.grade} />
                 </Paper>
               );
             })}
@@ -484,16 +572,17 @@ const AdminSeo = () => {
                 <TableRow sx={{ bgcolor: '#FAFAFA' }}>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>Property</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>SEO Title</TableCell>
-                  <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Description</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Desc</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Keywords</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Schema</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Canonical</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }}>SEO Score</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#6B7280' }} align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginated.map((property) => {
-                  const score = calculateSeoScore(property);
+                  const scoreData = calculateSeoScore(property);
                   return (
                     <TableRow
                       key={property.id}
@@ -544,8 +633,11 @@ const AdminSeo = () => {
                       <TableCell align="center">
                         <StatusDot hasValue={!!property.schemaMarkup?.trim()} label="Schema" />
                       </TableCell>
+                      <TableCell align="center">
+                        <StatusDot hasValue={!!property.canonicalUrl?.trim()} label="Canonical" />
+                      </TableCell>
                       <TableCell>
-                        <SeoScoreBar score={score} />
+                        <SeoScoreBar score={scoreData.totalScore} grade={scoreData.grade} />
                       </TableCell>
                       <TableCell align="center">
                         <IconButton
@@ -560,7 +652,7 @@ const AdminSeo = () => {
                 })}
                 {paginated.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                    <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
                       <Icon icon="mdi:magnify" style={{ fontSize: 40, color: '#D1D5DB' }} />
                       <Typography sx={{ color: '#9CA3AF', mt: 1 }}>No properties found</Typography>
                     </TableCell>
@@ -633,12 +725,23 @@ const AdminSeo = () => {
             />
           </Box>
 
+          {/* Live Score Breakdown */}
+          <Box sx={{ mb: 3 }}>
+            <SeoScoreBreakdown scoreData={editScoreData} />
+          </Box>
+
           {/* SEO Title */}
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151', mb: 1 }}>
               SEO Title
-              <Typography component="span" sx={{ fontSize: '0.6875rem', color: '#9CA3AF', ml: 1 }}>
-                {editForm.seoTitle.length}/70 characters
+              <Typography
+                component="span"
+                sx={{ fontSize: '0.6875rem', color: getTitleLenColor(editForm.seoTitle.length), ml: 1 }}
+              >
+                {editForm.seoTitle.length}/{SEO_LIMITS.TITLE_OPTIMAL_MAX} characters
+                {editForm.seoTitle.length > 0 && editForm.seoTitle.length < SEO_LIMITS.TITLE_OPTIMAL_MIN && ' (too short)'}
+                {editForm.seoTitle.length > SEO_LIMITS.TITLE_MAX_LENGTH && ' (too long)'}
+                {editForm.seoTitle.length >= SEO_LIMITS.TITLE_OPTIMAL_MIN && editForm.seoTitle.length <= SEO_LIMITS.TITLE_OPTIMAL_MAX && ' (optimal)'}
               </Typography>
             </Typography>
             <TextField
@@ -655,8 +758,14 @@ const AdminSeo = () => {
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151', mb: 1 }}>
               SEO Description
-              <Typography component="span" sx={{ fontSize: '0.6875rem', color: '#9CA3AF', ml: 1 }}>
-                {editForm.seoDescription.length}/160 characters
+              <Typography
+                component="span"
+                sx={{ fontSize: '0.6875rem', color: getDescLenColor(editForm.seoDescription.length), ml: 1 }}
+              >
+                {editForm.seoDescription.length}/{SEO_LIMITS.DESC_OPTIMAL_MAX} characters
+                {editForm.seoDescription.length > 0 && editForm.seoDescription.length < SEO_LIMITS.DESC_OPTIMAL_MIN && ' (too short)'}
+                {editForm.seoDescription.length > SEO_LIMITS.DESC_MAX_LENGTH && ' (too long)'}
+                {editForm.seoDescription.length >= SEO_LIMITS.DESC_OPTIMAL_MIN && editForm.seoDescription.length <= SEO_LIMITS.DESC_OPTIMAL_MAX && ' (optimal)'}
               </Typography>
             </Typography>
             <TextField
@@ -671,10 +780,28 @@ const AdminSeo = () => {
             />
           </Box>
 
+          {/* Canonical URL */}
+          <Box sx={{ mb: 3 }}>
+            <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151', mb: 1 }}>
+              Canonical URL
+            </Typography>
+            <TextField
+              fullWidth
+              size="small"
+              value={editForm.canonicalUrl}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, canonicalUrl: e.target.value }))}
+              placeholder="https://homadvisory.com/properties/property-slug"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+            />
+          </Box>
+
           {/* Keywords */}
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151', mb: 1 }}>
               Keywords ({editForm.seoKeywords.length})
+              <Typography component="span" sx={{ fontSize: '0.6875rem', color: '#9CA3AF', ml: 1 }}>
+                Recommended: {SEO_LIMITS.MIN_KEYWORDS}-{SEO_LIMITS.MAX_KEYWORDS} keywords
+              </Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
               <TextField
@@ -715,10 +842,84 @@ const AdminSeo = () => {
             </Box>
           </Box>
 
+          {/* Open Graph Section */}
+          <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, mb: 3, border: '1px solid #E5E7EB' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Icon icon="mdi:share-variant" style={{ fontSize: 18, color: '#C9A86C' }} />
+              <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151' }}>
+                Open Graph Tags
+              </Typography>
+              <Typography sx={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>
+                (For social media sharing)
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                size="small"
+                label="OG Title"
+                fullWidth
+                value={editForm.ogTitle}
+                onChange={(e) => setEditForm((prev) => ({ ...prev, ogTitle: e.target.value }))}
+                placeholder="Defaults to SEO Title if empty"
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+              <TextField
+                size="small"
+                label="OG Description"
+                fullWidth
+                multiline
+                rows={2}
+                value={editForm.ogDescription}
+                onChange={(e) => setEditForm((prev) => ({ ...prev, ogDescription: e.target.value }))}
+                placeholder="Defaults to SEO Description if empty"
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+              <TextField
+                size="small"
+                label="OG Image URL"
+                fullWidth
+                value={editForm.ogImage}
+                onChange={(e) => setEditForm((prev) => ({ ...prev, ogImage: e.target.value }))}
+                placeholder="Defaults to first gallery image if empty"
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+            </Box>
+          </Paper>
+
+          {/* Twitter Card Section */}
+          <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, mb: 3, border: '1px solid #E5E7EB' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+              <Icon icon="mdi:twitter" style={{ fontSize: 18, color: '#C9A86C' }} />
+              <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151' }}>
+                Twitter Card
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              {['summary', 'summary_large_image'].map((type) => (
+                <Chip
+                  key={type}
+                  label={type}
+                  clickable
+                  onClick={() => setEditForm((prev) => ({ ...prev, twitterCard: type }))}
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    bgcolor: editForm.twitterCard === type ? '#1B2A4A' : '#F3F4F6',
+                    color: editForm.twitterCard === type ? '#fff' : '#6B7280',
+                  }}
+                />
+              ))}
+            </Box>
+          </Paper>
+
           {/* Schema Markup */}
           <Box>
             <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151', mb: 1 }}>
               Schema Markup (JSON-LD)
+              {editForm.schemaMarkup && (() => {
+                try { JSON.parse(editForm.schemaMarkup); return <Chip label="Valid JSON" size="small" sx={{ ml: 1, height: 18, fontSize: '0.625rem', bgcolor: '#ECFDF5', color: '#059669' }} />; }
+                catch { return <Chip label="Invalid JSON" size="small" sx={{ ml: 1, height: 18, fontSize: '0.625rem', bgcolor: '#FEF2F2', color: '#DC2626' }} />; }
+              })()}
             </Typography>
             <TextField
               fullWidth
@@ -727,7 +928,7 @@ const AdminSeo = () => {
               rows={8}
               value={editForm.schemaMarkup}
               onChange={(e) => setEditForm((prev) => ({ ...prev, schemaMarkup: e.target.value }))}
-              placeholder='{"@context":"https://schema.org","@type":"Residence",...}'
+              placeholder='{"@context":"https://schema.org","@type":"RealEstateListing",...}'
               InputProps={{
                 sx: { fontFamily: 'monospace', fontSize: '0.8125rem' },
               }}
