@@ -25,9 +25,8 @@ const DEFAULT_LINK_GROUPS = [
   {
     title: 'Offices',
     links: [
-      { label: 'Flexible Workspace', path: '/properties' },
-      { label: 'Direct Lease', path: '/properties' },
-      { label: 'Retails', path: '/properties' },
+      { label: 'Flexible Workspace', path: '/flexible-workspace' },
+      { label: 'Direct Lease & Retails', path: '/direct-lease-retails' },
     ],
   },
   {

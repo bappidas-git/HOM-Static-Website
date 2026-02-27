@@ -66,7 +66,7 @@ const FloorPlans = ({
               onKeyDown={!isLeadCaptured ? (e) => { if (e.key === 'Enter' || e.key === ' ') handleFloorPlanImageClick(); } : undefined}
             >
               <img
-                src={activePlan.image || 'https://placehold.co/600x400/1B2A4A/white?text=Floor+Plan'}
+                src={activePlan.image}
                 alt={`${activePlan.config} floor plan`}
                 loading="lazy"
               />

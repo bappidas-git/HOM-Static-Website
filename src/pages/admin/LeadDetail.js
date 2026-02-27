@@ -20,37 +20,11 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { leadService, propertyService } from '../../services/api';
-
-// Status config
-const statusConfig = {
-  new: { label: 'New', color: '#3B82F6', bg: '#EFF6FF', icon: 'mdi:new-box' },
-  contacted: { label: 'Contacted', color: '#F59E0B', bg: '#FFFBEB', icon: 'mdi:phone-check-outline' },
-  qualified: { label: 'Qualified', color: '#10B981', bg: '#ECFDF5', icon: 'mdi:check-decagram-outline' },
-  converted: { label: 'Converted', color: '#B45309', bg: '#FEF3C7', icon: 'mdi:handshake-outline' },
-  lost: { label: 'Lost', color: '#EF4444', bg: '#FEF2F2', icon: 'mdi:close-circle-outline' },
-};
-
-const statusOptions = ['new', 'contacted', 'qualified', 'converted', 'lost'];
-
-const formatSource = (source) => {
-  if (!source) return '--';
-  const sourceMap = {
-    'property-detail-page': 'Property Enquiry',
-    'homepage-contact-form': 'Contact Form',
-    'newsletter': 'Newsletter',
-    'home-loan': 'Home Loan',
-    'legal-assistance': 'Legal',
-    'interior-designing': 'Interior Design',
-    'sell-let': 'Sell/Let',
-    'careers': 'Careers',
-    'partnership': 'Partnership',
-    'property-listing-page': 'Property Listing',
-    'financial-assessment': 'Financial Assessment',
-    'brochure_download': 'Brochure Download',
-    'floorplan_download': 'Floor Plan Download',
-  };
-  return sourceMap[source] || source.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-};
+import {
+  LEAD_STATUS_CONFIG as statusConfig,
+  LEAD_STATUS_OPTIONS as statusOptions,
+  formatLeadSource as formatSource,
+} from '../../config/adminConstants';
 
 const LeadDetail = () => {
   const { id } = useParams();
@@ -128,6 +102,7 @@ const LeadDetail = () => {
           setProperty(propData);
         } catch {
           setProperty(null);
+          setSnackbar({ open: true, message: 'Could not load linked property details', severity: 'warning' });
         }
       }
       setError(null);

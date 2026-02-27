@@ -79,9 +79,8 @@ const PropertyCard = memo(({ property }) => {
 
   if (!property) return null;
 
-  const images = property.gallery?.length ? property.gallery : [
-    'https://placehold.co/400x280/1B2A4A/white?text=Property',
-  ];
+  // Use API gallery images only — no external placeholder fallback
+  const images = property.gallery?.length ? property.gallery : [];
 
   const badge = property.type === 'rent' ? 'For Rent' : 'For Sale';
   const badgeClass = property.type === 'rent' ? styles.badgeRent : styles.badgeSale;
@@ -110,8 +109,10 @@ const PropertyCard = memo(({ property }) => {
   const cardContent = (
     <>
       <div className={styles.imageWrapper}>
-        {/* Render video or image based on media type */}
-        {currentIsVideo ? (
+        {/* Render video or image based on media type; gradient fallback when no gallery */}
+        {!currentMediaUrl ? (
+          <div className={styles.imagePlaceholder} style={{ background: 'linear-gradient(135deg, #1B2A4A 0%, #2D4470 100%)' }} />
+        ) : currentIsVideo ? (
           <video
             ref={videoRef}
             src={currentMediaUrl}

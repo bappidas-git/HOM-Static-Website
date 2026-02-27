@@ -58,9 +58,8 @@ const PropertyGallery = ({ images = [] }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [direction, setDirection] = useState(0);
 
-  const gallery = images.length
-    ? images
-    : ['https://placehold.co/800x600/1B2A4A/white?text=No+Image'];
+  const gallery = images;
+  const imageCount = gallery.length;
 
   const currentIsVideo = isVideoUrl(gallery[currentIndex]);
 
@@ -71,13 +70,13 @@ const PropertyGallery = ({ images = [] }) => {
 
   const goPrev = useCallback(() => {
     setDirection(-1);
-    setCurrentIndex((prev) => (prev === 0 ? gallery.length - 1 : prev - 1));
-  }, [gallery.length]);
+    setCurrentIndex((prev) => (prev === 0 ? imageCount - 1 : prev - 1));
+  }, [imageCount]);
 
   const goNext = useCallback(() => {
     setDirection(1);
-    setCurrentIndex((prev) => (prev === gallery.length - 1 ? 0 : prev + 1));
-  }, [gallery.length]);
+    setCurrentIndex((prev) => (prev === imageCount - 1 ? 0 : prev + 1));
+  }, [imageCount]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') setLightboxOpen(false);
@@ -90,6 +89,9 @@ const PropertyGallery = ({ images = [] }) => {
     center: { x: 0, opacity: 1 },
     exit: (dir) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
   };
+
+  // Render nothing when no images exist — no placeholder fallback
+  if (!imageCount) return null;
 
   return (
     <>

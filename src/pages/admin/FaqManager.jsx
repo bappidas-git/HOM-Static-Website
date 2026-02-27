@@ -30,24 +30,10 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { faqService } from '../../services/api';
-
-const faqCategories = [
-  { value: 'general', label: 'General' },
-  { value: 'buying', label: 'Buying' },
-  { value: 'selling', label: 'Selling' },
-  { value: 'renting', label: 'Renting' },
-  { value: 'home-loan', label: 'Home Loan' },
-  { value: 'legal', label: 'Legal' },
-];
-
-const categoryColors = {
-  general: { bg: '#F3F4F6', color: '#6B7280' },
-  buying: { bg: '#EFF6FF', color: '#3B82F6' },
-  selling: { bg: '#ECFDF5', color: '#10B981' },
-  renting: { bg: '#FFFBEB', color: '#F59E0B' },
-  'home-loan': { bg: '#F5F3FF', color: '#8B5CF6' },
-  legal: { bg: '#FEF2F2', color: '#EF4444' },
-};
+import {
+  FAQ_CATEGORIES as faqCategories,
+  FAQ_CATEGORY_COLORS as categoryColors,
+} from '../../config/adminConstants';
 
 const emptyFaq = {
   question: '',

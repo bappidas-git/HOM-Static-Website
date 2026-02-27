@@ -62,7 +62,9 @@ const PropertyOverview = ({ property }) => {
       >
         <h2 className={styles.title}>Project Overview</h2>
 
-        <p className={styles.description}>{property.description || 'No description available.'}</p>
+        {property.description && (
+          <p className={styles.description}>{property.description}</p>
+        )}
 
         <div className={styles.detailsGrid}>
           {details.map((detail, idx) => (

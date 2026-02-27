@@ -6,7 +6,7 @@ import { useInView } from 'react-intersection-observer';
 import { neighborhoodService } from '../../../services/api';
 import styles from './ExploreNeighborhoods.module.css';
 
-const FALLBACK_IMAGE = 'https://placehold.co/400x300/1B2A4A/white?text=Neighborhood';
+// No external placeholder — neighborhoods without images use a CSS gradient via onError
 
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -74,7 +74,8 @@ const ExploreNeighborhoods = () => {
                 className={styles.card}
               >
                 <img
-                  src={imgErrors[item.id] ? FALLBACK_IMAGE : (item.image || FALLBACK_IMAGE)}
+                  src={item.image || ''}
+                  style={imgErrors[item.id] || !item.image ? { display: 'none' } : undefined}
                   alt={item.name}
                   className={styles.cardImage}
                   loading="lazy"
