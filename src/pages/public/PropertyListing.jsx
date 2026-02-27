@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import { Icon } from '@iconify/react';
 import { propertyService } from '../../services/api';
 import PropertyCard from '../../components/common/PropertyCard';
@@ -13,12 +12,20 @@ import styles from './PropertyListing.module.css';
 
 const ITEMS_PER_PAGE = 9;
 
-const PRICE_RANGES_MAP = {
+const SALE_PRICE_RANGES_MAP = {
   '0-5000000': { min: 0, max: 5000000 },
   '5000000-10000000': { min: 5000000, max: 10000000 },
   '10000000-20000000': { min: 10000000, max: 20000000 },
   '20000000-50000000': { min: 20000000, max: 50000000 },
   '50000000-Infinity': { min: 50000000, max: Infinity },
+};
+
+const RENT_PRICE_RANGES_MAP = {
+  '0-25000': { min: 0, max: 25000 },
+  '25000-50000': { min: 25000, max: 50000 },
+  '50000-100000': { min: 50000, max: 100000 },
+  '100000-200000': { min: 100000, max: 200000 },
+  '200000-Infinity': { min: 200000, max: Infinity },
 };
 
 // Route configuration for different listing pages
@@ -93,6 +100,22 @@ const PropertyListing = ({ routePath }) => {
   const typeOverride = urlType && !baseConfig.preFilters.type ? TYPE_LABELS[urlType] : null;
   const config = typeOverride ? { ...baseConfig, ...typeOverride, preFilters: baseConfig.preFilters } : baseConfig;
 
+  // Extract URL param values as stable primitives for hook dependencies.
+  // Using the searchParams object directly in useCallback/useMemo deps can cause
+  // infinite re-renders because URLSearchParams doesn't have referential stability.
+  const urlSearchQuery = searchParams.get('q') || '';
+  const urlArea = searchParams.get('area') || '';
+  const urlBhk = searchParams.get('bhk') || '';
+  const urlPriceRange = searchParams.get('priceRange') || '';
+  const urlLocations = searchParams.get('locations') || '';
+  const urlPropertyType = searchParams.get('propertyType') || '';
+  const urlStatus = searchParams.get('status') || '';
+  const urlDeveloper = searchParams.get('developer') || '';
+  const urlSort = searchParams.get('sort') || '';
+
+  const isRentPage = config.preFilters.type === 'rent';
+  const priceRangesMap = isRentPage ? RENT_PRICE_RANGES_MAP : SALE_PRICE_RANGES_MAP;
+
   const [allProperties, setAllProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -101,26 +124,19 @@ const PropertyListing = ({ routePath }) => {
 
   // Initialize filters from URL params + pre-filters
   const initFilters = useCallback(() => {
-    const bhk = searchParams.get('bhk');
-    const priceRange = searchParams.get('priceRange');
-    const locations = searchParams.get('locations');
-    const propertyType = searchParams.get('propertyType');
-    const status = searchParams.get('status');
-    const developer = searchParams.get('developer');
-
     return {
-      bhk: bhk ? bhk.split(',') : [],
-      priceRange: priceRange || '',
-      locations: locations ? locations.split(',') : [],
-      propertyType: propertyType || '',
-      status: status || '',
-      developer: developer || '',
+      bhk: urlBhk ? urlBhk.split(',') : [],
+      priceRange: urlPriceRange,
+      locations: urlLocations ? urlLocations.split(',') : [],
+      propertyType: urlPropertyType,
+      status: urlStatus,
+      developer: urlDeveloper,
       ...config.preFilters,
     };
-  }, [searchParams, config.preFilters]);
+  }, [urlBhk, urlPriceRange, urlLocations, urlPropertyType, urlStatus, urlDeveloper, config.preFilters]);
 
   const [filters, setFilters] = useState(initFilters);
-  const [sortBy, setSortBy] = useState(searchParams.get('sort') || '');
+  const [sortBy, setSortBy] = useState(urlSort);
 
   // Fetch all properties
   const fetchProperties = useCallback(async () => {
@@ -142,15 +158,13 @@ const PropertyListing = ({ routePath }) => {
       }
 
       // Apply type filter from URL param (used by category cards on homepage)
-      const urlType = searchParams.get('type');
       if (urlType && !config.preFilters.type) {
         params.type = urlType;
       }
 
       // Search query from URL
-      const q = searchParams.get('q');
-      if (q) {
-        params.q = q;
+      if (urlSearchQuery) {
+        params.q = urlSearchQuery;
       }
 
       // Area filter from URL (from neighborhood links)
@@ -163,7 +177,7 @@ const PropertyListing = ({ routePath }) => {
     } finally {
       setLoading(false);
     }
-  }, [config.preFilters, searchParams]);
+  }, [config.preFilters, urlType, urlSearchQuery]);
 
   useEffect(() => {
     fetchProperties();
@@ -180,10 +194,9 @@ const PropertyListing = ({ routePath }) => {
     let result = [...allProperties];
 
     // Area filter from URL (from neighborhood links) — client-side for backend-agnostic compatibility
-    const area = searchParams.get('area');
-    if (area) {
+    if (urlArea) {
       result = result.filter((p) =>
-        p.location?.area?.toLowerCase().includes(area.toLowerCase())
+        p.location?.area?.toLowerCase().includes(urlArea.toLowerCase())
       );
     }
 
@@ -199,7 +212,7 @@ const PropertyListing = ({ routePath }) => {
 
     // Price range filter
     if (filters.priceRange) {
-      const range = PRICE_RANGES_MAP[filters.priceRange];
+      const range = priceRangesMap[filters.priceRange];
       if (range) {
         result = result.filter(
           (p) => p.price >= range.min && p.price < range.max
@@ -234,7 +247,7 @@ const PropertyListing = ({ routePath }) => {
     }
 
     return result;
-  }, [allProperties, filters, config.preFilters, searchParams]);
+  }, [allProperties, filters, config.preFilters, urlArea, priceRangesMap]);
 
   // Sorting
   const sortedProperties = useMemo(() => {
