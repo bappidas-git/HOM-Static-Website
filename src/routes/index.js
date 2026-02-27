@@ -14,6 +14,7 @@ const UnderConstruction = lazy(() => import('../pages/public/UnderConstruction')
 const ReadyToMove = lazy(() => import('../pages/public/ReadyToMove'));
 const RentApartments = lazy(() => import('../pages/public/RentApartments'));
 const RentVillas = lazy(() => import('../pages/public/RentVillas'));
+const RentCategory = lazy(() => import('../pages/public/RentCategory'));
 const HomeLoan = lazy(() => import('../pages/public/HomeLoan'));
 const LegalAssistance = lazy(() => import('../pages/public/LegalAssistance'));
 const InteriorDesigning = lazy(() => import('../pages/public/InteriorDesigning'));
@@ -63,9 +64,10 @@ const AppRoutes = () => {
         <Route path="/buy/under-construction" element={<PublicRoute><UnderConstruction /></PublicRoute>} />
         <Route path="/buy/ready-to-move" element={<PublicRoute><ReadyToMove /></PublicRoute>} />
 
-        {/* Rent sub-routes */}
+        {/* Rent sub-routes — static for known categories, dynamic catch-all for new ones */}
         <Route path="/rent/apartments" element={<PublicRoute><RentApartments /></PublicRoute>} />
         <Route path="/rent/villas" element={<PublicRoute><RentVillas /></PublicRoute>} />
+        <Route path="/rent/:category" element={<PublicRoute><RentCategory /></PublicRoute>} />
 
         {/* Buyer Assistance sub-routes */}
         <Route path="/buyer-assistance/home-loan" element={<PublicRoute><HomeLoan /></PublicRoute>} />
