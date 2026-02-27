@@ -1864,34 +1864,9 @@
       ],
       "developerInfo": {
         "name": "Assam Digital",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem ex, maximus ut turpis sit amet, mattis rutrum elit. Etiam tincidunt congue augue, ut finibus tortor hendrerit ac. Cras quis dolor ut ligula pulvinar placerat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris varius tristique mi mattis molestie. Donec pretium enim in ligula feugiat, ut vestibulum mauris malesuada. Phasellus nec nisl malesuada, posuere lectus in, tempus purus. Vestibulum felis dui, pretium in hendrerit non, hendrerit id nisi. Praesent faucibus suscipit nibh, non lobortis ex hendrerit eget. Cras iaculis lobortis lacus, efficitur mollis odio hendrerit nec. Vestibulum sodales laoreet euismod. Ut gravida scelerisque iaculis. Curabitur eget metus sit amet erat semper mattis et in diam.",
-        "logo": "https://assamdigital.com/wp-content/uploads/2022/04/logo.png",
-        "stats": [
-          {
-            "value": 20,
-            "suffix": "+",
-            "label": "Years Experience",
-            "icon": "mdi:calendar-star"
-          },
-          {
-            "value": 10,
-            "suffix": "+",
-            "label": "Projects Completed",
-            "icon": "mdi:office-building"
-          },
-          {
-            "value": 100,
-            "suffix": "%",
-            "label": "Satisfied Customers",
-            "icon": "mdi:check-decagram"
-          },
-          {
-            "value": 10,
-            "suffix": "+",
-            "label": "Cities Present In",
-            "icon": "mdi:home-group"
-          }
-        ]
+        "description": "",
+        "logo": "",
+        "stats": []
       },
       "faqs": [
         {
@@ -1933,7 +1908,7 @@
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-26T08:25:42.026Z"
+      "updatedAt": "2026-02-27T08:47:07.075Z"
     }
   ],
   "leads": [
