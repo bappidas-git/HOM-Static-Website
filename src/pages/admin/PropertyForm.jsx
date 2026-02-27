@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { propertyService } from '../../services/api';
-import { TAB_CONFIG, DRAFT_STORAGE_KEY, generateSlug, getDefaultFormData } from './property-tabs/constants';
+import { TAB_CONFIG, DRAFT_STORAGE_KEY, generateSlug, getDefaultFormData, getDisabledTabIndices } from './property-tabs/constants';
 import {
   GalleryTab,
   BasicInfoTab,
@@ -254,7 +254,8 @@ const PropertyForm = ({ propertyId = null }) => {
     if (!formData.title.trim()) errs.title = 'Property name is required';
     if (!formData.slug.trim()) errs.slug = 'Slug is required';
     if (!formData.price || Number(formData.price) <= 0) errs.price = 'Valid price is required';
-    if (!formData.developer.trim()) errs.developer = 'Developer name is required';
+    // Developer is only required for sale properties
+    if (formData.type !== 'rent' && !formData.developer.trim()) errs.developer = 'Developer name is required';
     if (!formData.location.area.trim()) errs['location.area'] = 'Area is required';
     if (!formData.location.city.trim()) errs['location.city'] = 'City is required';
     if (!formData.description.trim()) errs.description = 'Description is required';
@@ -290,15 +291,18 @@ const PropertyForm = ({ propertyId = null }) => {
       (s) => s.value && s.label.trim()
     ).map((s) => ({ ...s, value: Number(s.value) || 0 }));
 
+    const isRent = formData.type === 'rent';
+
     return {
       title: formData.title.trim(),
       slug: formData.slug.trim(),
       type: formData.type,
+      category: formData.propertyType,
       propertyType: formData.propertyType,
       status: formData.status,
       price: Number(formData.price),
       priceUnit: formData.priceUnit,
-      developer: formData.developer.trim(),
+      developer: isRent ? (formData.developer?.trim() || null) : formData.developer.trim(),
       description: formData.description.trim(),
       highlights: formData.highlights.filter((h) => h.trim()),
       location: {
@@ -326,15 +330,15 @@ const PropertyForm = ({ propertyId = null }) => {
       floorPlanPdfUrl: formData.floorPlanPdfUrl?.trim() || '',
       specialities: formData.specialities.filter((s) => s.name.trim()),
       documents: formData.documents.filter((d) => d.name.trim()),
-      constructionSpecs: Object.fromEntries(
+      constructionSpecs: isRent ? null : Object.fromEntries(
         Object.entries(formData.constructionSpecs)
           .filter(
             ([, items]) => Array.isArray(items) && items.some((item) => item.area.trim() && item.spec.trim())
           )
           .map(([key, items]) => [key, items.filter((item) => item.area.trim() && item.spec.trim())])
       ),
-      constructionTimeline: formData.constructionTimeline.filter((t) => t.label.trim()),
-      developerInfo: {
+      constructionTimeline: isRent ? null : formData.constructionTimeline.filter((t) => t.label.trim()),
+      developerInfo: isRent ? null : {
         name: formData.developerInfo?.name || formData.developer.trim(),
         description: formData.developerInfo?.description?.trim() || '',
         logo: formData.developerInfo?.logo?.trim() || '',
@@ -385,6 +389,9 @@ const PropertyForm = ({ propertyId = null }) => {
       setSaving(false);
     }
   };
+
+  // ---- Disabled tabs based on property type ----
+  const disabledTabs = getDisabledTabIndices(formData.type);
 
   // ---- Tab renderers ----
   const sharedProps = {
@@ -474,49 +481,67 @@ const PropertyForm = ({ propertyId = null }) => {
 
       {isMobile ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {TAB_CONFIG.map((tab, index) => (
-            <Accordion
-              key={tab.key}
-              expanded={activeTab === index}
-              onChange={() => setActiveTab(activeTab === index ? -1 : index)}
-              sx={{
-                borderRadius: '12px !important',
-                '&:before': { display: 'none' },
-                border: activeTab === index ? '1px solid #C9A86C' : '1px solid #E5E7EB',
-              }}
-            >
-              <AccordionSummary expandIcon={<Icon icon="mdi:chevron-down" />}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 28, height: 28, borderRadius: '50%',
-                      bgcolor: activeTab === index ? '#1B2A4A' : '#F3F4F6',
-                      color: activeTab === index ? '#fff' : '#6B7280',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.75rem', fontWeight: 600,
-                    }}
-                  >
-                    {index + 1}
+          {TAB_CONFIG.map((tab, index) => {
+            const isDisabled = disabledTabs.includes(index);
+            return (
+              <Accordion
+                key={tab.key}
+                expanded={!isDisabled && activeTab === index}
+                onChange={() => {
+                  if (isDisabled) return;
+                  setActiveTab(activeTab === index ? -1 : index);
+                }}
+                disabled={isDisabled}
+                sx={{
+                  borderRadius: '12px !important',
+                  '&:before': { display: 'none' },
+                  border: activeTab === index && !isDisabled ? '1px solid #C9A86C' : '1px solid #E5E7EB',
+                  opacity: isDisabled ? 0.5 : 1,
+                  pointerEvents: isDisabled ? 'none' : 'auto',
+                }}
+              >
+                <AccordionSummary expandIcon={<Icon icon="mdi:chevron-down" />}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 28, height: 28, borderRadius: '50%',
+                        bgcolor: activeTab === index && !isDisabled ? '#1B2A4A' : '#F3F4F6',
+                        color: activeTab === index && !isDisabled ? '#fff' : '#6B7280',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.75rem', fontWeight: 600,
+                      }}
+                    >
+                      {index + 1}
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                      <Icon icon={tab.icon} style={{ fontSize: 18, color: isDisabled ? '#D1D5DB' : (activeTab === index ? '#C9A86C' : '#9CA3AF') }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, color: isDisabled ? '#D1D5DB' : (activeTab === index ? '#1B2A4A' : '#6B7280') }}>
+                        {tab.label}
+                        {isDisabled && (
+                          <Typography component="span" variant="caption" sx={{ ml: 1, color: '#9CA3AF', fontWeight: 400 }}>
+                            (N/A for Rent)
+                          </Typography>
+                        )}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                    <Icon icon={tab.icon} style={{ fontSize: 18, color: activeTab === index ? '#C9A86C' : '#9CA3AF' }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: activeTab === index ? '#1B2A4A' : '#6B7280' }}>
-                      {tab.label}
-                    </Typography>
-                  </Box>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails sx={{ pt: 0 }}>
-                {tabRenderers[index]()}
-              </AccordionDetails>
-            </Accordion>
-          ))}
+                </AccordionSummary>
+                {!isDisabled && (
+                  <AccordionDetails sx={{ pt: 0 }}>
+                    {tabRenderers[index]()}
+                  </AccordionDetails>
+                )}
+              </Accordion>
+            );
+          })}
         </Box>
       ) : (
         <Paper sx={{ borderRadius: 3, overflow: 'hidden', maxWidth: '100%' }}>
           <Tabs
             value={activeTab}
-            onChange={(e, val) => setActiveTab(val)}
+            onChange={(e, val) => {
+              if (!disabledTabs.includes(val)) setActiveTab(val);
+            }}
             variant="scrollable"
             scrollButtons="auto"
             allowScrollButtonsMobile
@@ -535,20 +560,28 @@ const PropertyForm = ({ propertyId = null }) => {
               '& .MuiTabs-scrollButtons': { '&.Mui-disabled': { opacity: 0.3 } },
             }}
           >
-            {TAB_CONFIG.map((tab) => (
-              <Tab
-                key={tab.key}
-                label={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Icon icon={tab.icon} style={{ fontSize: 16 }} />
-                    {tab.label}
-                  </Box>
-                }
-              />
-            ))}
+            {TAB_CONFIG.map((tab, index) => {
+              const isDisabled = disabledTabs.includes(index);
+              return (
+                <Tab
+                  key={tab.key}
+                  disabled={isDisabled}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: isDisabled ? 0.4 : 1 }}>
+                      <Icon icon={tab.icon} style={{ fontSize: 16 }} />
+                      {tab.label}
+                    </Box>
+                  }
+                  sx={isDisabled ? {
+                    cursor: 'not-allowed !important',
+                    '&.Mui-disabled': { color: '#D1D5DB', opacity: 0.5 },
+                  } : {}}
+                />
+              );
+            })}
           </Tabs>
           <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 }, overflow: 'hidden' }}>
-            {tabRenderers[activeTab]()}
+            {!disabledTabs.includes(activeTab) && tabRenderers[activeTab]()}
           </Box>
         </Paper>
       )}
