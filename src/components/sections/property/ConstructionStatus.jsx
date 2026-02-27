@@ -4,21 +4,24 @@ import { Icon } from '@iconify/react';
 import { useInView } from 'react-intersection-observer';
 import styles from './ConstructionStatus.module.css';
 
-const milestones = [
-  { key: 'foundation', label: 'Foundation', icon: 'mdi:shovel', description: 'Site preparation & foundation work' },
-  { key: 'structure', label: 'Structure', icon: 'mdi:crane', description: 'Structural framework & RCC work' },
-  { key: 'finishing', label: 'Finishing', icon: 'mdi:format-paint', description: 'Interior finishing & fitouts' },
-  { key: 'handover', label: 'Handover', icon: 'mdi:key-variant', description: 'Final inspection & key handover' },
-];
-
-const ConstructionStatus = ({ status }) => {
+const ConstructionStatus = ({ status, constructionTimeline }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
+  // Require constructionTimeline data from API — no static fallback
+  const milestones = Array.isArray(constructionTimeline) && constructionTimeline.length > 0
+    ? constructionTimeline
+    : null;
+
+  if (!milestones) return null;
+
+  // Determine progress from milestone statuses
   const getProgress = () => {
-    if (status === 'ready-to-move') return 4;
-    if (status === 'under-construction') return 2;
-    if (status === 'pre-launch') return 0;
-    return 0;
+    if (status === 'ready-to-move') return milestones.length;
+    // Count completed milestones from API data
+    const completedCount = milestones.filter(
+      (m) => m.status === 'completed'
+    ).length;
+    return completedCount;
   };
 
   const progress = getProgress();
@@ -68,11 +71,11 @@ const ConstructionStatus = ({ status }) => {
 
           <div className={styles.milestones}>
             {milestones.map((milestone, idx) => {
-              const isCompleted = idx < progress;
-              const isCurrent = idx === progress && progress < milestones.length;
+              const isCompleted = milestone.status === 'completed' || idx < progress;
+              const isCurrent = milestone.status === 'in-progress' || (idx === progress && progress < milestones.length);
               return (
                 <motion.div
-                  key={milestone.key}
+                  key={milestone.label || idx}
                   className={`${styles.milestone} ${isCompleted ? styles.completed : ''} ${isCurrent ? styles.current : ''}`}
                   initial={{ opacity: 0, y: 15 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -82,12 +85,14 @@ const ConstructionStatus = ({ status }) => {
                     {isCompleted ? (
                       <Icon icon="mdi:check" className={styles.nodeIcon} />
                     ) : (
-                      <Icon icon={milestone.icon} className={styles.nodeIcon} />
+                      <Icon icon={milestone.icon || 'mdi:circle-outline'} className={styles.nodeIcon} />
                     )}
                   </div>
                   <div className={styles.milestoneInfo}>
                     <span className={styles.milestoneLabel}>{milestone.label}</span>
-                    <span className={styles.milestoneDesc}>{milestone.description}</span>
+                    {milestone.description && (
+                      <span className={styles.milestoneDesc}>{milestone.description}</span>
+                    )}
                   </div>
                 </motion.div>
               );

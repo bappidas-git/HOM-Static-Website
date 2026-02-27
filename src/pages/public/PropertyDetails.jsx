@@ -26,6 +26,7 @@ import EnquiryForm from '../../components/sections/property/EnquiryForm';
 import PropertyFaq from '../../components/sections/property/PropertyFaq';
 import SimilarProperties from '../../components/sections/property/SimilarProperties';
 import StickyNav from '../../components/sections/property/StickyNav';
+import SectionGuard from '../../components/common/SectionGuard';
 import styles from './PropertyDetails.module.css';
 
 const formatPrice = (price, unit) => {
@@ -443,6 +444,15 @@ const PropertyDetails = () => {
     saveLeadToSession(formData, property?.id, 'child_form');
   }, [property?.id, saveLeadToSession]);
 
+  // Section visibility from admin toggles (defaults to all enabled)
+  const sec = useMemo(() => {
+    if (!property) return {};
+    return property.sections || {};
+  }, [property]);
+
+  const isSale = property?.type === 'sale';
+  const isRent = property?.type === 'rent';
+
   // Compute which sections have data for conditional rendering + sticky nav
   // Must be called before early returns to maintain hook order
   const sectionFlags = useMemo(() => {
@@ -460,6 +470,12 @@ const PropertyDetails = () => {
         (arr) => Array.isArray(arr) && arr.length > 0 && arr.some(item => item.area?.trim() && item.spec?.trim())
       );
     })();
+    const hasConstructionTimeline = Array.isArray(property.constructionTimeline) && property.constructionTimeline.length > 0;
+    const hasFaqs = Array.isArray(property.faqs) && property.faqs.length > 0;
+    const hasSimilar = Array.isArray(property.similarPropertyIds) && property.similarPropertyIds.length > 0;
+    const hasDeveloperInfo = Boolean(
+      property.developerInfo?.name || property.developerInfo?.description || property.developer
+    );
     return {
       hasOverview: Boolean(property.description),
       hasSpecs,
@@ -469,28 +485,32 @@ const PropertyDetails = () => {
       hasNearbyPlaces: property.nearbyPlaces?.length > 0,
       hasDocuments: property.documents?.length > 0,
       hasConstructionSpecs,
-      hasDeveloper: Boolean(property.developer),
+      hasConstructionTimeline,
+      hasDeveloper: hasDeveloperInfo,
+      hasFaqs,
+      hasSimilar,
     };
   }, [property]);
 
   const visibleSections = useMemo(() => {
     if (!property) return [];
     const sections = [];
-    if (sectionFlags.hasOverview) sections.push('overview');
-    if (sectionFlags.hasSpecs) sections.push('specifications');
+    const enabled = (key) => sec[key] !== false;
+    if (enabled('overview') && sectionFlags.hasOverview) sections.push('overview');
+    if (enabled('details') && sectionFlags.hasSpecs) sections.push('specifications');
     if (sectionFlags.hasSpecialities) sections.push('specialities');
-    if (sectionFlags.hasAmenities) sections.push('amenities');
-    if (sectionFlags.hasFloorPlans) sections.push('floor-plans');
-    sections.push('finance');
-    if (sectionFlags.hasNearbyPlaces) sections.push('nearby');
-    if (sectionFlags.hasDocuments) sections.push('documents');
-    if (sectionFlags.hasConstructionSpecs) sections.push('construction-specs');
-    sections.push('construction');
-    if (sectionFlags.hasDeveloper) sections.push('builder');
-    sections.push('faqs');
-    sections.push('similar');
+    if (enabled('amenities') && sectionFlags.hasAmenities) sections.push('amenities');
+    if (enabled('floorPlans') && sectionFlags.hasFloorPlans) sections.push('floor-plans');
+    if (enabled('finance') && isSale) sections.push('finance');
+    if (enabled('location') && sectionFlags.hasNearbyPlaces) sections.push('nearby');
+    if (enabled('documents') && sectionFlags.hasDocuments) sections.push('documents');
+    if (enabled('constructionSpecs') && sectionFlags.hasConstructionSpecs) sections.push('construction-specs');
+    if (enabled('construction') && sectionFlags.hasConstructionTimeline) sections.push('construction');
+    if (enabled('developer') && sectionFlags.hasDeveloper) sections.push('builder');
+    if (enabled('faqs') && sectionFlags.hasFaqs) sections.push('faqs');
+    if (enabled('similar') && sectionFlags.hasSimilar) sections.push('similar');
     return sections;
-  }, [property, sectionFlags]);
+  }, [property, sectionFlags, sec, isSale]);
 
   // Loading skeleton
   if (loading) {
@@ -522,8 +542,12 @@ const PropertyDetails = () => {
 
   const {
     hasOverview, hasSpecs, hasSpecialities, hasAmenities,
-    hasFloorPlans, hasNearbyPlaces, hasDocuments, hasConstructionSpecs, hasDeveloper,
+    hasFloorPlans, hasNearbyPlaces, hasDocuments, hasConstructionSpecs,
+    hasConstructionTimeline, hasDeveloper, hasFaqs, hasSimilar,
   } = sectionFlags;
+
+  // Helper: check if admin has enabled a section (defaults to true if not set)
+  const sectionEnabled = (key) => sec[key] !== false;
 
   const badge = property.type === 'rent' ? 'For Rent' : 'For Sale';
   const badgeClass = property.type === 'rent' ? styles.badgeRent : styles.badgeSale;
@@ -1245,12 +1269,20 @@ const PropertyDetails = () => {
                 </div>
               </motion.div>
 
-              {/* Sections — conditionally rendered based on data */}
-              {hasOverview && <PropertyOverview property={property} />}
-              {hasSpecs && <PropertySpecs specifications={property.specifications} specificationsArray={property.specificationsArray} propertyType={property.propertyType} />}
-              {hasSpecialities && <PropertySpecialities specialities={property.specialities} />}
-              {hasAmenities && <PropertyAmenities amenities={property.amenities} />}
-              {hasFloorPlans && (
+              {/* Sections — rendered via SectionGuard (admin toggle + data presence + type) */}
+              <SectionGuard sectionEnabled={sectionEnabled('overview')} hasData={hasOverview}>
+                <PropertyOverview property={property} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('details')} hasData={hasSpecs}>
+                <PropertySpecs specifications={property.specifications} specificationsArray={property.specificationsArray} propertyType={property.propertyType} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('highlights')} hasData={hasSpecialities}>
+                <PropertySpecialities specialities={property.specialities} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('amenities')} hasData={hasAmenities}>
+                <PropertyAmenities amenities={property.amenities} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('floorPlans')} hasData={hasFloorPlans}>
                 <FloorPlans
                   floorPlans={property.floorPlans}
                   priceUnit={property.priceUnit}
@@ -1259,19 +1291,33 @@ const PropertyDetails = () => {
                   isLeadCaptured={leadCaptured}
                   onFloorPlanImageClick={openFloorPlanRequestModal}
                 />
-              )}
-              <FinanceGuide
-                price={property.price}
-                property={property}
-                savedUserDetails={savedUserDetails}
-                onLeadCaptured={handleLeadCapturedFromChild}
-              />
-              {hasNearbyPlaces && <NearbyPlaces nearbyPlaces={property.nearbyPlaces} location={property.location} />}
-              {hasDocuments && <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />}
-              {hasConstructionSpecs && <ConstructionSpecs constructionSpecs={property.constructionSpecs} />}
-              <ConstructionStatus status={property.status} />
-              {hasDeveloper && <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />}
-              <PropertyFaq property={property} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('finance')} hasData={true} typeAllowed={isSale}>
+                <FinanceGuide
+                  price={property.price}
+                  property={property}
+                  savedUserDetails={savedUserDetails}
+                  onLeadCaptured={handleLeadCapturedFromChild}
+                />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('location')} hasData={hasNearbyPlaces}>
+                <NearbyPlaces nearbyPlaces={property.nearbyPlaces} location={property.location} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('documents')} hasData={hasDocuments}>
+                <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('constructionSpecs')} hasData={hasConstructionSpecs} typeAllowed={!isRent}>
+                <ConstructionSpecs constructionSpecs={property.constructionSpecs} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('construction')} hasData={hasConstructionTimeline} typeAllowed={!isRent}>
+                <ConstructionStatus status={property.status} constructionTimeline={property.constructionTimeline} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('developer')} hasData={hasDeveloper}>
+                <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />
+              </SectionGuard>
+              <SectionGuard sectionEnabled={sectionEnabled('faqs')} hasData={hasFaqs}>
+                <PropertyFaq property={property} />
+              </SectionGuard>
             </div>
 
             {/* Sidebar — sticky on desktop */}
@@ -1285,7 +1331,9 @@ const PropertyDetails = () => {
           </div>
 
           {/* Similar Properties - full width */}
-          <SimilarProperties currentProperty={property} />
+          <SectionGuard sectionEnabled={sectionEnabled('similar')} hasData={hasSimilar}>
+            <SimilarProperties currentProperty={property} />
+          </SectionGuard>
         </div>
       </div>
 

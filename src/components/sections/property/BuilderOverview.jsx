@@ -5,31 +5,27 @@ import { useInView } from 'react-intersection-observer';
 import CountUp from 'react-countup';
 import styles from './BuilderOverview.module.css';
 
-const DEFAULT_STATS = [
-  { value: 20, suffix: '+', label: 'Years Experience', icon: 'mdi:calendar-star' },
-  { value: 50, suffix: '+', label: 'Projects Completed', icon: 'mdi:office-building' },
-  { value: 97, suffix: '%', label: 'Customer Satisfaction', icon: 'mdi:emoticon-happy' },
-  { value: 10, suffix: '+', label: 'Cities Present In', icon: 'mdi:city-variant' },
-];
-
 const BuilderOverview = ({ developer, developerInfo }) => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 });
 
-  if (!developer) return null;
+  // Return null if no developer data from API
+  if (!developer && !developerInfo?.name) return null;
 
-  // Use custom stats from API if available, otherwise fall back to defaults
-  const rawStats = (developerInfo?.stats && developerInfo.stats.length > 0)
-    ? developerInfo.stats
-    : DEFAULT_STATS;
-  const stats = rawStats.map((s) => ({
-    value: Number(s.value) || 0,
-    suffix: s.suffix || '',
-    label: s.label || 'Metric',
-    icon: s.icon || 'mdi:information',
-  }));
-
+  const developerName = developerInfo?.name || developer;
   const description = developerInfo?.description || null;
   const logo = developerInfo?.logo || null;
+
+  // Only show stats if API provides them — no fallback defaults
+  const stats = (developerInfo?.stats && developerInfo.stats.length > 0)
+    ? developerInfo.stats
+      .filter((s) => s.value && s.label)
+      .map((s) => ({
+        value: Number(s.value) || 0,
+        suffix: s.suffix || '',
+        label: s.label || 'Metric',
+        icon: s.icon || 'mdi:information',
+      }))
+    : [];
 
   return (
     <section className={styles.section} ref={ref} id="builder">
@@ -43,57 +39,44 @@ const BuilderOverview = ({ developer, developerInfo }) => {
             <span className={styles.badge}>
               <Icon icon="mdi:shield-star" /> Meet the Developer
             </span>
-            <h2 className={styles.title}>{developer}</h2>
+            <h2 className={styles.title}>{developerName}</h2>
           </div>
           <div className={styles.logoPlaceholder}>
             {logo ? (
-              <img src={logo} alt={`${developer} logo`} style={{ maxHeight: 48, maxWidth: 120, objectFit: 'contain' }} />
+              <img src={logo} alt={`${developerName} logo`} style={{ maxHeight: 48, maxWidth: 120, objectFit: 'contain' }} />
             ) : (
               <Icon icon="mdi:domain" className={styles.logoIcon} />
             )}
           </div>
         </div>
 
-        <p className={styles.description}>
-          {description || `${developer} is one of India's leading real estate developers with decades of experience delivering high-quality residential and commercial projects. Known for maintaining high construction standards, timely possession, and strong customer focus, ${developer} continues to shape India's urban landscape with innovation and trust.`}
-        </p>
+        {description && (
+          <p className={styles.description}>{description}</p>
+        )}
 
-        <div className={styles.statsGrid}>
-          {stats.map((stat, idx) => (
-            <motion.div
-              key={idx}
-              className={styles.statCard}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
-            >
-              <Icon icon={stat.icon} className={styles.statIcon} />
-              <span className={styles.statValue}>
-                {inView ? (
-                  <CountUp end={stat.value} duration={2} suffix={stat.suffix} />
-                ) : (
-                  `0${stat.suffix}`
-                )}
-              </span>
-              <span className={styles.statLabel}>{stat.label}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className={styles.qualities}>
-          <div className={styles.qualityItem}>
-            <Icon icon="mdi:check-decagram" className={styles.qualityIcon} />
-            <span>Proven Expertise</span>
+        {stats.length > 0 && (
+          <div className={styles.statsGrid}>
+            {stats.map((stat, idx) => (
+              <motion.div
+                key={idx}
+                className={styles.statCard}
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
+              >
+                <Icon icon={stat.icon} className={styles.statIcon} />
+                <span className={styles.statValue}>
+                  {inView ? (
+                    <CountUp end={stat.value} duration={2} suffix={stat.suffix} />
+                  ) : (
+                    `0${stat.suffix}`
+                  )}
+                </span>
+                <span className={styles.statLabel}>{stat.label}</span>
+              </motion.div>
+            ))}
           </div>
-          <div className={styles.qualityItem}>
-            <Icon icon="mdi:clock-check" className={styles.qualityIcon} />
-            <span>On-time Delivery</span>
-          </div>
-          <div className={styles.qualityItem}>
-            <Icon icon="mdi:leaf" className={styles.qualityIcon} />
-            <span>Sustainable Design</span>
-          </div>
-        </div>
+        )}
       </motion.div>
     </section>
   );

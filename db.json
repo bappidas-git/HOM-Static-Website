@@ -294,7 +294,23 @@
       "ogTitle": "Nambiar District 25 Phase 2 by Nambiar Builders | Bangalore",
       "ogDescription": "Explore Nambiar District 25 Phase 2 by Nambiar Builders in Dommasandra, Sarjapur Road, Bangalore. 2 BHK, 3 BHK, 4 BHK, 4.5 BHK apartments from 1245-2990 sqft...",
       "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Nambiar+Exterior",
-      "twitterCard": "summary_large_image"
+      "twitterCard": "summary_large_image",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "2",
@@ -591,7 +607,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Mahindra Blossom\"}",
       "isActive": true,
       "createdAt": "2024-03-10T08:00:00Z",
-      "updatedAt": "2025-11-15T12:00:00Z"
+      "updatedAt": "2025-11-15T12:00:00Z",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "3",
@@ -747,7 +779,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Prestige Lakeside Habitat\"}",
       "isActive": true,
       "createdAt": "2024-02-01T09:00:00Z",
-      "updatedAt": "2025-10-01T11:00:00Z"
+      "updatedAt": "2025-10-01T11:00:00Z",
+      "category": "villa",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "4",
@@ -901,7 +949,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Brigade El Dorado\"}",
       "isActive": true,
       "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-12-01T09:00:00Z"
+      "updatedAt": "2025-12-01T09:00:00Z",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "5",
@@ -1057,7 +1121,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Sobha Neopolis\"}",
       "isActive": true,
       "createdAt": "2024-09-20T10:00:00Z",
-      "updatedAt": "2026-02-27T05:26:49.108Z"
+      "updatedAt": "2026-02-27T05:26:49.108Z",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "6",
@@ -1201,7 +1281,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Godrej Splendour\"}",
       "isActive": true,
       "createdAt": "2024-06-01T10:00:00Z",
-      "updatedAt": "2025-11-20T10:00:00Z"
+      "updatedAt": "2025-11-20T10:00:00Z",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "7",
@@ -1365,7 +1461,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Puravankara Zenium\"}",
       "isActive": true,
       "createdAt": "2024-07-01T10:00:00Z",
-      "updatedAt": "2025-12-05T14:00:00Z"
+      "updatedAt": "2025-12-05T14:00:00Z",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "8",
@@ -1502,7 +1614,23 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Salarpuria Sattva Opus\"}",
       "isActive": true,
       "createdAt": "2024-08-15T10:00:00Z",
-      "updatedAt": "2025-11-30T16:00:00Z"
+      "updatedAt": "2025-11-30T16:00:00Z",
+      "category": "villa",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     },
     {
       "id": "b998",
@@ -1908,7 +2036,23 @@
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-27T08:47:07.075Z"
+      "updatedAt": "2026-02-27T08:47:07.075Z",
+      "category": "apartment",
+      "sections": {
+        "overview": true,
+        "details": true,
+        "highlights": true,
+        "amenities": true,
+        "floorPlans": true,
+        "finance": true,
+        "location": true,
+        "documents": true,
+        "construction": true,
+        "constructionSpecs": true,
+        "developer": true,
+        "faqs": true,
+        "similar": true
+      }
     }
   ],
   "leads": [

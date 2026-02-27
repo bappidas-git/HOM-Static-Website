@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { propertyService } from '../../services/api';
-import { TAB_CONFIG, DRAFT_STORAGE_KEY, generateSlug, getDefaultFormData } from './property-tabs/constants';
+import { TAB_CONFIG, DRAFT_STORAGE_KEY, generateSlug, getDefaultFormData, getDefaultSections } from './property-tabs/constants';
 import {
   GalleryTab,
   BasicInfoTab,
@@ -36,6 +36,7 @@ import {
   FaqsTab,
   SimilarPropertiesTab,
   SeoTagsTab,
+  SectionVisibilityTab,
 } from './property-tabs';
 
 const PropertyForm = ({ propertyId = null }) => {
@@ -87,7 +88,9 @@ const PropertyForm = ({ propertyId = null }) => {
           slug: property.slug || '',
           type: property.type || 'sale',
           propertyType: property.propertyType || 'apartment',
+          category: property.category || property.propertyType || 'apartment',
           status: property.status || 'pre-launch',
+          sections: { ...getDefaultSections(), ...(property.sections || {}) },
           publishStatus: property.publishStatus || (property.isActive ? 'published' : 'draft'),
           price: property.price || '',
           priceUnit: property.priceUnit || 'onwards',
@@ -295,7 +298,9 @@ const PropertyForm = ({ propertyId = null }) => {
       slug: formData.slug.trim(),
       type: formData.type,
       propertyType: formData.propertyType,
+      category: formData.category || formData.propertyType,
       status: formData.status,
+      sections: formData.sections || getDefaultSections(),
       price: Number(formData.price),
       priceUnit: formData.priceUnit,
       developer: formData.developer.trim(),
@@ -411,6 +416,7 @@ const PropertyForm = ({ propertyId = null }) => {
     () => <DeveloperTab {...sharedProps} />,
     () => <FaqsTab {...sharedProps} />,
     () => <SimilarPropertiesTab {...sharedProps} propertyId={propertyId} />,
+    () => <SectionVisibilityTab {...sharedProps} />,
     () => <SeoTagsTab {...sharedProps} />,
   ];
 
