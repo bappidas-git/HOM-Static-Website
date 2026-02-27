@@ -653,6 +653,8 @@ export const authService = {
 };
 
 // === Admin User Management Service ===
+// JSON Server:  /adminUsers
+// Laravel:      /api/admin/users
 export const adminService = {
   getAll: async (params = {}) => {
     try {
@@ -684,6 +686,65 @@ export const adminService = {
   update: async (id, data) => {
     try {
       const response = await apiClient.patch(`/adminUsers/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`/adminUsers/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+};
+
+// === User Management Service (Admin Panel) ===
+// Abstraction layer for user CRUD operations.
+// JSON Server: GET/POST/PATCH/DELETE /adminUsers
+// Laravel:     GET/POST/PUT/DELETE   /api/admin/users
+// The frontend does NOT depend on JSON-server-specific response shapes.
+export const userService = {
+  getAll: async (params = {}) => {
+    try {
+      const response = await apiClient.get('/adminUsers', { params });
+      return normalizeListResponse(response.data);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getById: async (id) => {
+    try {
+      const response = await apiClient.get(`/adminUsers/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  create: async (data) => {
+    try {
+      const response = await apiClient.post('/adminUsers', {
+        ...data,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`/adminUsers/${id}`, {
+        ...data,
+        updatedAt: new Date().toISOString(),
+      });
       return response.data;
     } catch (error) {
       throw error;

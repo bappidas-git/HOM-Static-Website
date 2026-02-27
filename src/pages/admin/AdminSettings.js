@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { siteSettingsService } from '../../services/api';
+import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import UserManagement from '../../components/admin/UserManagement';
 
 const TabPanel = ({ children, value, index }) => (
   <Box role="tabpanel" hidden={value !== index} sx={{ pt: 3 }}>
@@ -32,12 +34,18 @@ const FieldGroup = ({ label, children }) => (
 );
 
 const AdminSettings = () => {
+  const { role } = useAdminAuth();
+  const isAdmin = role === 'admin';
+
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [hasChanges, setHasChanges] = useState(false);
+
+  // Tab index for User Management (last tab, admin-only)
+  const USER_MGMT_TAB = 5;
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);
@@ -109,22 +117,24 @@ const AdminSettings = () => {
             Manage global website configuration
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<Icon icon="mdi:content-save-outline" />}
-          onClick={handleSave}
-          disabled={saving || !hasChanges}
-          sx={{
-            bgcolor: '#1B2A4A',
-            textTransform: 'none',
-            borderRadius: 2,
-            px: 4,
-            '&:hover': { bgcolor: '#2d3f63' },
-            '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' },
-          }}
-        >
-          {saving ? 'Saving...' : 'Save Settings'}
-        </Button>
+        {activeTab !== USER_MGMT_TAB && (
+          <Button
+            variant="contained"
+            startIcon={<Icon icon="mdi:content-save-outline" />}
+            onClick={handleSave}
+            disabled={saving || !hasChanges}
+            sx={{
+              bgcolor: '#1B2A4A',
+              textTransform: 'none',
+              borderRadius: 2,
+              px: 4,
+              '&:hover': { bgcolor: '#2d3f63' },
+              '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' },
+            }}
+          >
+            {saving ? 'Saving...' : 'Save Settings'}
+          </Button>
+        )}
       </Box>
 
       {/* Tabs */}
@@ -152,6 +162,9 @@ const AdminSettings = () => {
           <Tab icon={<Icon icon="mdi:share-variant-outline" style={{ fontSize: 18 }} />} iconPosition="start" label="Social Links" />
           <Tab icon={<Icon icon="mdi:email-newsletter" style={{ fontSize: 18 }} />} iconPosition="start" label="Newsletter" />
           <Tab icon={<Icon icon="mdi:page-layout-footer" style={{ fontSize: 18 }} />} iconPosition="start" label="Footer" />
+          {isAdmin && (
+            <Tab icon={<Icon icon="mdi:account-group-outline" style={{ fontSize: 18 }} />} iconPosition="start" label="User Management" />
+          )}
         </Tabs>
 
         <Box sx={{ p: 3 }}>
@@ -520,6 +533,13 @@ const AdminSettings = () => {
             </Paper>
           </TabPanel>
 
+          {/* User Management Tab (Admin only) */}
+          {isAdmin && (
+            <TabPanel value={activeTab} index={USER_MGMT_TAB}>
+              <UserManagement />
+            </TabPanel>
+          )}
+
           {/* Footer Tab */}
           <TabPanel value={activeTab} index={4}>
             <FieldGroup label="Footer Description">
@@ -721,8 +741,8 @@ const AdminSettings = () => {
         </Box>
       </Paper>
 
-      {/* Floating Save Button (if changes exist) */}
-      {hasChanges && (
+      {/* Floating Save Button (if changes exist, hidden on User Management tab) */}
+      {hasChanges && activeTab !== USER_MGMT_TAB && (
         <Paper
           elevation={4}
           sx={{
