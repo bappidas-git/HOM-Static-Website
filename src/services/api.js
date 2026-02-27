@@ -198,30 +198,6 @@ export const propertyService = {
       throw error;
     }
   },
-
-  // Get distinct categories for a given type (rent/sale)
-  // In JSON Server mode: fetches all properties and extracts unique categories client-side
-  // In Laravel mode: replace with GET /api/property/categories?type=rent
-  getCategories: async (type) => {
-    try {
-      const response = await apiClient.get('/properties', {
-        params: { type, isActive: true },
-      });
-      const data = normalizeListResponse(response.data);
-      const categories = [...new Set(
-        data
-          .map((p) => p.propertyType || p.category)
-          .filter(Boolean)
-      )];
-      return categories.map((cat) => ({
-        value: cat,
-        label: cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g, ' '),
-        count: data.filter((p) => (p.propertyType || p.category) === cat).length,
-      }));
-    } catch (error) {
-      throw error;
-    }
-  },
 };
 
 // === Lead Service ===

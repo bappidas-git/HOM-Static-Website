@@ -7,7 +7,6 @@ import { Icon } from '@iconify/react';
 import { propertyService } from '../../services/api';
 import PropertyCard from '../../components/common/PropertyCard';
 import PropertyFilters from '../../components/common/PropertyFilters';
-import RentCTA from '../../components/common/RentCTA';
 import { PropertyGridSkeleton } from '../../components/common/SkeletonLoaders';
 import styles from './PropertyListing.module.css';
 
@@ -61,26 +60,12 @@ const ROUTE_CONFIG = {
   },
 };
 
-// Generate config for dynamic /rent/:category routes not explicitly listed
-const getDynamicRentConfig = (category) => {
-  const label = category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ');
-  return {
-    title: `${label} for Rent`,
-    subtitle: `Browse ${label.toLowerCase()} properties available for rent`,
-    seoTitle: `${label} for Rent | H.O.M Advisory`,
-    preFilters: { propertyType: category, type: 'rent' },
-  };
-};
-
 const PropertyListing = ({ routePath }) => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
   const currentPath = routePath || location.pathname;
-  // Try static config first, then dynamic rent category, then fallback to /properties
-  const baseConfig = ROUTE_CONFIG[currentPath]
-    || (currentPath.startsWith('/rent/') ? getDynamicRentConfig(currentPath.replace('/rent/', '')) : null)
-    || ROUTE_CONFIG['/properties'];
+  const baseConfig = ROUTE_CONFIG[currentPath] || ROUTE_CONFIG['/properties'];
 
   // Dynamic config override based on URL type param (for homepage category card links)
   const TYPE_LABELS = {
@@ -339,9 +324,6 @@ const PropertyListing = ({ routePath }) => {
       {/* Main Content */}
       <section className={styles.section}>
         <div className={styles.container}>
-          {/* Rent CTA — shown only on rent listing pages */}
-          {config.preFilters.type === 'rent' && <RentCTA />}
-
           {/* Filters */}
           <PropertyFilters
             properties={allProperties}

@@ -443,9 +443,6 @@ const PropertyDetails = () => {
     saveLeadToSession(formData, property?.id, 'child_form');
   }, [property?.id, saveLeadToSession]);
 
-  // Property type-based section visibility
-  const isRent = property?.type === 'rent';
-
   // Compute which sections have data for conditional rendering + sticky nav
   // Must be called before early returns to maintain hook order
   const sectionFlags = useMemo(() => {
@@ -463,7 +460,6 @@ const PropertyDetails = () => {
         (arr) => Array.isArray(arr) && arr.length > 0 && arr.some(item => item.area?.trim() && item.spec?.trim())
       );
     })();
-    const rentType = property.type === 'rent';
     return {
       hasOverview: Boolean(property.description),
       hasSpecs,
@@ -472,10 +468,8 @@ const PropertyDetails = () => {
       hasFloorPlans: property.floorPlans?.length > 0,
       hasNearbyPlaces: property.nearbyPlaces?.length > 0,
       hasDocuments: property.documents?.length > 0,
-      hasConstructionSpecs: !rentType && hasConstructionSpecs,
-      hasDeveloper: !rentType && Boolean(property.developer),
-      showFinance: !rentType,
-      showConstructionStatus: !rentType,
+      hasConstructionSpecs,
+      hasDeveloper: Boolean(property.developer),
     };
   }, [property]);
 
@@ -487,11 +481,11 @@ const PropertyDetails = () => {
     if (sectionFlags.hasSpecialities) sections.push('specialities');
     if (sectionFlags.hasAmenities) sections.push('amenities');
     if (sectionFlags.hasFloorPlans) sections.push('floor-plans');
-    if (sectionFlags.showFinance) sections.push('finance');
+    sections.push('finance');
     if (sectionFlags.hasNearbyPlaces) sections.push('nearby');
     if (sectionFlags.hasDocuments) sections.push('documents');
     if (sectionFlags.hasConstructionSpecs) sections.push('construction-specs');
-    if (sectionFlags.showConstructionStatus) sections.push('construction');
+    sections.push('construction');
     if (sectionFlags.hasDeveloper) sections.push('builder');
     sections.push('faqs');
     sections.push('similar');
@@ -1266,19 +1260,17 @@ const PropertyDetails = () => {
                   onFloorPlanImageClick={openFloorPlanRequestModal}
                 />
               )}
-              {!isRent && (
-                <FinanceGuide
-                  price={property.price}
-                  property={property}
-                  savedUserDetails={savedUserDetails}
-                  onLeadCaptured={handleLeadCapturedFromChild}
-                />
-              )}
+              <FinanceGuide
+                price={property.price}
+                property={property}
+                savedUserDetails={savedUserDetails}
+                onLeadCaptured={handleLeadCapturedFromChild}
+              />
               {hasNearbyPlaces && <NearbyPlaces nearbyPlaces={property.nearbyPlaces} location={property.location} />}
               {hasDocuments && <PropertyDocuments documents={property.documents} onDownloadClick={openDocModal} />}
               {hasConstructionSpecs && <ConstructionSpecs constructionSpecs={property.constructionSpecs} />}
-              {!isRent && <ConstructionStatus status={property.status} />}
-              {hasDeveloper && !isRent && <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />}
+              <ConstructionStatus status={property.status} />
+              {hasDeveloper && <BuilderOverview developer={property.developer} developerInfo={property.developerInfo} />}
               <PropertyFaq property={property} />
             </div>
 
