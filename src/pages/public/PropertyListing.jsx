@@ -8,6 +8,7 @@ import { propertyService } from '../../services/api';
 import PropertyCard from '../../components/common/PropertyCard';
 import PropertyFilters from '../../components/common/PropertyFilters';
 import { PropertyGridSkeleton } from '../../components/common/SkeletonLoaders';
+import RentListingCTA from '../../components/sections/rent/RentListingCTA';
 import styles from './PropertyListing.module.css';
 
 const ITEMS_PER_PAGE = 9;
@@ -77,6 +78,9 @@ const PropertyListing = ({ routePath }) => {
   const urlType = searchParams.get('type');
   const typeOverride = urlType && !baseConfig.preFilters.type ? TYPE_LABELS[urlType] : null;
   const config = typeOverride ? { ...baseConfig, ...typeOverride, preFilters: baseConfig.preFilters } : baseConfig;
+
+  // Show rent CTA only for rent listing pages
+  const isRentListing = config.preFilters.type === 'rent' || currentPath.startsWith('/rent') || urlType === 'rent';
 
   const [allProperties, setAllProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -406,6 +410,9 @@ const PropertyListing = ({ routePath }) => {
           )}
         </div>
       </section>
+
+      {/* Rent CTA — only for rent listing pages */}
+      {isRentListing && <RentListingCTA />}
     </>
   );
 };
