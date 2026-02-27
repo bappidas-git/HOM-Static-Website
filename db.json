@@ -274,18 +274,27 @@
         "premium",
         "popular"
       ],
-      "seoTitle": "Nambiar District 25 Phase 2 | 2, 3, 4 BHK Apartments in Sarjapur Road Bangalore",
-      "seoDescription": "Explore Nambiar District 25 Phase 2 - Premium ready-to-move apartments on Sarjapur Road, Bangalore. 2, 3, 4 & 4.5 BHK from 1245-2990 sqft starting at Rs 1.24 Cr.",
+      "seoTitle": "Nambiar District 25 Phase 2 by Nambiar Builders | Bangalore",
+      "seoDescription": "Explore Nambiar District 25 Phase 2 by Nambiar Builders in Dommasandra, Sarjapur Road, Bangalore. 2 BHK, 3 BHK, 4 BHK, 4.5 BHK apartments from 1245-2990 sqft...",
       "seoKeywords": [
-        "nambiar district 25",
-        "sarjapur road apartments",
-        "ready to move flats bangalore",
-        "3 bhk sarjapur road"
+        "nambiar district 25 phase 2",
+        "apartments in dommasandra, sarjapur road",
+        "apartments in bangalore",
+        "nambiar builders bangalore",
+        "buy apartments bangalore",
+        "2 BHK apartment in dommasandra, sarjapur road",
+        "ready to move apartments bangalore",
+        "dommasandra, sarjapur road, bangalore real estate"
       ],
-      "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Nambiar District 25 Phase 2\"}",
+      "schemaMarkup": "[\n  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"RealEstateListing\",\n    \"name\": \"Nambiar District 25 Phase 2\",\n    \"description\": \"Nambiar District 25 Phase 2 is a premium residential project located at Dommasandra, Sarjapur Road, Bangalore. The project offers spacious 2, 3, 4 and 4.5 BHK apartments with modern amenities and excellent connectivity to IT hubs. Nestled in the rapidly developing Sarjapur Road corridor, this pro...\",\n    \"url\": \"https://homadvisory.com/properties/nambiar-district-25-phase-2\",\n    \"datePosted\": \"2026-02-27T06:33:04.975Z\",\n    \"image\": [\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Exterior\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Living+Room\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Bedroom\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Kitchen\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Pool\"\n    ],\n    \"address\": {\n      \"@type\": \"PostalAddress\",\n      \"streetAddress\": \"Dommasandra, Sarjapur Road\",\n      \"addressLocality\": \"Dommasandra, Sarjapur Road\",\n      \"addressRegion\": \"Bangalore\",\n      \"addressCountry\": \"IN\"\n    },\n    \"geo\": {\n      \"@type\": \"GeoCoordinates\",\n      \"latitude\": 12.9058,\n      \"longitude\": 77.6854\n    },\n    \"offers\": {\n      \"@type\": \"Offer\",\n      \"price\": 12400000,\n      \"priceCurrency\": \"INR\",\n      \"availability\": \"https://schema.org/InStock\"\n    },\n    \"about\": {\n      \"@type\": \"Residence\",\n      \"name\": \"Nambiar District 25 Phase 2\",\n      \"numberOfRooms\": \"2\",\n      \"floorSize\": {\n        \"@type\": \"QuantitativeValue\",\n        \"minValue\": 1245,\n        \"maxValue\": 2990,\n        \"unitCode\": \"FTK\"\n      },\n      \"amenityFeature\": [\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Swimming Pool\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Gymnasium\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Basketball Court\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Landscaped Gardens\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Covered Parking\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"24/7 Security\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Kids Play Area\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Clubhouse\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Tennis Court\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Power Backup\"\n        }\n      ]\n    },\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Nambiar Builders\"\n    }\n  },\n  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"BreadcrumbList\",\n    \"itemListElement\": [\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 1,\n        \"name\": \"Home\",\n        \"item\": \"https://homadvisory.com\"\n      },\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 2,\n        \"name\": \"Properties\",\n        \"item\": \"https://homadvisory.com/properties\"\n      },\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 3,\n        \"name\": \"Bangalore\",\n        \"item\": \"https://homadvisory.com/properties?city=Bangalore\"\n      },\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 4,\n        \"name\": \"Nambiar District 25 Phase 2\"\n      }\n    ]\n  }\n]",
       "isActive": true,
       "createdAt": "2024-01-15T10:00:00Z",
-      "updatedAt": "2026-02-20T05:09:35.368Z"
+      "updatedAt": "2026-02-27T06:36:49.604Z",
+      "canonicalUrl": "https://homadvisory.com/properties/nambiar-district-25-phase-2",
+      "ogTitle": "Nambiar District 25 Phase 2 by Nambiar Builders | Bangalore",
+      "ogDescription": "Explore Nambiar District 25 Phase 2 by Nambiar Builders in Dommasandra, Sarjapur Road, Bangalore. 2 BHK, 3 BHK, 4 BHK, 4.5 BHK apartments from 1245-2990 sqft...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Nambiar+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "2",
@@ -2478,7 +2487,7 @@
       "question": "How do I schedule a property viewing??",
       "answer": "You can schedule a property viewing by: 1) Clicking the 'Schedule Visit' button on any property page, 2) Calling us at (555) 123-4567, 3) Filling out the contact form on our website, or 4) Sending us an email at info@homadvisory.com. Our team will confirm and arrange the visit at your convenience.",
       "category": "general",
-      "order": 2,
+      "order": 4,
       "isActive": true
     },
     {
@@ -2486,7 +2495,7 @@
       "question": "What documents do I need to buy a property?",
       "answer": "To buy a property in India, you typically need: PAN Card, Aadhaar Card, Passport-size photos, Bank statements (last 6 months), Salary slips (last 3 months) or ITR (for self-employed), Property documents from seller including Title Deed, Encumbrance Certificate, Khata Certificate, and RERA registration details. Our legal team helps verify all documents.",
       "category": "buying",
-      "order": 3,
+      "order": 2,
       "isActive": true
     },
     {
@@ -2494,7 +2503,7 @@
       "question": "How long does it take to close a deal?",
       "answer": "The timeline varies depending on several factors. For a ready-to-move property with clear documents, the process from booking to registration typically takes 30-45 days. If a home loan is involved, add another 15-20 days for loan processing. For under-construction properties, you make staged payments per the builder's schedule.",
       "category": "buying",
-      "order": 4,
+      "order": 3,
       "isActive": true
     },
     {
@@ -2574,7 +2583,7 @@
       "question": "What legal checks should I do before buying a property?",
       "answer": "Essential legal checks include: 1) Title deed verification — ensure clear ownership chain for at least 30 years, 2) Encumbrance Certificate (EC) — confirms no pending loans or legal disputes, 3) Khata Certificate and extract — confirms property is in municipal records, 4) RERA registration — mandatory for new projects, 5) Approved building plan, 6) Occupancy Certificate (for ready properties), 7) Tax payment receipts, 8) NOC from relevant authorities. Our legal team handles all these verifications.",
       "category": "legal",
-      "order": 14,
+      "order": 16,
       "isActive": true
     },
     {
@@ -2582,7 +2591,7 @@
       "question": "Does H.O.M Advisory offer services in cities other than Bangalore?",
       "answer": "Currently, H.O.M Advisory primarily operates in Bangalore and surrounding areas. However, we have a network of trusted partners in Mumbai, Hyderabad, Chennai, and Pune. We're actively expanding our direct operations to these cities. Contact us for specific requirements in other cities, and we'll connect you with our partner network.",
       "category": "general",
-      "order": 15,
+      "order": 14,
       "isActive": true
     },
     {
@@ -2590,7 +2599,7 @@
       "question": "Are H.O.M Advisory's services free for homebuyers?",
       "answer": "Yes, our property search, advisory, and site visit coordination services are completely free for homebuyers. We earn our commission from the developer or seller. For specialized services like legal verification, home loan processing, and interior designing, transparent fees are communicated upfront before you engage.",
       "category": "general",
-      "order": 16,
+      "order": 13,
       "isActive": true
     }
   ],
