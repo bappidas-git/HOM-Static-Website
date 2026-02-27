@@ -13,3 +13,4 @@ export { default as DeveloperTab } from './DeveloperTab';
 export { default as FaqsTab } from './FaqsTab';
 export { default as SimilarPropertiesTab } from './SimilarPropertiesTab';
 export { default as SeoTagsTab } from './SeoTagsTab';
+export { default as SectionVisibilityTab } from './SectionVisibilityTab';

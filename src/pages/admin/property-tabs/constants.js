@@ -13,6 +13,7 @@ export const TAB_CONFIG = [
   { key: 'developer', label: 'Developer', icon: 'mdi:domain' },
   { key: 'faqs', label: 'FAQs', icon: 'mdi:frequently-asked-questions' },
   { key: 'similarProperties', label: 'Similar Properties', icon: 'mdi:home-group' },
+  { key: 'sectionVisibility', label: 'Section Visibility', icon: 'mdi:toggle-switch-outline' },
   { key: 'seoTags', label: 'SEO & Tags', icon: 'mdi:search-web' },
 ];
 
@@ -105,6 +106,60 @@ export const CONSTRUCTION_SPEC_CATEGORIES = [
   'flooring', 'doors', 'structure', 'electrical', 'plumbing', 'others',
 ];
 
+// Category options per property type (sale / rent)
+export const CATEGORY_OPTIONS = {
+  sale: [
+    { value: 'apartment', label: 'Apartment' },
+    { value: 'villa', label: 'Villa' },
+    { value: 'plot', label: 'Plot' },
+    { value: 'builder-floor', label: 'Builder Floor' },
+    { value: 'penthouse', label: 'Penthouse' },
+  ],
+  rent: [
+    { value: 'apartment', label: 'Apartment' },
+    { value: 'villa', label: 'Villa' },
+    { value: 'house', label: 'House' },
+    { value: 'pg', label: 'PG' },
+    { value: 'studio', label: 'Studio' },
+    { value: 'co-living', label: 'Co-Living' },
+    { value: 'builder-floor', label: 'Builder Floor' },
+  ],
+};
+
+// Section visibility toggles — each key maps to a property detail section
+export const SECTION_VISIBILITY_CONFIG = [
+  { key: 'overview', label: 'Overview', icon: 'mdi:text-box-outline' },
+  { key: 'details', label: 'Details & Specifications', icon: 'mdi:clipboard-list-outline' },
+  { key: 'highlights', label: 'Highlights', icon: 'mdi:star-circle-outline' },
+  { key: 'amenities', label: 'Amenities', icon: 'mdi:pool' },
+  { key: 'floorPlans', label: 'Floor Plans', icon: 'mdi:layers-outline' },
+  { key: 'finance', label: 'Home Finance Clarity', icon: 'mdi:calculator-variant-outline' },
+  { key: 'location', label: 'Nearby Places & Location', icon: 'mdi:map-marker-radius-outline' },
+  { key: 'documents', label: 'Property Documents', icon: 'mdi:file-document-outline' },
+  { key: 'construction', label: 'Construction Status', icon: 'mdi:progress-clock' },
+  { key: 'constructionSpecs', label: 'Construction Specifications', icon: 'mdi:crane' },
+  { key: 'developer', label: 'Developer', icon: 'mdi:domain' },
+  { key: 'faqs', label: 'FAQs', icon: 'mdi:frequently-asked-questions' },
+  { key: 'similar', label: 'Similar Properties', icon: 'mdi:home-group' },
+];
+
+// Default section visibility — all enabled by default
+export const getDefaultSections = () => ({
+  overview: true,
+  details: true,
+  highlights: true,
+  amenities: true,
+  floorPlans: true,
+  finance: true,
+  location: true,
+  documents: true,
+  construction: true,
+  constructionSpecs: true,
+  developer: true,
+  faqs: true,
+  similar: true,
+});
+
 export const DRAFT_STORAGE_KEY = 'hom_property_draft';
 
 export const generateSlug = (title) =>
@@ -120,7 +175,9 @@ export const getDefaultFormData = () => ({
   slug: '',
   type: 'sale',
   propertyType: 'apartment',
+  category: 'apartment',
   status: 'pre-launch',
+  sections: getDefaultSections(),
   publishStatus: 'draft',
   price: '',
   priceUnit: 'onwards',

@@ -15,9 +15,21 @@ import {
   Chip,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { TAG_OPTIONS } from './constants';
+import { TAG_OPTIONS, CATEGORY_OPTIONS } from './constants';
 
 const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSlugManuallyEdited }) => {
+  const categoryOptions = CATEGORY_OPTIONS[formData.type] || CATEGORY_OPTIONS.sale;
+
+  const handleTypeChange = (newType) => {
+    updateField('type', newType);
+    // Reset category to first valid option when type changes
+    const newCategories = CATEGORY_OPTIONS[newType] || CATEGORY_OPTIONS.sale;
+    const currentCategoryValid = newCategories.some((c) => c.value === formData.category);
+    if (!currentCategoryValid) {
+      updateField('category', newCategories[0].value);
+    }
+  };
+
   const toggleTag = (tag) => {
     updateField(
       'tags',
@@ -55,30 +67,33 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
         }}
       />
 
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <FormControl>
           <FormLabel sx={{ fontWeight: 600, mb: 1, color: '#1B2A4A' }}>Type</FormLabel>
           <RadioGroup
             row
             value={formData.type}
-            onChange={(e) => updateField('type', e.target.value)}
+            onChange={(e) => handleTypeChange(e.target.value)}
           >
             <FormControlLabel value="sale" control={<Radio />} label="Sale" />
             <FormControlLabel value="rent" control={<Radio />} label="Rent" />
           </RadioGroup>
         </FormControl>
 
-        <FormControl>
-          <FormLabel sx={{ fontWeight: 600, mb: 1, color: '#1B2A4A' }}>Property Type</FormLabel>
-          <RadioGroup
-            row
-            value={formData.propertyType}
-            onChange={(e) => updateField('propertyType', e.target.value)}
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel>Category</InputLabel>
+          <Select
+            value={formData.category || formData.propertyType || 'apartment'}
+            label="Category"
+            onChange={(e) => {
+              updateField('category', e.target.value);
+              updateField('propertyType', e.target.value);
+            }}
           >
-            <FormControlLabel value="apartment" control={<Radio />} label="Apartment" />
-            <FormControlLabel value="villa" control={<Radio />} label="Villa" />
-            <FormControlLabel value="plot" control={<Radio />} label="Plot" />
-          </RadioGroup>
+            {categoryOptions.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            ))}
+          </Select>
         </FormControl>
       </Box>
 
