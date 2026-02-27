@@ -67,20 +67,20 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
         }}
       />
 
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-        <FormControl>
-          <FormLabel sx={{ fontWeight: 600, mb: 1, color: '#1B2A4A' }}>Type</FormLabel>
-          <RadioGroup
-            row
-            value={formData.type}
-            onChange={(e) => handleTypeChange(e.target.value)}
-          >
-            <FormControlLabel value="sale" control={<Radio />} label="Sale" />
-            <FormControlLabel value="rent" control={<Radio />} label="Rent" />
-          </RadioGroup>
-        </FormControl>
+      <FormControl>
+        <FormLabel sx={{ fontWeight: 600, mb: 1, color: '#1B2A4A' }}>Type</FormLabel>
+        <RadioGroup
+          row
+          value={formData.type}
+          onChange={(e) => handleTypeChange(e.target.value)}
+        >
+          <FormControlLabel value="sale" control={<Radio />} label="Sale" />
+          <FormControlLabel value="rent" control={<Radio />} label="Rent" />
+        </RadioGroup>
+      </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }}>
+      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+        <FormControl sx={{ flex: 1, minWidth: 200 }}>
           <InputLabel>Category</InputLabel>
           <Select
             value={formData.category || formData.propertyType || 'apartment'}
@@ -95,20 +95,20 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
             ))}
           </Select>
         </FormControl>
-      </Box>
 
-      <FormControl sx={{ maxWidth: 300 }}>
-        <InputLabel>Status</InputLabel>
-        <Select
-          value={formData.status}
-          label="Status"
-          onChange={(e) => updateField('status', e.target.value)}
-        >
-          <MenuItem value="pre-launch">Pre-Launch</MenuItem>
-          <MenuItem value="under-construction">Under Construction</MenuItem>
-          <MenuItem value="ready-to-move">Ready to Move</MenuItem>
-        </Select>
-      </FormControl>
+        <FormControl sx={{ flex: 1, minWidth: 200 }}>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={formData.status}
+            label="Status"
+            onChange={(e) => updateField('status', e.target.value)}
+          >
+            <MenuItem value="pre-launch">Pre-Launch</MenuItem>
+            <MenuItem value="under-construction">Under Construction</MenuItem>
+            <MenuItem value="ready-to-move">Ready to Move</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
 
       <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
         <TextField
