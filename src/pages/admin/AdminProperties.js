@@ -101,7 +101,7 @@ const AdminProperties = () => {
     try {
       setLoading(true);
       const data = await propertyService.getAll();
-      setProperties(data);
+      setProperties(Array.isArray(data) ? data : []);
       setError(null);
     } catch (err) {
       setError('Failed to load properties. Please try again.');

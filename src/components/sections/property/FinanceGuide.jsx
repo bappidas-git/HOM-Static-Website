@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { useInView } from "react-intersection-observer";
 import { leadService } from "../../../services/api";
 import { getNameErrorMessage, getEmailErrorMessage, getMobileErrorMessage } from "../../../utils/validators";
+import { DEFAULT_BANKS } from "../../../config/adminConstants";
 import styles from "./FinanceGuide.module.css";
 
 const formatCurrency = (val) => {
@@ -11,52 +12,6 @@ const formatCurrency = (val) => {
   if (val >= 100000) return `₹${(val / 100000).toFixed(2)} L`;
   return `₹${Math.round(val).toLocaleString("en-IN")}`;
 };
-
-/* ─── Bank Data ─── */
-const banks = [
-  {
-    name: "HDFC Bank",
-    icon: "mdi:bank",
-    rate: 8.35,
-    maxLoan: 50000000,
-    color: "#004B87",
-  },
-  {
-    name: "SBI",
-    icon: "mdi:bank",
-    rate: 8.4,
-    maxLoan: 50000000,
-    color: "#22409A",
-  },
-  {
-    name: "Axis Bank",
-    icon: "mdi:bank",
-    rate: 8.55,
-    maxLoan: 50000000,
-    color: "#97144D",
-  },
-  {
-    name: "ICICI Bank",
-    icon: "mdi:bank",
-    rate: 8.45,
-    maxLoan: 30000000,
-    color: "#F37021",
-  },
-  {
-    name: "Kotak Mahindra",
-    icon: "mdi:bank",
-    rate: 8.7,
-    maxLoan: 30000000,
-    color: "#ED1C24",
-  },
-  {
-    name: "LIC Housing",
-    icon: "mdi:bank",
-    rate: 8.5,
-    maxLoan: 50000000,
-    color: "#0072BC",
-  },
-];
 
 /* ─── Assessment Options ─── */
 const occupationOptions = [
@@ -205,7 +160,10 @@ const getScoreLabel = (score) => {
   };
 };
 
-const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCaptured }) => {
+const FinanceGuide = ({ price = 0, property = null, savedUserDetails, onLeadCaptured, bankData }) => {
+  // Bank data: use API-provided bankData prop when available, fall back to centralized defaults
+  const banks = Array.isArray(bankData) && bankData.length > 0 ? bankData : DEFAULT_BANKS;
+
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const resultRef = useRef(null);
 

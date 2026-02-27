@@ -27,6 +27,8 @@ const About = lazy(() => import('../pages/public/About'));
 const SellLet = lazy(() => import('../pages/public/SellLet'));
 const Careers = lazy(() => import('../pages/public/Careers'));
 const Partnership = lazy(() => import('../pages/public/Partnership'));
+const FlexibleWorkspace = lazy(() => import('../pages/public/FlexibleWorkspace'));
+const DirectLeaseRetails = lazy(() => import('../pages/public/DirectLeaseRetails'));
 const NotFound = lazy(() => import('../pages/public/NotFound'));
 
 // === Admin Pages (lazy loaded) ===
@@ -96,6 +98,8 @@ const AppRoutes = () => {
         <Route path="/sell-let" element={<PublicRoute><SellLet /></PublicRoute>} />
         <Route path="/careers" element={<PublicRoute><Careers /></PublicRoute>} />
         <Route path="/partnership" element={<PublicRoute><Partnership /></PublicRoute>} />
+        <Route path="/flexible-workspace" element={<PublicRoute><FlexibleWorkspace /></PublicRoute>} />
+        <Route path="/direct-lease-retails" element={<PublicRoute><DirectLeaseRetails /></PublicRoute>} />
 
         {/* === Admin Routes === */}
         {/* Login — no layout, no auth required */}

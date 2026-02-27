@@ -22,14 +22,7 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { articleService } from '../../services/api';
-
-const categories = [
-  { value: 'market-trends', label: 'Market Trends' },
-  { value: 'buying-guide', label: 'Buying Guide' },
-  { value: 'investment', label: 'Investment' },
-  { value: 'legal', label: 'Legal' },
-  { value: 'interior', label: 'Interior Design' },
-];
+import { ARTICLE_CATEGORIES as categories } from '../../config/adminConstants';
 
 const generateSlug = (title) =>
   title
@@ -236,9 +229,10 @@ const ArticleForm = () => {
   const fetchAllArticles = useCallback(async () => {
     try {
       const data = await articleService.getAll();
-      setAllArticles(data);
+      setAllArticles(Array.isArray(data) ? data : []);
     } catch {
-      // Silently fail — related articles selector will be empty
+      setAllArticles([]);
+      setSnackbar({ open: true, message: 'Could not load related articles', severity: 'warning' });
     }
   }, []);
 

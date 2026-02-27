@@ -33,23 +33,13 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { articleService } from '../../services/api';
+import {
+  ARTICLE_CATEGORIES,
+  ARTICLE_CATEGORY_COLORS as categoryColors,
+} from '../../config/adminConstants';
 
-const categories = [
-  { value: '', label: 'All Categories' },
-  { value: 'market-trends', label: 'Market Trends' },
-  { value: 'buying-guide', label: 'Buying Guide' },
-  { value: 'investment', label: 'Investment' },
-  { value: 'legal', label: 'Legal' },
-  { value: 'interior', label: 'Interior Design' },
-];
-
-const categoryColors = {
-  'market-trends': { bg: '#EFF6FF', color: '#3B82F6' },
-  'buying-guide': { bg: '#ECFDF5', color: '#10B981' },
-  investment: { bg: '#FFFBEB', color: '#F59E0B' },
-  legal: { bg: '#FEF2F2', color: '#EF4444' },
-  interior: { bg: '#F5F3FF', color: '#8B5CF6' },
-};
+// Add 'All' option for filter view
+const categories = [{ value: '', label: 'All Categories' }, ...ARTICLE_CATEGORIES];
 
 const AdminArticles = () => {
   const theme = useTheme();
