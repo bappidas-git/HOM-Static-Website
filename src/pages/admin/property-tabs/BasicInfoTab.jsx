@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
@@ -15,7 +15,7 @@ import {
   Chip,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { TAG_OPTIONS, PROPERTY_CATEGORIES } from './constants';
+import { TAG_OPTIONS } from './constants';
 
 const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSlugManuallyEdited }) => {
   const toggleTag = (tag) => {
@@ -25,27 +25,6 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
         ? formData.tags.filter((t) => t !== tag)
         : [...formData.tags, tag]
     );
-  };
-
-  const isRent = formData.type === 'rent';
-
-  // Get categories based on current type selection
-  const categories = useMemo(() => {
-    return PROPERTY_CATEGORIES[formData.type] || PROPERTY_CATEGORIES.sale;
-  }, [formData.type]);
-
-  // When type changes, reset propertyType if not available in new type's categories
-  const handleTypeChange = (newType) => {
-    updateField('type', newType);
-    const availableCategories = PROPERTY_CATEGORIES[newType] || [];
-    const currentCategoryValid = availableCategories.some((c) => c.value === formData.propertyType);
-    if (!currentCategoryValid && availableCategories.length > 0) {
-      updateField('propertyType', availableCategories[0].value);
-    }
-    // Auto-set price unit for rent
-    if (newType === 'rent' && formData.priceUnit === 'onwards') {
-      updateField('priceUnit', 'per month');
-    }
   };
 
   return (
@@ -82,26 +61,24 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
           <RadioGroup
             row
             value={formData.type}
-            onChange={(e) => handleTypeChange(e.target.value)}
+            onChange={(e) => updateField('type', e.target.value)}
           >
             <FormControlLabel value="sale" control={<Radio />} label="Sale" />
             <FormControlLabel value="rent" control={<Radio />} label="Rent" />
           </RadioGroup>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Property Category</InputLabel>
-          <Select
+        <FormControl>
+          <FormLabel sx={{ fontWeight: 600, mb: 1, color: '#1B2A4A' }}>Property Type</FormLabel>
+          <RadioGroup
+            row
             value={formData.propertyType}
-            label="Property Category"
             onChange={(e) => updateField('propertyType', e.target.value)}
           >
-            {categories.map((cat) => (
-              <MenuItem key={cat.value} value={cat.value}>
-                {cat.label}
-              </MenuItem>
-            ))}
-          </Select>
+            <FormControlLabel value="apartment" control={<Radio />} label="Apartment" />
+            <FormControlLabel value="villa" control={<Radio />} label="Villa" />
+            <FormControlLabel value="plot" control={<Radio />} label="Plot" />
+          </RadioGroup>
         </FormControl>
       </Box>
 
@@ -147,35 +124,22 @@ const BasicInfoTab = ({ formData, updateField, errors, slugManuallyEdited, setSl
         </FormControl>
       </Box>
 
-      {!isRent && (
-        <TextField
-          label="Developer Name"
-          value={formData.developer}
-          onChange={(e) => updateField('developer', e.target.value)}
-          error={!!errors.developer}
-          helperText={errors.developer}
-          fullWidth
-          required
-        />
-      )}
-
-      {isRent && (
-        <TextField
-          label="Owner / Manager Name"
-          value={formData.developer}
-          onChange={(e) => updateField('developer', e.target.value)}
-          fullWidth
-          placeholder="Optional for rent properties"
-          helperText="Property owner or manager (optional)"
-        />
-      )}
+      <TextField
+        label="Developer Name"
+        value={formData.developer}
+        onChange={(e) => updateField('developer', e.target.value)}
+        error={!!errors.developer}
+        helperText={errors.developer}
+        fullWidth
+        required
+      />
 
       <TextField
         label="Possession Date"
         value={formData.possession}
         onChange={(e) => updateField('possession', e.target.value)}
         fullWidth
-        placeholder={isRent ? 'e.g., Immediate or Feb 2026' : 'e.g., Dec 2026 or Ready to Move'}
+        placeholder="e.g., Dec 2026 or Ready to Move"
       />
 
       {/* Property Tags */}

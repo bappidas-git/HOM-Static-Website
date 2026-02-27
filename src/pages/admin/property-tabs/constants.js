@@ -9,52 +9,12 @@ export const TAB_CONFIG = [
   { key: 'nearbyPlaces', label: 'Nearby Places', icon: 'mdi:map-marker-radius-outline' },
   { key: 'documents', label: 'Property Documents', icon: 'mdi:file-document-outline' },
   { key: 'constructionSpecs', label: 'Construction Specifications', icon: 'mdi:crane' },
-  { key: 'constructionStatus', label: 'Construction Status', icon: 'mdi:progress-clock', disabledForTypes: ['rent'] },
-  { key: 'developer', label: 'Developer', icon: 'mdi:domain', disabledForTypes: ['rent'] },
+  { key: 'constructionStatus', label: 'Construction Status', icon: 'mdi:progress-clock' },
+  { key: 'developer', label: 'Developer', icon: 'mdi:domain' },
   { key: 'faqs', label: 'FAQs', icon: 'mdi:frequently-asked-questions' },
   { key: 'similarProperties', label: 'Similar Properties', icon: 'mdi:home-group' },
   { key: 'seoTags', label: 'SEO & Tags', icon: 'mdi:search-web' },
 ];
-
-// Returns which tab indices are disabled for a given property type
-export const getDisabledTabIndices = (propertyType) => {
-  return TAB_CONFIG.reduce((acc, tab, index) => {
-    if (Array.isArray(tab.disabledForTypes) && tab.disabledForTypes.includes(propertyType)) {
-      acc.push(index);
-    }
-    return acc;
-  }, []);
-};
-
-// Property type → category mapping (config-driven, API-ready)
-export const PROPERTY_CATEGORIES = {
-  sale: [
-    { value: 'apartment', label: 'Apartment' },
-    { value: 'villa', label: 'Villa' },
-    { value: 'plot', label: 'Plot' },
-  ],
-  rent: [
-    { value: 'apartment', label: 'Apartment' },
-    { value: 'villa', label: 'Villa' },
-    { value: 'house', label: 'House' },
-    { value: 'pg', label: 'PG' },
-    { value: 'studio', label: 'Studio' },
-    { value: 'builder-floor', label: 'Builder Floor' },
-    { value: 'co-living', label: 'Co-Living' },
-  ],
-};
-
-// Sections to hide on frontend property detail page per type
-export const HIDDEN_SECTIONS_BY_TYPE = {
-  rent: ['finance', 'construction-status', 'builder'],
-};
-
-// Helper: check if a section should be visible for a property type
-export const isSectionVisible = (sectionId, propertyType) => {
-  const hidden = HIDDEN_SECTIONS_BY_TYPE[propertyType];
-  if (!hidden) return true;
-  return !hidden.includes(sectionId);
-};
 
 export const CONFIGURATION_OPTIONS = [
   '1 BHK', '1.5 BHK', '2 BHK', '2.5 BHK', '3 BHK', '3.5 BHK',
