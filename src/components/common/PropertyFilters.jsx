@@ -18,20 +18,12 @@ import styles from './PropertyFilters.module.css';
 
 const BHK_OPTIONS = ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '4.5 BHK', '5+ BHK'];
 
-const SALE_PRICE_RANGES = [
+const PRICE_RANGES = [
   { label: 'Under ₹50L', min: 0, max: 5000000 },
   { label: '₹50L - 1Cr', min: 5000000, max: 10000000 },
   { label: '₹1Cr - 2Cr', min: 10000000, max: 20000000 },
   { label: '₹2Cr - 5Cr', min: 20000000, max: 50000000 },
   { label: '₹5Cr+', min: 50000000, max: Infinity },
-];
-
-const RENT_PRICE_RANGES = [
-  { label: 'Under ₹25K/mo', min: 0, max: 25000 },
-  { label: '₹25K - 50K/mo', min: 25000, max: 50000 },
-  { label: '₹50K - 1L/mo', min: 50000, max: 100000 },
-  { label: '₹1L - 2L/mo', min: 100000, max: 200000 },
-  { label: '₹2L+/mo', min: 200000, max: Infinity },
 ];
 
 const PROPERTY_TYPES = [
@@ -78,7 +70,6 @@ const PropertyFilters = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [searchParams, setSearchParams] = useSearchParams();
-  const PRICE_RANGES = preFilters.type === 'rent' ? RENT_PRICE_RANGES : SALE_PRICE_RANGES;
   const [panelOpen, setPanelOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
