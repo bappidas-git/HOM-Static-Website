@@ -25,7 +25,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor
+// Response interceptor — handles 401 auto-logout
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -34,7 +34,12 @@ apiClient.interceptors.response.use(
       const message = data?.message || data?.error || error.message;
       switch (status) {
         case 401:
+          // Clear all auth data and redirect to login
           localStorage.removeItem('authToken');
+          localStorage.removeItem('adminUser');
+          localStorage.removeItem('tokenExpiry');
+          sessionStorage.removeItem('authToken');
+          sessionStorage.removeItem('adminUser');
           window.location.href = '/admin/login';
           break;
         case 404:
@@ -575,27 +580,80 @@ export const siteSettingsService = {
   },
 };
 
-// === Admin Service ===
-export const adminService = {
+// === Auth Service (Laravel-ready) ===
+// When Laravel backend is live, these will call:
+//   POST /auth/login   → authService.login()
+//   GET  /auth/profile  → authService.getProfile()
+//   POST /auth/logout   → authService.logout()
+// Only BASE_URL needs to change.
+export const authService = {
   login: async (email, password) => {
     try {
-      // In JSON Server mode, we simulate auth by finding the user
-      // In production, replace with POST /auth/login endpoint
+      // JSON Server mode: simulate auth by querying /adminUsers
+      // Laravel mode: POST /auth/login { email, password }
       const response = await apiClient.get('/adminUsers', {
         params: { email },
       });
       const users = normalizeListResponse(response.data);
-      const user = users[0];
-      if (user) {
-        // In real backend, password verification happens server-side
-        return { user: { id: user.id, name: user.name, email: user.email, role: user.role }, token: 'mock-jwt-token' };
+      const user = users.find((u) => u.email === email);
+
+      if (!user) {
+        throw new Error('Invalid email or password');
       }
-      throw new Error('Invalid credentials');
+
+      // Password validation (server-side in Laravel)
+      if (user.password !== password) {
+        throw new Error('Invalid email or password');
+      }
+
+      // Active account check
+      if (user.isActive === false) {
+        throw new Error('Account is deactivated. Contact your administrator.');
+      }
+
+      // Generate fake JWT (replaced by real JWT from Laravel)
+      const token = `jwt_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
+
+      const safeUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar || null,
+      };
+
+      return { user: safeUser, token, tokenExpiry };
     } catch (error) {
       throw error;
     }
   },
 
+  getProfile: async () => {
+    try {
+      // JSON Server mode: read from localStorage
+      // Laravel mode: GET /auth/profile (uses Bearer token)
+      const stored = localStorage.getItem('adminUser');
+      if (!stored) throw new Error('Not authenticated');
+      return JSON.parse(stored);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  logout: async () => {
+    // JSON Server mode: client-side only
+    // Laravel mode: POST /auth/logout to invalidate token server-side
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('tokenExpiry');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('adminUser');
+  },
+};
+
+// === Admin User Management Service ===
+export const adminService = {
   getAll: async (params = {}) => {
     try {
       const response = await apiClient.get('/adminUsers', { params });

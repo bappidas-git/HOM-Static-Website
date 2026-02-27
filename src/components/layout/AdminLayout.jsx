@@ -19,63 +19,8 @@ import {
 import { Icon } from '@iconify/react';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { leadService } from '../../services/api';
+import { getNavItemsForRole } from '../../config/rbac';
 import styles from './AdminLayout.module.css';
-
-// Sidebar navigation config
-const navItems = [
-  {
-    label: 'Dashboard',
-    icon: 'mdi:view-dashboard-outline',
-    path: '/admin/dashboard',
-  },
-  {
-    label: 'Properties',
-    icon: 'mdi:home-city-outline',
-    children: [
-      { label: 'All Properties', path: '/admin/properties' },
-      { label: 'Add New', path: '/admin/properties/add' },
-    ],
-  },
-  {
-    label: 'Leads',
-    icon: 'mdi:account-group-outline',
-    path: '/admin/leads',
-    badge: true,
-  },
-  {
-    label: 'Articles',
-    icon: 'mdi:newspaper-variant-outline',
-    children: [
-      { label: 'All Articles', path: '/admin/articles' },
-      { label: 'Add New', path: '/admin/articles/add' },
-    ],
-  },
-  {
-    label: 'SEO Manager',
-    icon: 'mdi:magnify',
-    path: '/admin/seo',
-  },
-  {
-    label: 'FAQs',
-    icon: 'mdi:help-circle-outline',
-    path: '/admin/faqs',
-  },
-  {
-    label: 'Neighborhoods',
-    icon: 'mdi:map-marker-radius-outline',
-    path: '/admin/neighborhoods',
-  },
-  {
-    label: 'Partners',
-    icon: 'mdi:handshake-outline',
-    path: '/admin/partners',
-  },
-  {
-    label: 'Site Settings',
-    icon: 'mdi:cog-outline',
-    path: '/admin/settings',
-  },
-];
 
 // Page title mapping
 const pageTitles = {
@@ -114,7 +59,10 @@ const AdminLayout = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAdminAuth();
+  const { user, logout, role } = useAdminAuth();
+
+  // Dynamic navigation items based on user role (from centralized RBAC config)
+  const navItems = useMemo(() => getNavItemsForRole(role), [role]);
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -313,7 +261,7 @@ const AdminLayout = () => {
           {(!collapsed || mobile) && (
             <div className={styles.userInfo}>
               <div className={styles.userName}>{user?.name || 'Admin'}</div>
-              <div className={styles.userRole}>{user?.role || 'admin'}</div>
+              <div className={styles.userRole}>{(user?.role || 'admin').replace(/^\w/, (c) => c.toUpperCase())}</div>
             </div>
           )}
         </div>

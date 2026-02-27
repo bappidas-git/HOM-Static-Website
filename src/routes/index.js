@@ -1,9 +1,10 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import ProtectedRoute from '../components/admin/ProtectedRoute';
 import { PageLoader } from '../components/common/SkeletonLoaders';
+import { ROLES } from '../config/rbac';
 
 // === Public Pages (lazy loaded) ===
 const Home = lazy(() => import('../pages/public/Home'));
@@ -44,9 +45,20 @@ const AdminNeighborhoods = lazy(() => import('../pages/admin/AdminNeighborhoods'
 const AdminPartners = lazy(() => import('../pages/admin/AdminPartners'));
 const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
 
+// All roles shorthand
+const ALL_ROLES = [ROLES.ADMIN, ROLES.MANAGER, ROLES.SALES];
+
 // Public layout wrapper
 const PublicRoute = ({ children }) => (
   <MainLayout>{children}</MainLayout>
+);
+
+/**
+ * Role-protected wrapper for individual admin child routes.
+ * Renders children only if user's role is in allowedRoles.
+ */
+const RoleRoute = ({ children, allowedRoles }) => (
+  <ProtectedRoute allowedRoles={allowedRoles}>{children}</ProtectedRoute>
 );
 
 const AppRoutes = () => {
@@ -98,20 +110,40 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="properties" element={<AdminProperties />} />
-          <Route path="properties/add" element={<AddProperty />} />
-          <Route path="properties/edit/:id" element={<EditProperty />} />
-          <Route path="leads" element={<AdminLeads />} />
-          <Route path="leads/:id" element={<LeadDetail />} />
-          <Route path="seo" element={<AdminSeo />} />
-          <Route path="articles" element={<AdminArticles />} />
-          <Route path="articles/add" element={<ArticleForm />} />
-          <Route path="articles/edit/:id" element={<ArticleForm />} />
-          <Route path="faqs" element={<FaqManager />} />
-          <Route path="neighborhoods" element={<AdminNeighborhoods />} />
-          <Route path="partners" element={<AdminPartners />} />
-          <Route path="settings" element={<AdminSettings />} />
+          {/* Redirect /admin to /admin/dashboard */}
+          <Route index element={<Navigate to="dashboard" replace />} />
+
+          {/* Dashboard — all roles */}
+          <Route path="dashboard" element={<RoleRoute allowedRoles={ALL_ROLES}><Dashboard /></RoleRoute>} />
+
+          {/* Properties — admin + manager */}
+          <Route path="properties" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><AdminProperties /></RoleRoute>} />
+          <Route path="properties/add" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><AddProperty /></RoleRoute>} />
+          <Route path="properties/edit/:id" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><EditProperty /></RoleRoute>} />
+
+          {/* Leads — all roles */}
+          <Route path="leads" element={<RoleRoute allowedRoles={ALL_ROLES}><AdminLeads /></RoleRoute>} />
+          <Route path="leads/:id" element={<RoleRoute allowedRoles={ALL_ROLES}><LeadDetail /></RoleRoute>} />
+
+          {/* SEO — admin only */}
+          <Route path="seo" element={<RoleRoute allowedRoles={[ROLES.ADMIN]}><AdminSeo /></RoleRoute>} />
+
+          {/* Articles — admin + manager */}
+          <Route path="articles" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><AdminArticles /></RoleRoute>} />
+          <Route path="articles/add" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><ArticleForm /></RoleRoute>} />
+          <Route path="articles/edit/:id" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><ArticleForm /></RoleRoute>} />
+
+          {/* FAQs — admin + manager */}
+          <Route path="faqs" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><FaqManager /></RoleRoute>} />
+
+          {/* Neighborhoods — admin + manager */}
+          <Route path="neighborhoods" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><AdminNeighborhoods /></RoleRoute>} />
+
+          {/* Partners — admin + manager */}
+          <Route path="partners" element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}><AdminPartners /></RoleRoute>} />
+
+          {/* Site Settings — admin only */}
+          <Route path="settings" element={<RoleRoute allowedRoles={[ROLES.ADMIN]}><AdminSettings /></RoleRoute>} />
         </Route>
 
         {/* 404 Not Found */}
