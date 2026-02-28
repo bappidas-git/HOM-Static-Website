@@ -8,20 +8,20 @@
 
 ### Tech Stack
 
-| Layer    | Technology                          |
-| -------- | ----------------------------------- |
-| Frontend | React 18 (SPA, Axios HTTP client)   |
-| Backend  | Laravel 11 (target)                 |
-| Auth     | Laravel Sanctum (token-based)       |
-| Database | MySQL 8                             |
-| API      | RESTful JSON                        |
+| Layer    | Technology                        |
+| -------- | --------------------------------- |
+| Frontend | React 18 (SPA, Axios HTTP client) |
+| Backend  | Laravel 11 (target)               |
+| Auth     | Laravel Sanctum (token-based)     |
+| Database | MySQL 8                           |
+| API      | RESTful JSON                      |
 
 ### Base URL
 
 ```
 Development : http://localhost:8000/api
-Staging     : https://staging-api.homadvisory.com/api
-Production  : https://api.homadvisory.com/api
+Staging     : https://staging-core.homadvisory.com/api
+Production  : https://core.homadvisory.com/api
 ```
 
 The frontend reads `REACT_APP_API_URL` from environment. All endpoints below are relative to this base.
@@ -88,10 +88,10 @@ Authenticate an admin user and return a Bearer token.
 
 **Validation Rules**
 
-| Field      | Rules                                  |
-| ---------- | -------------------------------------- |
-| `email`    | required, string, email, max:255       |
-| `password` | required, string, min:6, max:128       |
+| Field      | Rules                            |
+| ---------- | -------------------------------- |
+| `email`    | required, string, email, max:255 |
+| `password` | required, string, min:6, max:128 |
 
 **Success Response** — `200 OK`
 
@@ -281,11 +281,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 ### Roles
 
-| Role      | Description                                      |
-| --------- | ------------------------------------------------ |
-| `admin`   | Full access to all modules and settings           |
-| `manager` | Content & lead management, no system settings     |
-| `sales`   | Dashboard and leads only                          |
+| Role      | Description                                   |
+| --------- | --------------------------------------------- |
+| `admin`   | Full access to all modules and settings       |
+| `manager` | Content & lead management, no system settings |
+| `sales`   | Dashboard and leads only                      |
 
 ### Route Permissions Matrix
 
@@ -540,20 +540,20 @@ Authorization: Bearer <token>
 
 ### Required Response Fields
 
-| Field                | Type     | Description                                  |
-| -------------------- | -------- | -------------------------------------------- |
-| `totalProperties`    | integer  | Total property count                         |
-| `activeProperties`   | integer  | Properties where `is_active = true`          |
-| `inactiveProperties` | integer  | Properties where `is_active = false`         |
-| `totalLeads`         | integer  | Total lead count                             |
-| `newLeads7Days`      | integer  | Leads created in the last 7 days             |
-| `totalArticles`      | integer  | Total article count                          |
-| `publishedArticles`  | integer  | Articles where `is_active = true`            |
-| `draftArticles`      | integer  | Articles where `is_active = false`           |
-| `websiteVisits`      | integer  | Unique visitors in the last 30 days          |
-| `leadsBySource`      | array    | Lead count grouped by source                 |
-| `propertiesByStatus` | array    | Active property count grouped by status      |
-| `recentLeads`        | array    | 10 most recent leads with property relation  |
+| Field                | Type    | Description                                 |
+| -------------------- | ------- | ------------------------------------------- |
+| `totalProperties`    | integer | Total property count                        |
+| `activeProperties`   | integer | Properties where `is_active = true`         |
+| `inactiveProperties` | integer | Properties where `is_active = false`        |
+| `totalLeads`         | integer | Total lead count                            |
+| `newLeads7Days`      | integer | Leads created in the last 7 days            |
+| `totalArticles`      | integer | Total article count                         |
+| `publishedArticles`  | integer | Articles where `is_active = true`           |
+| `draftArticles`      | integer | Articles where `is_active = false`          |
+| `websiteVisits`      | integer | Unique visitors in the last 30 days         |
+| `leadsBySource`      | array   | Lead count grouped by source                |
+| `propertiesByStatus` | array   | Active property count grouped by status     |
+| `recentLeads`        | array   | 10 most recent leads with property relation |
 
 ### Example Response — `200 OK`
 
