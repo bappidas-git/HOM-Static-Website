@@ -289,7 +289,7 @@
       "schemaMarkup": "[\n  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"RealEstateListing\",\n    \"name\": \"Nambiar District 25 Phase 2\",\n    \"description\": \"Nambiar District 25 Phase 2 is a premium residential project located at Dommasandra, Sarjapur Road, Bangalore. The project offers spacious 2, 3, 4 and 4.5 BHK apartments with modern amenities and excellent connectivity to IT hubs. Nestled in the rapidly developing Sarjapur Road corridor, this pro...\",\n    \"url\": \"https://homadvisory.com/properties/nambiar-district-25-phase-2\",\n    \"datePosted\": \"2026-02-27T06:33:04.975Z\",\n    \"image\": [\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Exterior\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Living+Room\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Bedroom\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Kitchen\",\n      \"https://placehold.co/800x600/goldenrod/white?text=Nambiar+Pool\"\n    ],\n    \"address\": {\n      \"@type\": \"PostalAddress\",\n      \"streetAddress\": \"Dommasandra, Sarjapur Road\",\n      \"addressLocality\": \"Dommasandra, Sarjapur Road\",\n      \"addressRegion\": \"Bangalore\",\n      \"addressCountry\": \"IN\"\n    },\n    \"geo\": {\n      \"@type\": \"GeoCoordinates\",\n      \"latitude\": 12.9058,\n      \"longitude\": 77.6854\n    },\n    \"offers\": {\n      \"@type\": \"Offer\",\n      \"price\": 12400000,\n      \"priceCurrency\": \"INR\",\n      \"availability\": \"https://schema.org/InStock\"\n    },\n    \"about\": {\n      \"@type\": \"Residence\",\n      \"name\": \"Nambiar District 25 Phase 2\",\n      \"numberOfRooms\": \"2\",\n      \"floorSize\": {\n        \"@type\": \"QuantitativeValue\",\n        \"minValue\": 1245,\n        \"maxValue\": 2990,\n        \"unitCode\": \"FTK\"\n      },\n      \"amenityFeature\": [\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Swimming Pool\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Gymnasium\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Basketball Court\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Landscaped Gardens\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Covered Parking\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"24/7 Security\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Kids Play Area\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Clubhouse\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Tennis Court\"\n        },\n        {\n          \"@type\": \"LocationFeatureSpecification\",\n          \"name\": \"Power Backup\"\n        }\n      ]\n    },\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Nambiar Builders\"\n    }\n  },\n  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"BreadcrumbList\",\n    \"itemListElement\": [\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 1,\n        \"name\": \"Home\",\n        \"item\": \"https://homadvisory.com\"\n      },\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 2,\n        \"name\": \"Properties\",\n        \"item\": \"https://homadvisory.com/properties\"\n      },\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 3,\n        \"name\": \"Bangalore\",\n        \"item\": \"https://homadvisory.com/properties?city=Bangalore\"\n      },\n      {\n        \"@type\": \"ListItem\",\n        \"position\": 4,\n        \"name\": \"Nambiar District 25 Phase 2\"\n      }\n    ]\n  }\n]",
       "isActive": true,
       "createdAt": "2024-01-15T10:00:00Z",
-      "updatedAt": "2026-02-27T06:36:49.604Z",
+      "updatedAt": "2026-02-27T16:35:19.742Z",
       "canonicalUrl": "https://homadvisory.com/properties/nambiar-district-25-phase-2",
       "ogTitle": "Nambiar District 25 Phase 2 by Nambiar Builders | Bangalore",
       "ogDescription": "Explore Nambiar District 25 Phase 2 by Nambiar Builders in Dommasandra, Sarjapur Road, Bangalore. 2 BHK, 3 BHK, 4 BHK, 4.5 BHK apartments from 1245-2990 sqft...",
@@ -607,7 +607,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Mahindra Blossom\"}",
       "isActive": true,
       "createdAt": "2024-03-10T08:00:00Z",
-      "updatedAt": "2025-11-15T12:00:00Z",
+      "updatedAt": "2026-02-27T16:35:19.815Z",
       "category": "apartment",
       "sections": {
         "overview": true,
@@ -623,7 +623,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/mahindra-blossom",
+      "ogTitle": "Mahindra Blossom | HopeFarm Junction, Whitefield, Bangalore",
+      "ogDescription": "Explore Mahindra Blossom by Mahindra Lifespaces in HopeFarm Junction, Whitefield, Bangalore. 2 BHK, 3 BHK, 3.5 BHK, 4 BHK apartments from 1250-2450 sqft. Und...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Mahindra+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "3",
@@ -779,7 +784,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Prestige Lakeside Habitat\"}",
       "isActive": true,
       "createdAt": "2024-02-01T09:00:00Z",
-      "updatedAt": "2025-10-01T11:00:00Z",
+      "updatedAt": "2026-02-27T16:35:19.833Z",
       "category": "villa",
       "sections": {
         "overview": true,
@@ -795,7 +800,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/prestige-lakeside-habitat",
+      "ogTitle": "Prestige Lakeside Habitat | Varthur, Whitefield, Bangalore",
+      "ogDescription": "Explore Prestige Lakeside Habitat by Prestige Group in Varthur, Whitefield, Bangalore. 3 BHK Villa, 4 BHK Villa villas from 2800-4500 sqft. Ready to Move. St...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Prestige+Villa+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "4",
@@ -949,7 +959,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Brigade El Dorado\"}",
       "isActive": true,
       "createdAt": "2025-01-10T10:00:00Z",
-      "updatedAt": "2025-12-01T09:00:00Z",
+      "updatedAt": "2026-02-27T16:35:19.842Z",
       "category": "apartment",
       "sections": {
         "overview": true,
@@ -965,7 +975,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/brigade-el-dorado",
+      "ogTitle": "Brigade El Dorado | Bagalur, North Bangalore, Bangalore",
+      "ogDescription": "Explore Brigade El Dorado by Brigade Group in Bagalur, North Bangalore, Bangalore. 1 BHK, 2 BHK, 3 BHK apartments from 650-1450 sqft. Pre-Launch. Starting ₹8...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Brigade+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "5",
@@ -1121,7 +1136,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Sobha Neopolis\"}",
       "isActive": true,
       "createdAt": "2024-09-20T10:00:00Z",
-      "updatedAt": "2026-02-27T05:26:49.108Z",
+      "updatedAt": "2026-02-27T16:35:19.852Z",
       "category": "apartment",
       "sections": {
         "overview": true,
@@ -1137,7 +1152,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/sobha-neopolis",
+      "ogTitle": "Sobha Neopolis | Panathur, Off Outer Ring Road, Bangalore",
+      "ogDescription": "Explore Sobha Neopolis by Sobha Limited in Panathur, Off Outer Ring Road, Bangalore. 3 BHK, 4 BHK apartments from 1800-3200 sqft. Under Construction. Startin...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Sobha+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "6",
@@ -1281,7 +1301,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Godrej Splendour\"}",
       "isActive": true,
       "createdAt": "2024-06-01T10:00:00Z",
-      "updatedAt": "2025-11-20T10:00:00Z",
+      "updatedAt": "2026-02-27T16:35:19.864Z",
       "category": "apartment",
       "sections": {
         "overview": true,
@@ -1297,7 +1317,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/godrej-splendour",
+      "ogTitle": "Godrej Splendour — 2 BHK, 3 BHK in Electronic City Phase 1",
+      "ogDescription": "Explore Godrej Splendour by Godrej Properties in Electronic City Phase 1, Bangalore. 2 BHK, 3 BHK apartments from 1100-1650 sqft. Ready to Move. Starting ₹35...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Godrej+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "7",
@@ -1461,7 +1486,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Puravankara Zenium\"}",
       "isActive": true,
       "createdAt": "2024-07-01T10:00:00Z",
-      "updatedAt": "2025-12-05T14:00:00Z",
+      "updatedAt": "2026-02-27T16:35:19.874Z",
       "category": "apartment",
       "sections": {
         "overview": true,
@@ -1477,7 +1502,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/puravankara-zenium",
+      "ogTitle": "Puravankara Zenium by Puravankara Limited | Bangalore",
+      "ogDescription": "Explore Puravankara Zenium by Puravankara Limited in Hosahalli, Off Kanakapura Road, Bangalore. 2 BHK, 3 BHK, 3.5 BHK apartments from 1100-2100 sqft. Under C...",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Puravankara+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "8",
@@ -1614,7 +1644,7 @@
       "schemaMarkup": "{\"@context\":\"https://schema.org\",\"@type\":\"Residence\",\"name\":\"Salarpuria Sattva Opus\"}",
       "isActive": true,
       "createdAt": "2024-08-15T10:00:00Z",
-      "updatedAt": "2025-11-30T16:00:00Z",
+      "updatedAt": "2026-02-27T16:35:19.885Z",
       "category": "villa",
       "sections": {
         "overview": true,
@@ -1630,7 +1660,12 @@
         "developer": true,
         "faqs": true,
         "similar": true
-      }
+      },
+      "canonicalUrl": "https://homadvisory.com/properties/salarpuria-sattva-opus",
+      "ogTitle": "4 BHK Villa Villas in Bangalore | Salarpuria Sattva Opus",
+      "ogDescription": "Explore Salarpuria Sattva Opus by Salarpuria Sattva Group in Yeshwanthpur, North Bangalore, Bangalore. 4 BHK Villa villas from 3500-3500 sqft. Ready to Move....",
+      "ogImage": "https://placehold.co/800x600/goldenrod/white?text=Sattva+Villa+Exterior",
+      "twitterCard": "summary_large_image"
     },
     {
       "id": "b998",
@@ -2024,11 +2059,11 @@
         "assam digital guwahati",
         "buy guwahati"
       ],
-      "ogTitle": "",
-      "ogDescription": "",
-      "ogImage": "",
+      "ogTitle": "Test Property — 1 BHK, 2 BHK, 3 BHK in Khanapara",
+      "ogDescription": "Explore Test Property by Assam Digital in Khanapara, Guwahati. 1 BHK, 2 BHK, 3 BHK apartments from 1200-3500 sqft. Under Construction. Starting ₹80.00 L onwa...",
+      "ogImage": "https://res.cloudinary.com/dzbiw7t4i/image/upload/v1767606789/cld-sample-2.jpg",
       "twitterCard": "summary_large_image",
-      "canonicalUrl": "",
+      "canonicalUrl": "https://homadvisory.com/properties/test-property",
       "schemaMarkup": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Residence\",\n  \"name\": \"Test Property\",\n  \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem ex, maximus ut turpis sit amet, mattis rutrum elit. Etiam tincidunt congue augue, ut finibus tortor hendrerit ac. Cras quis dolor ut\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"addressLocality\": \"Khanapara\",\n    \"addressRegion\": \"Guwahati\"\n  }\n}",
       "tags": [
         "featured"
@@ -2036,7 +2071,7 @@
       "isActive": true,
       "publishStatus": "published",
       "createdAt": "2026-02-25T10:07:35.252Z",
-      "updatedAt": "2026-02-27T16:14:57.416Z",
+      "updatedAt": "2026-02-27T16:35:19.896Z",
       "category": "apartment",
       "sections": {
         "overview": true,
