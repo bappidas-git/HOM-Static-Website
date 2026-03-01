@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Base URL — change this to Laravel backend URL when ready
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+// Base URL — points to Laravel backend
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://phplaravel-780646-6246811.cloudwaysapps.com/api';
 
 // Create axios instance
 const apiClient = axios.create({
