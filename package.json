@@ -30,8 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server --watch db.json --port 3001",
-    "dev": "concurrently \"npm start\" \"npm run server\""
+    "dev": "react-scripts start"
   },
   "eslintConfig": {
     "extends": [
@@ -51,8 +50,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "concurrently": "^9.2.1",
-    "json-server": "^1.0.0-beta.5"
-  }
+  "devDependencies": {}
 }

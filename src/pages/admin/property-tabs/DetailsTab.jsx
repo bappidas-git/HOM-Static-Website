@@ -29,9 +29,7 @@ const DetailsTab = ({ formData, updateListItem, addListItem, removeListItem }) =
     const [moved] = specs.splice(dragIndex, 1);
     specs.splice(index, 0, moved);
     // Update entire specs array via parent
-    const fakeEvent = specs;
-    // Use updateListItem for each, but better to handle at parent level
-    // For simplicity, we rebuild the array
+    // Rebuild the array via parent update
     specs.forEach((spec, i) => {
       updateListItem('specifications', i, spec);
     });

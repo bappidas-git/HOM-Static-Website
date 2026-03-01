@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { leadService } from '../../services/api';
+import { newsletterService } from '../../services/api';
 import { useToast } from './ToastProvider';
 import styles from './NewsletterSection.module.css';
 
@@ -15,13 +15,7 @@ const NewsletterSection = () => {
 
     setLoading(true);
     try {
-      await leadService.create({
-        email,
-        name: '',
-        phone: '',
-        source: 'newsletter',
-        message: 'Newsletter subscription',
-      });
+      await newsletterService.subscribe(email);
       setEmail('');
       toast.success('Successfully subscribed to our newsletter!');
     } catch {

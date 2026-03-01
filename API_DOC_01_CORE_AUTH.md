@@ -19,8 +19,7 @@
 ### Base URL
 
 ```
-Development : http://localhost:8000/api
-Staging     : https://staging-core.homadvisory.com/api
+Live        : https://phplaravel-780646-6246811.cloudwaysapps.com/api
 Production  : https://core.homadvisory.com/api
 ```
 
