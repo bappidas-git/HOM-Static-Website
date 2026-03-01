@@ -1,13 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Base URL — points to Laravel backend
-const BASE_URL = process.env.REACT_APP_API_URL || 'https://phplaravel-780646-6246811.cloudwaysapps.com/api';
+const BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://phplaravel-780646-6246811.cloudwaysapps.com/api";
 
 // Create axios instance
 const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   timeout: 15000,
 });
@@ -16,13 +18,13 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Add auth token if available (for admin routes)
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Response interceptor — handles 401 auto-logout
@@ -35,12 +37,12 @@ apiClient.interceptors.response.use(
       switch (status) {
         case 401:
           // Clear all auth data and redirect to login
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('adminUser');
-          localStorage.removeItem('tokenExpiry');
-          sessionStorage.removeItem('authToken');
-          sessionStorage.removeItem('adminUser');
-          window.location.href = '/admin/login';
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("adminUser");
+          localStorage.removeItem("tokenExpiry");
+          sessionStorage.removeItem("authToken");
+          sessionStorage.removeItem("adminUser");
+          window.location.href = "/admin/login";
           break;
         case 404:
           console.warn(`Resource not found: ${error.config?.url}`, message);
@@ -52,13 +54,13 @@ apiClient.interceptors.response.use(
           console.warn(`API error (${status}): ${error.config?.url}`, message);
           break;
       }
-    } else if (error.code === 'ECONNABORTED') {
-      console.error('Request timeout:', error.config?.url);
+    } else if (error.code === "ECONNABORTED") {
+      console.error("Request timeout:", error.config?.url);
     } else if (!error.response) {
-      console.error('Network error:', error.message);
+      console.error("Network error:", error.message);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Helper: normalize list response (handles both array and paginated object responses)
@@ -77,10 +79,10 @@ const filterByQuery = (items, query) => {
   if (!query || !query.trim()) return items;
   const q = query.trim().toLowerCase();
   return items.filter((p) => {
-    const title = (p.title || '').toLowerCase();
-    const area = (p.location?.area || '').toLowerCase();
-    const city = (p.location?.city || '').toLowerCase();
-    const developer = (p.developer || '').toLowerCase();
+    const title = (p.title || "").toLowerCase();
+    const area = (p.location?.area || "").toLowerCase();
+    const city = (p.location?.city || "").toLowerCase();
+    const developer = (p.developer || "").toLowerCase();
     return (
       title.includes(q) ||
       area.includes(q) ||
@@ -96,7 +98,9 @@ export const propertyService = {
     try {
       // Extract q param — json-server v1 ignores it, so we filter client-side
       const { q, ...serverParams } = params;
-      const response = await apiClient.get('/properties', { params: serverParams });
+      const response = await apiClient.get("/properties", {
+        params: serverParams,
+      });
       const data = normalizeListResponse(response.data);
       return filterByQuery(data, q);
     } catch (error) {
@@ -115,7 +119,7 @@ export const propertyService = {
 
   getBySlug: async (slug) => {
     try {
-      const response = await apiClient.get('/properties', {
+      const response = await apiClient.get("/properties", {
         params: { slug },
       });
       // Handle both array (JSON Server) and single object (Laravel) responses
@@ -129,7 +133,7 @@ export const propertyService = {
 
   getFeatured: async () => {
     try {
-      const response = await apiClient.get('/properties', {
+      const response = await apiClient.get("/properties", {
         params: { isActive: true },
       });
       const data = normalizeListResponse(response.data);
@@ -137,7 +141,7 @@ export const propertyService = {
       // When migrating to Laravel, replace with a dedicated /properties/featured endpoint
       // or server-side tag filtering.
       return data.filter(
-        (p) => Array.isArray(p.tags) && p.tags.includes('featured')
+        (p) => Array.isArray(p.tags) && p.tags.includes("featured"),
       );
     } catch (error) {
       throw error;
@@ -146,7 +150,7 @@ export const propertyService = {
 
   getByStatus: async (status, params = {}) => {
     try {
-      const response = await apiClient.get('/properties', {
+      const response = await apiClient.get("/properties", {
         params: { status, isActive: true, ...params },
       });
       return normalizeListResponse(response.data);
@@ -157,7 +161,7 @@ export const propertyService = {
 
   getByType: async (type, params = {}) => {
     try {
-      const response = await apiClient.get('/properties', {
+      const response = await apiClient.get("/properties", {
         params: { type, isActive: true, ...params },
       });
       return normalizeListResponse(response.data);
@@ -172,7 +176,7 @@ export const propertyService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/properties', {
+      const response = await apiClient.post("/properties", {
         ...data,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -209,7 +213,7 @@ export const propertyService = {
 export const leadService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/leads', { params });
+      const response = await apiClient.get("/leads", { params });
       return normalizeListResponse(response.data);
     } catch (error) {
       throw error;
@@ -227,9 +231,9 @@ export const leadService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/leads', {
+      const response = await apiClient.post("/leads", {
         ...data,
-        status: 'new',
+        status: "new",
         notes: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -280,7 +284,7 @@ export const leadService = {
 export const neighborhoodService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/neighborhoods', { params });
+      const response = await apiClient.get("/neighborhoods", { params });
       return normalizeListResponse(response.data);
     } catch (error) {
       throw error;
@@ -298,7 +302,7 @@ export const neighborhoodService = {
 
   getActive: async () => {
     try {
-      const response = await apiClient.get('/neighborhoods', {
+      const response = await apiClient.get("/neighborhoods", {
         params: { isActive: true },
       });
       return normalizeListResponse(response.data);
@@ -309,7 +313,7 @@ export const neighborhoodService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/neighborhoods', data);
+      const response = await apiClient.post("/neighborhoods", data);
       return response.data;
     } catch (error) {
       throw error;
@@ -339,7 +343,7 @@ export const neighborhoodService = {
 export const partnerService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/partners', { params });
+      const response = await apiClient.get("/partners", { params });
       const data = normalizeListResponse(response.data);
       return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     } catch (error) {
@@ -358,7 +362,7 @@ export const partnerService = {
 
   getActive: async () => {
     try {
-      const response = await apiClient.get('/partners', {
+      const response = await apiClient.get("/partners", {
         params: { isActive: true },
       });
       const data = normalizeListResponse(response.data);
@@ -370,7 +374,7 @@ export const partnerService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/partners', data);
+      const response = await apiClient.post("/partners", data);
       return response.data;
     } catch (error) {
       throw error;
@@ -400,7 +404,7 @@ export const partnerService = {
 export const faqService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/faqs', { params });
+      const response = await apiClient.get("/faqs", { params });
       const data = normalizeListResponse(response.data);
       return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     } catch (error) {
@@ -419,7 +423,7 @@ export const faqService = {
 
   getByCategory: async (category) => {
     try {
-      const response = await apiClient.get('/faqs', {
+      const response = await apiClient.get("/faqs", {
         params: { category, isActive: true },
       });
       const data = normalizeListResponse(response.data);
@@ -431,7 +435,7 @@ export const faqService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/faqs', data);
+      const response = await apiClient.post("/faqs", data);
       return response.data;
     } catch (error) {
       throw error;
@@ -461,10 +465,10 @@ export const faqService = {
 export const articleService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/articles', { params });
+      const response = await apiClient.get("/articles", { params });
       const data = normalizeListResponse(response.data);
       return data.sort(
-        (a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
+        (a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0),
       );
     } catch (error) {
       throw error;
@@ -482,7 +486,7 @@ export const articleService = {
 
   getBySlug: async (slug) => {
     try {
-      const response = await apiClient.get('/articles', {
+      const response = await apiClient.get("/articles", {
         params: { slug },
       });
       // Handle both array (JSON Server) and single object (Laravel) responses
@@ -496,11 +500,13 @@ export const articleService = {
 
   getTrending: async () => {
     try {
-      const response = await apiClient.get('/articles', {
+      const response = await apiClient.get("/articles", {
         params: { isActive: true, isTrending: true },
       });
       const data = normalizeListResponse(response.data);
-      return data.sort((a, b) => (a.trendingOrder ?? 999) - (b.trendingOrder ?? 999));
+      return data.sort(
+        (a, b) => (a.trendingOrder ?? 999) - (b.trendingOrder ?? 999),
+      );
     } catch (error) {
       throw error;
     }
@@ -512,8 +518,8 @@ export const articleService = {
       // JSON Server supports ?id=1&id=2 for multiple IDs.
       // For Laravel, replace with POST /articles/by-ids or similar endpoint.
       const params = new URLSearchParams();
-      ids.forEach((id) => params.append('id', id));
-      const response = await apiClient.get('/articles', { params });
+      ids.forEach((id) => params.append("id", id));
+      const response = await apiClient.get("/articles", { params });
       return normalizeListResponse(response.data);
     } catch (error) {
       throw error;
@@ -522,7 +528,7 @@ export const articleService = {
 
   getByCategory: async (category, params = {}) => {
     try {
-      const response = await apiClient.get('/articles', {
+      const response = await apiClient.get("/articles", {
         params: { category, isActive: true, ...params },
       });
       return normalizeListResponse(response.data);
@@ -533,7 +539,7 @@ export const articleService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/articles', data);
+      const response = await apiClient.post("/articles", data);
       return response.data;
     } catch (error) {
       throw error;
@@ -563,7 +569,7 @@ export const articleService = {
 export const siteSettingsService = {
   get: async () => {
     try {
-      const response = await apiClient.get('/siteSettings');
+      const response = await apiClient.get("/siteSettings");
       return response.data;
     } catch (error) {
       throw error;
@@ -572,7 +578,7 @@ export const siteSettingsService = {
 
   update: async (data) => {
     try {
-      const response = await apiClient.patch('/siteSettings', data);
+      const response = await apiClient.patch("/siteSettings", data);
       return response.data;
     } catch (error) {
       throw error;
@@ -591,29 +597,31 @@ export const authService = {
     try {
       // JSON Server mode: simulate auth by querying /adminUsers
       // Laravel mode: POST /auth/login { email, password }
-      const response = await apiClient.get('/adminUsers', {
+      const response = await apiClient.get("/adminUsers", {
         params: { email },
       });
       const users = normalizeListResponse(response.data);
       const user = users.find((u) => u.email === email);
 
       if (!user) {
-        throw new Error('Invalid email or password');
+        throw new Error("Invalid email or password");
       }
 
       // Password validation (server-side in Laravel)
       if (user.password !== password) {
-        throw new Error('Invalid email or password');
+        throw new Error("Invalid email or password");
       }
 
       // Active account check
       if (user.isActive === false) {
-        throw new Error('Account is deactivated. Contact your administrator.');
+        throw new Error("Account is deactivated. Contact your administrator.");
       }
 
       // Generate fake JWT (replaced by real JWT from Laravel)
       const token = `jwt_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-      const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
+      const tokenExpiry = new Date(
+        Date.now() + 24 * 60 * 60 * 1000,
+      ).toISOString(); // 24h
 
       const safeUser = {
         id: user.id,
@@ -633,8 +641,8 @@ export const authService = {
     try {
       // JSON Server mode: read from localStorage
       // Laravel mode: GET /auth/profile (uses Bearer token)
-      const stored = localStorage.getItem('adminUser');
-      if (!stored) throw new Error('Not authenticated');
+      const stored = localStorage.getItem("adminUser");
+      if (!stored) throw new Error("Not authenticated");
       return JSON.parse(stored);
     } catch (error) {
       throw error;
@@ -644,11 +652,11 @@ export const authService = {
   logout: async () => {
     // JSON Server mode: client-side only
     // Laravel mode: POST /auth/logout to invalidate token server-side
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('adminUser');
-    localStorage.removeItem('tokenExpiry');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('adminUser');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("adminUser");
+    localStorage.removeItem("tokenExpiry");
+    sessionStorage.removeItem("authToken");
+    sessionStorage.removeItem("adminUser");
   },
 };
 
@@ -658,7 +666,7 @@ export const authService = {
 export const adminService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/adminUsers', { params });
+      const response = await apiClient.get("/adminUsers", { params });
       return normalizeListResponse(response.data);
     } catch (error) {
       throw error;
@@ -676,7 +684,7 @@ export const adminService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/adminUsers', data);
+      const response = await apiClient.post("/adminUsers", data);
       return response.data;
     } catch (error) {
       throw error;
@@ -710,7 +718,7 @@ export const adminService = {
 export const userService = {
   getAll: async (params = {}) => {
     try {
-      const response = await apiClient.get('/adminUsers', { params });
+      const response = await apiClient.get("/adminUsers", { params });
       return normalizeListResponse(response.data);
     } catch (error) {
       throw error;
@@ -728,7 +736,7 @@ export const userService = {
 
   create: async (data) => {
     try {
-      const response = await apiClient.post('/adminUsers', {
+      const response = await apiClient.post("/adminUsers", {
         ...data,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -768,7 +776,7 @@ export const userService = {
 export const dashboardService = {
   get: async () => {
     try {
-      const response = await apiClient.get('/api/dashboard');
+      const response = await apiClient.get("/api/dashboard");
       return response.data;
     } catch (error) {
       throw error;
@@ -860,7 +868,7 @@ export const dashboardService = {
 export const visitService = {
   record: async (data = {}) => {
     try {
-      const response = await apiClient.post('/api/visits', data);
+      const response = await apiClient.post("/api/visits", data);
       return response.data;
     } catch {
       // Silently fail — visit tracking should never block UX

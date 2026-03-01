@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "H.O.M Advisory API",
+    "_postman_id": "hom-advisory-api-collection",
+    "description": "Collection for H.O.M Advisory backend APIs (public + admin)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000/api" },
+    { "key": "authToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@homadvisory.com\",\n  \"password\": \"admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth","login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile (Auth)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/profile", "host": ["{{baseUrl}}"], "path": ["auth","profile"] }
+          }
+        },
+        {
+          "name": "Logout (Auth)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{authToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth","logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public Auth (app)",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}" },
+            "url": { "raw": "{{baseUrl}}/register", "host": ["{{baseUrl}}"], "path": ["register"] }
+          }
+        },
+        {
+          "name": "App Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password\"\n}" },
+            "url": { "raw": "{{baseUrl}}/login", "host": ["{{baseUrl}}"], "path": ["login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        { "name": "List Properties", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/properties", "host": ["{{baseUrl}}"], "path": ["properties"] } } },
+        { "name": "Get Property by ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/properties/1", "host": ["{{baseUrl}}"], "path": ["properties","1"] } } },
+        { "name": "Get Property by Slug", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/properties/slug/example-slug", "host": ["{{baseUrl}}"], "path": ["properties","slug","example-slug"] } } },
+        {
+          "name": "Create Property (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{authToken}}" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Sample Property\",\n  \"slug\": \"sample-property\",\n  \"type\": \"sale\",\n  \"property_type\": \"apartment\",\n  \"category\": \"apartment\",\n  \"status\": \"ready-to-move\",\n  \"price\": 1000000,\n  \"configuration\": [\"2 BHK\"] ,\n  \"location_area\": \"Dommasandra\",\n  \"location_city\": \"Bangalore\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/properties", "host": ["{{baseUrl}}"], "path": ["admin","properties"] }
+          }
+        },
+        { "name": "Update Property (Admin)", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Property\"\n}" }, "url": { "raw": "{{baseUrl}}/admin/properties/1", "host": ["{{baseUrl}}"], "path": ["admin","properties","1"] } } },
+        { "name": "Delete Property (Admin)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/admin/properties/1", "host": ["{{baseUrl}}"], "path": ["admin","properties","1"] } } }
+      ]
+    },
+    {
+      "name": "SEO",
+      "item": [
+        { "name": "List SEO Properties", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/seo/properties", "host": ["{{baseUrl}}"], "path": ["seo","properties"] } } },
+        { "name": "Get SEO for Property", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/seo/property/1", "host": ["{{baseUrl}}"], "path": ["seo","property","1"] } } },
+        { "name": "Update SEO", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"meta_title\": \"SEO Title\"\n}" }, "url": { "raw": "{{baseUrl}}/seo/property/1", "host": ["{{baseUrl}}"], "path": ["seo","property","1"] } } },
+        { "name": "Auto-generate SEO", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"property_id\": 1\n}" }, "url": { "raw": "{{baseUrl}}/seo/auto-generate", "host": ["{{baseUrl}}"], "path": ["seo","auto-generate"] } } }
+      ]
+    },
+    {
+      "name": "Visits & Leads",
+      "item": [
+        { "name": "Record Visit", "request": { "method": "POST", "header": [{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"visitor_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"page\": \"/properties/sample-property\",\n  \"referrer\": \"https://google.com\",\n  \"user_agent\": \"Mozilla/5.0\"\n}" }, "url": { "raw": "{{baseUrl}}/visits", "host": ["{{baseUrl}}"], "path": ["visits"] } } },
+        { "name": "Create Lead (Public)", "request": { "method": "POST", "header": [{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Rajesh Kumar\",\n  \"email\": \"rajesh.kumar@gmail.com\",\n  \"phone\": \"+919876543210\",\n  \"source\": \"property-detail-page\",\n  \"propertyId\": 1,\n  \"message\": \"Interested in 3 BHK\"\n}" }, "url": { "raw": "{{baseUrl}}/leads", "host": ["{{baseUrl}}"], "path": ["leads"] } } },
+        { "name": "List Leads (Admin)", "request": { "method": "GET", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/admin/leads", "host": ["{{baseUrl}}"], "path": ["admin","leads"] } } },
+        { "name": "Get Lead (Admin)", "request": { "method": "GET", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/admin/leads/1", "host": ["{{baseUrl}}"], "path": ["admin","leads","1"] } } },
+        { "name": "Update Lead (Admin)", "request": { "method": "PUT", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"qualified\",\n  \"email\": \"rajesh.updated@gmail.com\"\n}" }, "url": { "raw": "{{baseUrl}}/admin/leads/1", "host": ["{{baseUrl}}"], "path": ["admin","leads","1"] } } },
+        { "name": "Delete Lead (Admin)", "request": { "method": "DELETE", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/admin/leads/1", "host": ["{{baseUrl}}"], "path": ["admin","leads","1"] } } },
+        { "name": "Add Note to Lead (Admin)", "request": { "method": "POST", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"text\": \"Called back, interested in 3BHK.\"\n}" }, "url": { "raw": "{{baseUrl}}/admin/leads/1/notes", "host": ["{{baseUrl}}"], "path": ["admin","leads","1","notes"] } } }
+      ]
+    },
+    {
+      "name": "Admin Users",
+      "item": [
+        { "name": "List Admin Users", "request": { "method": "GET", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin","users"] } } },
+        { "name": "Create Admin User", "request": { "method": "POST", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Manager\",\n  \"email\": \"newmanager@homadvisory.com\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"manager\"\n}" }, "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin","users"] } } },
+        { "name": "Update Admin User", "request": { "method": "PUT", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Name\"\n}" }, "url": { "raw": "{{baseUrl}}/admin/users/2", "host": ["{{baseUrl}}"], "path": ["admin","users","2"] } } },
+        { "name": "Delete Admin User", "request": { "method": "DELETE", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" }], "url": { "raw": "{{baseUrl}}/admin/users/3", "host": ["{{baseUrl}}"], "path": ["admin","users","3"] } } }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        { "name": "Get Settings", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/settings", "host": ["{{baseUrl}}"], "path": ["settings"] } } },
+        { "name": "Update Settings (Admin)", "request": { "method": "PUT", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"contactInfo\": { \"phone\": \"(555) 999-0000\" }\n}" }, "url": { "raw": "{{baseUrl}}/admin/settings", "host": ["{{baseUrl}}"], "path": ["admin","settings"] } } }
+      ]
+    },
+    {
+      "name": "Newsletter",
+      "item": [
+        { "name": "Subscribe", "request": { "method": "POST", "header": [{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"buyer@example.com\"\n}" }, "url": { "raw": "{{baseUrl}}/newsletter/subscribe", "host": ["{{baseUrl}}"], "path": ["newsletter","subscribe"] } } }
+      ]
+    },
+    {
+      "name": "Articles & Content",
+      "item": [
+        { "name": "List Articles", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/articles", "host": ["{{baseUrl}}"], "path": ["articles"] } } },
+        { "name": "Get Article", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/articles/1", "host": ["{{baseUrl}}"], "path": ["articles","1"] } } },
+        { "name": "Get Article by Slug", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/articles/slug/example-article", "host": ["{{baseUrl}}"], "path": ["articles","slug","example-article"] } } },
+        { "name": "Trending Articles", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/articles/trending", "host": ["{{baseUrl}}"], "path": ["articles","trending"] } } },
+        { "name": "Create Article (Admin)", "request": { "method": "POST", "header": [{ "key": "Authorization","value":"Bearer {{authToken}}" },{ "key": "Content-Type","value":"application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"North Bangalore: India's Fastest Growing Corridor\",\n  \"excerpt\": \"North Bangalore is witnessing unprecedented growth...\",\n  \"content\": \"Full article content...\",\n  \"category\": \"market-trends\",\n  \"author\": \"H.O.M Advisory Team\",\n  \"isActive\": true\n}" }, "url": { "raw": "{{baseUrl}}/admin/articles", "host": ["{{baseUrl}}"], "path": ["admin","articles"] } } }
+      ]
+    },
+    {
+      "name": "FAQs, Neighborhoods, Partners",
+      "item": [
+        { "name": "List FAQs", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/faqs", "host": ["{{baseUrl}}"], "path": ["faqs"] } } },
+        { "name": "List Neighborhoods", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/neighborhoods/active", "host": ["{{baseUrl}}"], "path": ["neighborhoods","active"] } } },
+        { "name": "List Partners", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/partners/active", "host": ["{{baseUrl}}"], "path": ["partners","active"] } } }
+      ]
+    }
+  ]
+}
