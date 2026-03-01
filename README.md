@@ -16,8 +16,7 @@ A full-featured real estate advisory platform for **H.O.M Advisory** (Home Offic
 | **Animations** | Framer Motion |
 | **Icons** | MUI Icons + Iconify (MDI set) |
 | **SEO** | React Helmet Async |
-| **Mock API** | JSON Server |
-| **Dev Tooling** | Concurrently (parallel dev servers) |
+| **Backend API** | Laravel (REST) |
 
 ---
 
@@ -37,21 +36,16 @@ npm install
 
 ### Development
 
-Run both the React dev server and JSON Server mock API simultaneously:
+Run the React dev server:
 
 ```bash
-npm run dev
+npm start
 ```
 
-This starts:
-- React app at **http://localhost:3000**
-- JSON Server API at **http://localhost:3001**
-
-### Individual Commands
+### Commands
 
 ```bash
-npm start        # React dev server only
-npm run server   # JSON Server only
+npm start        # React dev server
 npm run build    # Production build
 npm test         # Run tests
 ```
@@ -68,7 +62,7 @@ cp .env.example .env.local
 
 | Variable | Default | Description |
 |---|---|---|
-| `REACT_APP_API_URL` | `http://localhost:3001` | API base URL |
+| `REACT_APP_API_URL` | `https://phplaravel-780646-6246811.cloudwaysapps.com/api` | Laravel API base URL |
 | `REACT_APP_SITE_NAME` | `H.O.M Advisory` | Site display name |
 | `REACT_APP_GOOGLE_MAPS_KEY` | — | Google Maps API key |
 
@@ -131,22 +125,15 @@ src/
 
 ---
 
-## Switching to Laravel Backend
+## Backend API
 
-The frontend is designed to work with any REST API backend. To switch from JSON Server to a Laravel backend:
+The frontend connects to a live Laravel API. Update `REACT_APP_API_URL` in `.env.local` to point to your API instance:
 
-1. Update `REACT_APP_API_URL` in `.env.local`:
-   ```
-   REACT_APP_API_URL=https://your-laravel-api.com/api/v1
-   ```
+```
+REACT_APP_API_URL=https://phplaravel-780646-6246811.cloudwaysapps.com/api
+```
 
-2. Ensure the Laravel API implements the endpoints documented in [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md).
-
-3. Implement JWT authentication — the frontend sends `Authorization: Bearer <token>` on all admin routes.
-
-4. Use Laravel API Resources to return camelCase JSON matching the frontend's expected format.
-
-No frontend code changes are required — only the base URL needs to change.
+The frontend sends `Authorization: Bearer <token>` on all admin routes.
 
 ---
 

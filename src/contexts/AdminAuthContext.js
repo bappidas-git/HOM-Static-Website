@@ -55,9 +55,9 @@ export const AdminAuthProvider = ({ children }) => {
     return userData;
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setUser(null);
-    authService.logout();
+    await authService.logout();
   }, []);
 
   /**

@@ -344,7 +344,7 @@ const AdminSeo = () => {
   const handleBulkAutoGenerate = async () => {
     setBulkGenerating(true);
     try {
-      const updates = await seoService.bulkAutoGenerate(properties, calculateSeoScore, generateSeoData);
+      const updates = await seoService.bulkAutoGenerate(properties, calculateSeoScore);
       if (updates.length === 0) {
         setSnackbar({ open: true, message: 'All properties already have complete SEO data', severity: 'info' });
       } else {
