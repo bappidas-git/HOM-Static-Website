@@ -168,7 +168,7 @@ const PropertyListing = ({ routePath }) => {
     const area = searchParams.get('area');
     if (area) {
       result = result.filter((p) =>
-        p.location?.area?.toLowerCase().includes(area.toLowerCase())
+        (p.location?.area || p.location_area || '').toLowerCase().includes(area.toLowerCase())
       );
     }
 
@@ -196,14 +196,14 @@ const PropertyListing = ({ routePath }) => {
     if (filters.locations && filters.locations.length > 0) {
       result = result.filter((p) =>
         filters.locations.some(
-          (loc) => p.location?.area?.toLowerCase().includes(loc.toLowerCase())
+          (loc) => (p.location?.area || p.location_area || '').toLowerCase().includes(loc.toLowerCase())
         )
       );
     }
 
     // Property type filter (only if not already a pre-filter)
     if (filters.propertyType && !config.preFilters.propertyType) {
-      result = result.filter((p) => p.propertyType === filters.propertyType);
+      result = result.filter((p) => (p.propertyType || p.property_type) === filters.propertyType);
     }
 
     // Status filter (only if not already a pre-filter)

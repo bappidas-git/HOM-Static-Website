@@ -123,8 +123,8 @@ const AdminProperties = () => {
       result = result.filter(
         (p) =>
           p.title?.toLowerCase().includes(q) ||
-          p.location?.area?.toLowerCase().includes(q) ||
-          p.location?.city?.toLowerCase().includes(q) ||
+          (p.location?.area || p.location_area || '').toLowerCase().includes(q) ||
+          (p.location?.city || p.location_city || '').toLowerCase().includes(q) ||
           p.developer?.toLowerCase().includes(q)
       );
     }
@@ -136,10 +136,11 @@ const AdminProperties = () => {
       result = result.filter((p) => p.type === typeFilter);
     }
     if (propertyTypeFilter !== 'all') {
-      result = result.filter((p) => p.propertyType === propertyTypeFilter);
+      result = result.filter((p) => (p.propertyType || p.property_type) === propertyTypeFilter);
     }
     if (activeFilter !== 'all') {
-      result = result.filter((p) => (activeFilter === 'active' ? p.isActive : !p.isActive));
+      const isActive = activeFilter === 'active';
+      result = result.filter((p) => (p.isActive ?? p.is_active) === isActive);
     }
 
     // Sort
@@ -147,8 +148,8 @@ const AdminProperties = () => {
       let aVal = a[sortField];
       let bVal = b[sortField];
       if (sortField === 'location') {
-        aVal = a.location?.area || '';
-        bVal = b.location?.area || '';
+        aVal = a.location?.area || a.location_area || '';
+        bVal = b.location?.area || b.location_area || '';
       }
       if (typeof aVal === 'string') {
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
@@ -163,7 +164,7 @@ const AdminProperties = () => {
   // Toggle active status
   const handleToggleActive = async (id, currentStatus) => {
     try {
-      await propertyService.update(id, { isActive: !currentStatus });
+      await propertyService.update(id, { is_active: !currentStatus });
       setProperties((prev) =>
         prev.map((p) => (p.id === id ? { ...p, isActive: !currentStatus } : p))
       );
@@ -205,7 +206,7 @@ const AdminProperties = () => {
   // Bulk actions
   const handleBulkActivate = async () => {
     try {
-      await Promise.all(selected.map((id) => propertyService.update(id, { isActive: true })));
+      await Promise.all(selected.map((id) => propertyService.update(id, { is_active: true })));
       setProperties((prev) =>
         prev.map((p) => (selected.includes(p.id) ? { ...p, isActive: true } : p))
       );
@@ -218,7 +219,7 @@ const AdminProperties = () => {
 
   const handleBulkDeactivate = async () => {
     try {
-      await Promise.all(selected.map((id) => propertyService.update(id, { isActive: false })));
+      await Promise.all(selected.map((id) => propertyService.update(id, { is_active: false })));
       setProperties((prev) =>
         prev.map((p) => (selected.includes(p.id) ? { ...p, isActive: false } : p))
       );
@@ -294,7 +295,7 @@ const AdminProperties = () => {
     currentPageIds.some((id) => selected.includes(id)) && !allOnPageSelected;
 
   // Get unique property types from data
-  const propertyTypes = [...new Set(properties.map((p) => p.propertyType).filter(Boolean))];
+  const propertyTypes = [...new Set(properties.map((p) => p.propertyType || p.property_type).filter(Boolean))];
 
   return (
     <Box>
@@ -549,7 +550,7 @@ const AdminProperties = () => {
                             {property.title}
                           </Typography>
                           <Typography variant="caption" sx={{ color: '#6B7280' }}>
-                            {property.location?.area}, {property.location?.city}
+                            {property.location?.area || property.location_area}, {property.location?.city || property.location_city}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600, color: '#C9A86C', mt: 0.5 }}>
                             {formatPrice(property.price)}
@@ -600,8 +601,8 @@ const AdminProperties = () => {
                         </Typography>
                         <Switch
                           size="small"
-                          checked={property.isActive}
-                          onChange={() => handleToggleActive(property.id, property.isActive)}
+                          checked={property.isActive ?? property.is_active ?? false}
+                          onChange={() => handleToggleActive(property.id, property.isActive ?? property.is_active)}
                           sx={{
                             '& .MuiSwitch-switchBase.Mui-checked': { color: '#10B981' },
                             '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#10B981' },
@@ -792,8 +793,8 @@ const AdminProperties = () => {
                         <TableCell align="center">
                           <Switch
                             size="small"
-                            checked={property.isActive}
-                            onChange={() => handleToggleActive(property.id, property.isActive)}
+                            checked={property.isActive ?? property.is_active ?? false}
+                            onChange={() => handleToggleActive(property.id, property.isActive ?? property.is_active)}
                             sx={{
                               '& .MuiSwitch-switchBase.Mui-checked': { color: '#10B981' },
                               '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#10B981' },
@@ -813,17 +814,17 @@ const AdminProperties = () => {
                                 <Icon icon="mdi:pencil-outline" style={{ fontSize: 18 }} />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip title={property.isActive ? 'Deactivate' : 'Activate'}>
+                            <Tooltip title={(property.isActive ?? property.is_active) ? 'Deactivate' : 'Activate'}>
                               <IconButton
                                 size="small"
                                 onClick={() => handleToggleActive(property.id, property.isActive)}
                                 sx={{
-                                  color: property.isActive ? '#F59E0B' : '#10B981',
-                                  '&:hover': { color: property.isActive ? '#D97706' : '#059669' },
+                                  color: (property.isActive ?? property.is_active) ? '#F59E0B' : '#10B981',
+                                  '&:hover': { color: (property.isActive ?? property.is_active) ? '#D97706' : '#059669' },
                                 }}
                               >
                                 <Icon
-                                  icon={property.isActive ? 'mdi:eye-off-outline' : 'mdi:eye-outline'}
+                                  icon={(property.isActive ?? property.is_active) ? 'mdi:eye-off-outline' : 'mdi:eye-outline'}
                                   style={{ fontSize: 18 }}
                                 />
                               </IconButton>
