@@ -107,14 +107,9 @@ const PropertyForm = ({ propertyId = null }) => {
         setFormData({
           title: property.title || "",
           slug: property.slug || "",
-          type: property.type || "sale",
-          propertyType:
-            property.propertyType || property.property_type || "apartment",
-          category:
-            property.category ||
-            property.propertyType ||
-            property.property_type ||
-            "apartment",
+          type: property.property_type || "sale",
+          propertyType: property.propertyType || "apartment",
+          category: property.category || property.propertyType || "apartment",
           status: property.status || "pre-launch",
           sections: { ...getDefaultSections(), ...(property.sections || {}) },
           publishStatus:
@@ -405,7 +400,7 @@ const PropertyForm = ({ propertyId = null }) => {
     return {
       title: formData.title.trim(),
       slug: formData.slug.trim(),
-      property_type: formData.type,
+      type: formData.type,
       property_type: formData.propertyType,
       category: formData.category || formData.propertyType,
       status: formData.status,
