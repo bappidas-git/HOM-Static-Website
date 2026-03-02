@@ -197,13 +197,13 @@ const PropertyCard = memo(({ property }) => {
         </Link>
 
         <div className={styles.price}>
-          {formatPrice(property.price, property.priceUnit)}{' '}
-          <span className={styles.priceUnit}>{property.priceUnit}</span>
+          {formatPrice(property.price, property.priceUnit || property.price_unit)}{' '}
+          <span className={styles.priceUnit}>{property.priceUnit || property.price_unit}</span>
         </div>
 
         <div className={styles.location}>
           <Icon icon="mdi:map-marker-outline" className={styles.locIcon} />
-          <span>{[property.location?.area, property.location?.city].filter(Boolean).join(', ') || '—'}</span>
+          <span>{[property.location?.area || property.location_area, property.location?.city || property.location_city].filter(Boolean).join(', ') || '—'}</span>
         </div>
 
         <div className={styles.detailsGrid}>
@@ -218,7 +218,7 @@ const PropertyCard = memo(({ property }) => {
             <span className={styles.detailValue}>
               {property.dimensionRange
                 ? `${property.dimensionRange.min} - ${property.dimensionRange.max} ${property.dimensionRange.unit}`
-                : '—'}
+                : (property.dimension_min ? `${property.dimension_min} - ${property.dimension_max} ${property.dimension_unit || 'sqft'}` : '—')}
             </span>
           </div>
           <div className={styles.detailItem}>

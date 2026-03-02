@@ -87,29 +87,29 @@ const PropertyForm = ({ propertyId = null }) => {
           title: property.title || '',
           slug: property.slug || '',
           type: property.type || 'sale',
-          propertyType: property.propertyType || 'apartment',
-          category: property.category || property.propertyType || 'apartment',
+          propertyType: property.propertyType || property.property_type || 'apartment',
+          category: property.category || property.propertyType || property.property_type || 'apartment',
           status: property.status || 'pre-launch',
           sections: { ...getDefaultSections(), ...(property.sections || {}) },
-          publishStatus: property.publishStatus || (property.isActive ? 'published' : 'draft'),
+          publishStatus: property.publishStatus || property.publish_status || (property.isActive || property.is_active ? 'published' : 'draft'),
           price: property.price || '',
-          priceUnit: property.priceUnit || 'onwards',
+          priceUnit: property.priceUnit || property.price_unit || 'onwards',
           developer: property.developer || '',
           description: property.description || '',
           highlights: property.highlights?.length ? property.highlights : [''],
           location: {
-            area: property.location?.area || '',
-            city: property.location?.city || '',
-            state: property.location?.state || '',
-            lat: property.location?.lat || '',
-            lng: property.location?.lng || '',
-            address: property.location?.address || property.address || '',
+            area: property.location?.area || property.location_area || '',
+            city: property.location?.city || property.location_city || '',
+            state: property.location?.state || property.location_state || '',
+            lat: property.location?.lat || property.location_lat || '',
+            lng: property.location?.lng || property.location_lng || '',
+            address: property.location?.address || property.location_address || property.address || '',
           },
           configuration: property.configuration || [],
           dimensionRange: {
-            min: property.dimensionRange?.min || '',
-            max: property.dimensionRange?.max || '',
-            unit: property.dimensionRange?.unit || 'sqft',
+            min: property.dimensionRange?.min || property.dimension_min || '',
+            max: property.dimensionRange?.max || property.dimension_max || '',
+            unit: property.dimensionRange?.unit || property.dimension_unit || 'sqft',
           },
           possession: property.possession || '',
           specifications: specs,
@@ -121,8 +121,8 @@ const PropertyForm = ({ propertyId = null }) => {
           nearbyPlaces: property.nearbyPlaces?.length
             ? property.nearbyPlaces
             : [{ name: '', distance: '', type: 'school' }],
-          brochureUrl: property.brochureUrl || '',
-          floorPlanPdfUrl: property.floorPlanPdfUrl || '',
+          brochureUrl: property.brochureUrl || property.brochure_url || '',
+          floorPlanPdfUrl: property.floorPlanPdfUrl || property.floor_plan_pdf_url || '',
           specialities: property.specialities?.length
             ? property.specialities
             : [{ icon: '', name: '', description: '' }],
@@ -178,9 +178,9 @@ const PropertyForm = ({ propertyId = null }) => {
           ogImage: property.ogImage || '',
           twitterCard: property.twitterCard || 'summary_large_image',
           canonicalUrl: property.canonicalUrl || '',
-          schemaMarkup: property.schemaMarkup || '',
+          schemaMarkup: property.schemaMarkup || property.schema_markup || '',
           tags: property.tags || [],
-          isActive: property.isActive !== undefined ? property.isActive : true,
+          isActive: property.isActive !== undefined ? property.isActive : (property.is_active !== undefined ? property.is_active : true),
         });
         setSlugManuallyEdited(true);
       } catch (err) {
@@ -275,6 +275,10 @@ const PropertyForm = ({ propertyId = null }) => {
   };
 
   // ---- Build API payload ----
+  // The Laravel backend expects snake_case field names for direct
+  // properties-table columns (e.g. property_type, location_area).
+  // Nested relation arrays (amenities, floorPlans, etc.) are kept
+  // in camelCase as the API documentation specifies.
   const buildPayload = () => {
     // Convert specifications array to object for backward compatibility
     const specsObj = {};
@@ -293,51 +297,50 @@ const PropertyForm = ({ propertyId = null }) => {
       (s) => s.value && s.label.trim()
     ).map((s) => ({ ...s, value: Number(s.value) || 0 }));
 
+    const filteredConstructionSpecs = Object.fromEntries(
+      Object.entries(formData.constructionSpecs)
+        .filter(
+          ([, items]) => Array.isArray(items) && items.some((item) => item.area.trim() && item.spec.trim())
+        )
+        .map(([key, items]) => [key, items.filter((item) => item.area.trim() && item.spec.trim())])
+    );
+
     return {
       title: formData.title.trim(),
       slug: formData.slug.trim(),
       type: formData.type,
-      propertyType: formData.propertyType,
+      property_type: formData.propertyType,
       category: formData.category || formData.propertyType,
       status: formData.status,
       sections: formData.sections || getDefaultSections(),
       price: Number(formData.price),
-      priceUnit: formData.priceUnit,
+      price_unit: formData.priceUnit,
       developer: formData.developer.trim(),
       description: formData.description.trim(),
       highlights: formData.highlights.filter((h) => h.trim()),
-      location: {
-        area: formData.location.area.trim(),
-        city: formData.location.city.trim(),
-        state: formData.location.state.trim(),
-        lat: formData.location.lat ? Number(formData.location.lat) : null,
-        lng: formData.location.lng ? Number(formData.location.lng) : null,
-        address: formData.location.address?.trim() || '',
-      },
+      // Flat location fields for Laravel backend
+      location_area: formData.location.area.trim(),
+      location_city: formData.location.city.trim(),
+      location_state: formData.location.state.trim(),
+      location_lat: formData.location.lat ? Number(formData.location.lat) : null,
+      location_lng: formData.location.lng ? Number(formData.location.lng) : null,
+      location_address: formData.location.address?.trim() || '',
       configuration: formData.configuration,
-      dimensionRange: {
-        min: formData.dimensionRange.min ? Number(formData.dimensionRange.min) : null,
-        max: formData.dimensionRange.max ? Number(formData.dimensionRange.max) : null,
-        unit: formData.dimensionRange.unit,
-      },
+      // Flat dimension fields for Laravel backend
+      dimension_min: formData.dimensionRange.min ? Number(formData.dimensionRange.min) : null,
+      dimension_max: formData.dimensionRange.max ? Number(formData.dimensionRange.max) : null,
+      dimension_unit: formData.dimensionRange.unit,
       possession: formData.possession,
       specifications: specsObj,
-      specificationsArray: formData.specifications.filter((s) => s.key.trim()),
       amenities: formData.amenities,
       floorPlans: formData.floorPlans.filter((fp) => fp.config.trim()),
       gallery: formData.gallery.filter((g) => g.trim()),
       nearbyPlaces: formData.nearbyPlaces.filter((np) => np.name.trim()),
-      brochureUrl: formData.brochureUrl?.trim() || '',
-      floorPlanPdfUrl: formData.floorPlanPdfUrl?.trim() || '',
+      brochure_url: formData.brochureUrl?.trim() || '',
+      floor_plan_pdf_url: formData.floorPlanPdfUrl?.trim() || '',
       specialities: formData.specialities.filter((s) => s.name.trim()),
       documents: formData.documents.filter((d) => d.name.trim()),
-      constructionSpecs: Object.fromEntries(
-        Object.entries(formData.constructionSpecs)
-          .filter(
-            ([, items]) => Array.isArray(items) && items.some((item) => item.area.trim() && item.spec.trim())
-          )
-          .map(([key, items]) => [key, items.filter((item) => item.area.trim() && item.spec.trim())])
-      ),
+      constructionSpecs: filteredConstructionSpecs,
       constructionTimeline: formData.constructionTimeline.filter((t) => t.label.trim()),
       developerInfo: {
         name: formData.developerInfo?.name || formData.developer.trim(),
@@ -355,9 +358,9 @@ const PropertyForm = ({ propertyId = null }) => {
       ogImage: formData.ogImage?.trim() || '',
       twitterCard: formData.twitterCard || 'summary_large_image',
       canonicalUrl: formData.canonicalUrl?.trim() || '',
-      schemaMarkup: formData.schemaMarkup.trim(),
+      schema_markup: formData.schemaMarkup.trim(),
       tags: formData.tags,
-      isActive: formData.isActive,
+      is_active: formData.isActive,
     };
   };
 
@@ -371,8 +374,8 @@ const PropertyForm = ({ propertyId = null }) => {
     try {
       setSaving(true);
       const payload = buildPayload();
-      payload.publishStatus = publish ? 'published' : 'draft';
-      payload.isActive = publish;
+      payload.publish_status = publish ? 'published' : 'draft';
+      payload.is_active = publish;
 
       if (isEdit) {
         await propertyService.update(propertyId, payload);
@@ -385,7 +388,15 @@ const PropertyForm = ({ propertyId = null }) => {
 
       setTimeout(() => navigate('/admin/properties'), 1200);
     } catch (err) {
-      setSnackbar({ open: true, message: 'Failed to save property. Please try again.', severity: 'error' });
+      // Show specific backend validation errors when available
+      const backendErrors = err?.response?.data?.errors;
+      if (backendErrors) {
+        const messages = Object.values(backendErrors).flat().join('. ');
+        setSnackbar({ open: true, message: messages || 'Validation failed. Please check all fields.', severity: 'error' });
+      } else {
+        const msg = err?.response?.data?.message || 'Failed to save property. Please try again.';
+        setSnackbar({ open: true, message: msg, severity: 'error' });
+      }
     } finally {
       setSaving(false);
     }
