@@ -32,7 +32,11 @@ const mapBackendToFrontend = (item) => {
     propertyId: item.property_id || item.id,
     title: property.title || item.title || '',
     slug: property.slug || item.slug || '',
-    location: property.location || item.location,
+    location: property.location || item.location || {
+      area: property.location_area || item.location_area || '',
+      city: property.location_city || item.location_city || '',
+      state: property.location_state || item.location_state || '',
+    },
     developer: property.developer || item.developer,
     configuration: property.configuration || item.configuration,
     dimensionRange: property.dimensionRange || item.dimensionRange || item.dimension_range,
@@ -57,6 +61,7 @@ const mapBackendToFrontend = (item) => {
     ogImage: item.og_image || item.ogImage || '',
     twitterCard: item.twitter_card || item.twitterCard || 'summary_large_image',
     schemaMarkup: item.schema_json || item.schemaMarkup || '',
+    seoScore: item.seo_score ?? item.seoScore ?? 0,
   };
 };
 

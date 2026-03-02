@@ -71,61 +71,206 @@ const normalizeListResponse = (data) => {
   return [];
 };
 
+// Helper: extract pagination meta from Laravel paginated response
+const extractPaginationMeta = (data) => {
+  if (!data || Array.isArray(data)) return null;
+  // Laravel wraps pagination meta at top level or inside meta key
+  const meta = data.meta || {
+    current_page: data.current_page,
+    per_page: data.per_page,
+    total: data.total,
+    last_page: data.last_page,
+  };
+  if (meta && meta.current_page !== undefined) return meta;
+  return null;
+};
+
+// === Property Payload Transformation ===
+// Converts frontend camelCase/nested format to backend snake_case/flat format
+const transformPropertyPayload = (data) => {
+  const payload = {};
+
+  // Core required fields — snake_case to match DB columns
+  if (data.title !== undefined) payload.title = data.title;
+  if (data.slug !== undefined) payload.slug = data.slug;
+  if (data.type !== undefined) payload.type = data.type;
+  if (data.propertyType !== undefined) payload.property_type = data.propertyType;
+  if (data.category !== undefined) payload.category = data.category;
+  if (data.status !== undefined) payload.status = data.status;
+  if (data.price !== undefined) payload.price = data.price;
+  if (data.configuration !== undefined) payload.configuration = data.configuration;
+
+  // Location — flatten nested object to snake_case fields
+  if (data.location) {
+    if (data.location.area !== undefined) payload.location_area = data.location.area;
+    if (data.location.city !== undefined) payload.location_city = data.location.city;
+    if (data.location.state !== undefined) payload.location_state = data.location.state || null;
+    if (data.location.lat !== undefined) payload.location_lat = data.location.lat || null;
+    if (data.location.lng !== undefined) payload.location_lng = data.location.lng || null;
+    if (data.location.address !== undefined) payload.location_address = data.location.address || null;
+  }
+  // Also handle pre-flattened location fields (from partial updates)
+  if (data.location_area !== undefined) payload.location_area = data.location_area;
+  if (data.location_city !== undefined) payload.location_city = data.location_city;
+  if (data.location_state !== undefined) payload.location_state = data.location_state;
+  if (data.location_lat !== undefined) payload.location_lat = data.location_lat;
+  if (data.location_lng !== undefined) payload.location_lng = data.location_lng;
+  if (data.location_address !== undefined) payload.location_address = data.location_address;
+
+  // Optional core fields — snake_case
+  if (data.publishStatus !== undefined) payload.publish_status = data.publishStatus;
+  if (data.publish_status !== undefined) payload.publish_status = data.publish_status;
+  if (data.priceUnit !== undefined) payload.price_unit = data.priceUnit;
+  if (data.price_unit !== undefined) payload.price_unit = data.price_unit;
+  if (data.developer !== undefined) payload.developer = data.developer;
+  if (data.description !== undefined) payload.description = data.description;
+  if (data.highlights !== undefined) payload.highlights = data.highlights;
+  if (data.possession !== undefined) payload.possession = data.possession;
+  if (data.specifications !== undefined) payload.specifications = data.specifications;
+  if (data.sections !== undefined) payload.sections = data.sections;
+  if (data.tags !== undefined) payload.tags = data.tags;
+
+  // Dimension — flatten nested object
+  if (data.dimensionRange) {
+    payload.dimension_min = data.dimensionRange.min || null;
+    payload.dimension_max = data.dimensionRange.max || null;
+    payload.dimension_unit = data.dimensionRange.unit || "sqft";
+  }
+  if (data.dimension_min !== undefined) payload.dimension_min = data.dimension_min;
+  if (data.dimension_max !== undefined) payload.dimension_max = data.dimension_max;
+  if (data.dimension_unit !== undefined) payload.dimension_unit = data.dimension_unit;
+
+  // Boolean/URL fields — snake_case
+  if (data.isActive !== undefined) payload.is_active = data.isActive;
+  if (data.is_active !== undefined) payload.is_active = data.is_active;
+  if (data.brochureUrl !== undefined) payload.brochure_url = data.brochureUrl;
+  if (data.brochure_url !== undefined) payload.brochure_url = data.brochure_url;
+  if (data.floorPlanPdfUrl !== undefined) payload.floor_plan_pdf_url = data.floorPlanPdfUrl;
+  if (data.floor_plan_pdf_url !== undefined) payload.floor_plan_pdf_url = data.floor_plan_pdf_url;
+
+  // Relation arrays — pass through (backend accepts these names)
+  if (data.amenities !== undefined) payload.amenities = data.amenities;
+  if (data.floorPlans !== undefined) payload.floorPlans = data.floorPlans;
+  if (data.gallery !== undefined) payload.gallery = data.gallery;
+  if (data.nearbyPlaces !== undefined) payload.nearbyPlaces = data.nearbyPlaces;
+  if (data.documents !== undefined) payload.documents = data.documents;
+  if (data.specialities !== undefined) payload.specialities = data.specialities;
+  if (data.constructionSpecs !== undefined) payload.constructionSpecs = data.constructionSpecs;
+  if (data.constructionTimeline !== undefined) payload.constructionTimeline = data.constructionTimeline;
+  if (data.developerInfo !== undefined) payload.developerInfo = data.developerInfo;
+  if (data.faqs !== undefined) payload.faqs = data.faqs;
+  if (data.similarPropertyIds !== undefined) payload.similarPropertyIds = data.similarPropertyIds;
+
+  // SEO fields
+  if (data.seoTitle !== undefined) payload.seoTitle = data.seoTitle;
+  if (data.seoDescription !== undefined) payload.seoDescription = data.seoDescription;
+  if (data.seoKeywords !== undefined) payload.seoKeywords = data.seoKeywords;
+  if (data.ogTitle !== undefined) payload.ogTitle = data.ogTitle;
+  if (data.ogDescription !== undefined) payload.ogDescription = data.ogDescription;
+  if (data.ogImage !== undefined) payload.ogImage = data.ogImage;
+  if (data.twitterCard !== undefined) payload.twitterCard = data.twitterCard;
+  if (data.canonicalUrl !== undefined) payload.canonicalUrl = data.canonicalUrl;
+  if (data.schemaMarkup !== undefined) payload.schema_markup = data.schemaMarkup;
+  if (data.schema_markup !== undefined) payload.schema_markup = data.schema_markup;
+
+  return payload;
+};
+
+// Normalize property response: ensure consistent camelCase format for frontend
+const normalizePropertyResponse = (data) => {
+  if (!data) return data;
+  return {
+    ...data,
+    propertyType: data.propertyType || data.property_type,
+    publishStatus: data.publishStatus || data.publish_status,
+    priceUnit: data.priceUnit || data.price_unit,
+    isActive: data.isActive ?? data.is_active,
+    brochureUrl: data.brochureUrl || data.brochure_url || "",
+    floorPlanPdfUrl: data.floorPlanPdfUrl || data.floor_plan_pdf_url || "",
+    schemaMarkup: data.schemaMarkup || data.schema_markup || "",
+    // Ensure nested location object
+    location: data.location || {
+      area: data.location_area || "",
+      city: data.location_city || "",
+      state: data.location_state || "",
+      lat: data.location_lat || null,
+      lng: data.location_lng || null,
+      address: data.location_address || "",
+    },
+    // Ensure nested dimensionRange object
+    dimensionRange: data.dimensionRange || data.dimension_range || {
+      min: data.dimension_min || null,
+      max: data.dimension_max || null,
+      unit: data.dimension_unit || "sqft",
+    },
+    createdAt: data.createdAt || data.created_at,
+    updatedAt: data.updatedAt || data.updated_at,
+  };
+};
+
 // === Property Service ===
 export const propertyService = {
   getAll: async (params = {}) => {
     const response = await apiClient.get("/properties", { params });
-    return normalizeListResponse(response.data);
+    const items = normalizeListResponse(response.data);
+    return items.map(normalizePropertyResponse);
   },
 
   getById: async (id) => {
     const response = await apiClient.get(`/properties/${id}`);
-    return response.data;
+    return normalizePropertyResponse(response.data);
   },
 
   getBySlug: async (slug) => {
     const response = await apiClient.get(`/properties/slug/${slug}`);
     const data = response.data;
     // Handle both wrapped { data: {...} } and direct object responses
-    return data?.data || data || null;
+    const property = data?.data || data || null;
+    return normalizePropertyResponse(property);
   },
 
   getFeatured: async () => {
     const response = await apiClient.get("/properties", {
-      params: { featured: true, isActive: true },
+      params: { featured: true },
     });
-    return normalizeListResponse(response.data);
+    const items = normalizeListResponse(response.data);
+    return items.map(normalizePropertyResponse);
   },
 
   getByStatus: async (status, params = {}) => {
     const response = await apiClient.get("/properties", {
-      params: { status, isActive: true, ...params },
+      params: { status, ...params },
     });
-    return normalizeListResponse(response.data);
+    const items = normalizeListResponse(response.data);
+    return items.map(normalizePropertyResponse);
   },
 
   getByType: async (type, params = {}) => {
     const response = await apiClient.get("/properties", {
-      params: { type, isActive: true, ...params },
+      params: { type, ...params },
     });
-    return normalizeListResponse(response.data);
+    const items = normalizeListResponse(response.data);
+    return items.map(normalizePropertyResponse);
   },
 
   search: async (query, params = {}) => {
     const response = await apiClient.get("/properties", {
-      params: { q: query, isActive: true, ...params },
+      params: { q: query, ...params },
     });
-    return normalizeListResponse(response.data);
+    const items = normalizeListResponse(response.data);
+    return items.map(normalizePropertyResponse);
   },
 
   create: async (data) => {
-    const response = await apiClient.post("/admin/properties", data);
-    return response.data;
+    const payload = transformPropertyPayload(data);
+    const response = await apiClient.post("/admin/properties", payload);
+    return normalizePropertyResponse(response.data);
   },
 
   update: async (id, data) => {
-    const response = await apiClient.put(`/admin/properties/${id}`, data);
-    return response.data;
+    const payload = transformPropertyPayload(data);
+    const response = await apiClient.put(`/admin/properties/${id}`, payload);
+    return normalizePropertyResponse(response.data);
   },
 
   delete: async (id) => {
@@ -187,17 +332,17 @@ export const neighborhoodService = {
   },
 
   create: async (data) => {
-    const response = await apiClient.post("/neighborhoods", data);
+    const response = await apiClient.post("/admin/neighborhoods", data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await apiClient.put(`/neighborhoods/${id}`, data);
+    const response = await apiClient.put(`/admin/neighborhoods/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await apiClient.delete(`/neighborhoods/${id}`);
+    const response = await apiClient.delete(`/admin/neighborhoods/${id}`);
     return response.data;
   },
 };
@@ -220,17 +365,17 @@ export const partnerService = {
   },
 
   create: async (data) => {
-    const response = await apiClient.post("/partners", data);
+    const response = await apiClient.post("/admin/partners", data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await apiClient.put(`/partners/${id}`, data);
+    const response = await apiClient.put(`/admin/partners/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await apiClient.delete(`/partners/${id}`);
+    const response = await apiClient.delete(`/admin/partners/${id}`);
     return response.data;
   },
 };
@@ -250,24 +395,24 @@ export const faqService = {
 
   getByCategory: async (category) => {
     const response = await apiClient.get("/faqs", {
-      params: { category, isActive: true },
+      params: { category },
     });
     const data = normalizeListResponse(response.data);
     return data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   },
 
   create: async (data) => {
-    const response = await apiClient.post("/faqs", data);
+    const response = await apiClient.post("/admin/faqs", data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await apiClient.put(`/faqs/${id}`, data);
+    const response = await apiClient.put(`/admin/faqs/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await apiClient.delete(`/faqs/${id}`);
+    const response = await apiClient.delete(`/admin/faqs/${id}`);
     return response.data;
   },
 };
@@ -309,7 +454,7 @@ export const articleService = {
 
   getByCategory: async (category, params = {}) => {
     const response = await apiClient.get("/articles", {
-      params: { category, isActive: true, ...params },
+      params: { category, ...params },
     });
     return normalizeListResponse(response.data);
   },
@@ -446,7 +591,7 @@ export const userService = {
 // === Dashboard Service ===
 export const dashboardService = {
   get: async () => {
-    const response = await apiClient.get("/dashboard");
+    const response = await apiClient.get("/admin/dashboard");
     return response.data;
   },
 };
