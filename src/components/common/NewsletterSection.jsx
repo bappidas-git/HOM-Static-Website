@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { newsletterService } from '../../services/api';
+import { newsletterService, leadService } from '../../services/api';
 import { useToast } from './ToastProvider';
 import styles from './NewsletterSection.module.css';
 
@@ -15,7 +15,14 @@ const NewsletterSection = () => {
 
     setLoading(true);
     try {
+      // Subscribe to newsletter mailing list
       await newsletterService.subscribe(email);
+      // Also capture as a lead so it appears in Admin → Leads
+      try {
+        await leadService.create({ email, source: 'newsletter' });
+      } catch {
+        // Lead capture is secondary — don't block the success flow
+      }
       setEmail('');
       toast.success('Successfully subscribed to our newsletter!');
     } catch {

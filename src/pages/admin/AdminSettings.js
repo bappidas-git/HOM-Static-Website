@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -47,25 +47,34 @@ const AdminSettings = () => {
   // Tab index for User Management (last tab, admin-only)
   const USER_MGMT_TAB = 5;
 
-  const fetchSettings = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await siteSettingsService.get();
-      setSettings(data);
-    } catch {
-      setSnackbar({ open: true, message: 'Failed to load settings', severity: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
+    // Only fetch once on mount — prevents React StrictMode double-fetch
+    // and useEffect re-triggering from overwriting local edits
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
+    let cancelled = false;
+    const fetchSettings = async () => {
+      setLoading(true);
+      try {
+        const data = await siteSettingsService.get();
+        if (!cancelled) setSettings(data);
+      } catch {
+        if (!cancelled) setSnackbar({ open: true, message: 'Failed to load settings', severity: 'error' });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
     fetchSettings();
-  }, [fetchSettings]);
+    return () => { cancelled = true; };
+  }, []);
 
   const updateField = (path, value) => {
     setSettings((prev) => {
-      const updated = JSON.parse(JSON.stringify(prev));
+      // Guard: if prev is null/undefined, start with empty object
+      const updated = JSON.parse(JSON.stringify(prev || {}));
       const keys = path.split('.');
       let obj = updated;
       for (let i = 0; i < keys.length - 1; i++) {
@@ -81,7 +90,11 @@ const AdminSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await siteSettingsService.update(settings);
+      const saved = await siteSettingsService.update(settings);
+      // Update local state from server response to stay in sync
+      if (saved && typeof saved === 'object') {
+        setSettings(saved);
+      }
       setSnackbar({ open: true, message: 'Settings saved successfully', severity: 'success' });
       setHasChanges(false);
     } catch {

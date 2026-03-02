@@ -26,6 +26,14 @@ import {
   formatLeadSource as formatSource,
 } from '../../config/adminConstants';
 
+// Safe date formatting — never shows "Invalid Date"
+const formatDate = (dateStr, options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) => {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '-';
+  return d.toLocaleDateString('en-IN', options);
+};
+
 const LeadDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -50,12 +58,15 @@ const LeadDetail = () => {
     if (!leadData) return [];
     const events = [];
 
+    const createdDate = leadData.createdAt || leadData.created_at;
+    const updatedDate = leadData.updatedAt || leadData.updated_at;
+
     // Lead created event
     events.push({
       type: 'created',
       text: 'Lead created',
       detail: `via ${formatSource(leadData.source)}`,
-      date: leadData.createdAt,
+      date: createdDate,
       icon: 'mdi:account-plus-outline',
       color: '#3B82F6',
     });
@@ -66,26 +77,30 @@ const LeadDetail = () => {
         type: 'note',
         text: 'Note added',
         detail: note.text,
-        date: note.addedAt,
+        date: note.addedAt || note.added_at || note.created_at,
         icon: 'mdi:note-edit-outline',
         color: '#8B5CF6',
       });
     });
 
     // Status change event (simulated from updatedAt if different from createdAt)
-    if (leadData.status !== 'new' && leadData.updatedAt !== leadData.createdAt) {
+    if (leadData.status !== 'new' && updatedDate !== createdDate) {
       events.push({
         type: 'status',
         text: `Status changed to ${statusConfig[leadData.status]?.label || leadData.status}`,
         detail: '',
-        date: leadData.updatedAt,
+        date: updatedDate,
         icon: statusConfig[leadData.status]?.icon || 'mdi:swap-horizontal',
         color: statusConfig[leadData.status]?.color || '#6B7280',
       });
     }
 
-    // Sort newest first
-    events.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Sort newest first, handle null/invalid dates gracefully
+    events.sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : 0;
+      const db = b.date ? new Date(b.date).getTime() : 0;
+      return (isNaN(db) ? 0 : db) - (isNaN(da) ? 0 : da);
+    });
     return events;
   }, []);
 
@@ -122,8 +137,10 @@ const LeadDetail = () => {
     if (!lead || lead.status === newStatus) return;
     setUpdatingStatus(true);
     try {
-      const updated = await leadService.update(lead.id, { status: newStatus });
-      setLead(updated);
+      await leadService.update(lead.id, { status: newStatus });
+      // Refetch full lead to get accurate updated data
+      const freshLead = await leadService.getById(lead.id);
+      setLead(freshLead);
       setSnackbar({
         open: true,
         message: `Status updated to ${statusConfig[newStatus].label}`,
@@ -141,10 +158,23 @@ const LeadDetail = () => {
     if (!noteText.trim() || !lead) return;
     setAddingNote(true);
     try {
-      const updated = await leadService.addNote(lead.id, noteText.trim());
-      setLead(updated);
+      await leadService.addNote(lead.id, noteText.trim());
+      // Optimistically append the note so Notes + Timeline update instantly
+      const optimisticNote = { text: noteText.trim(), addedAt: new Date().toISOString() };
+      setLead((prev) => ({
+        ...prev,
+        notes: [...(prev.notes || []), optimisticNote],
+        updatedAt: new Date().toISOString(),
+      }));
       setNoteText('');
       setSnackbar({ open: true, message: 'Note added successfully', severity: 'success' });
+      // Refetch in the background to reconcile with server data
+      try {
+        const freshLead = await leadService.getById(lead.id);
+        setLead(freshLead);
+      } catch {
+        // Keep optimistic update if background refetch fails
+      }
     } catch (err) {
       setSnackbar({ open: true, message: 'Failed to add note', severity: 'error' });
     } finally {
@@ -389,13 +419,7 @@ const LeadDetail = () => {
                     Created
                   </Typography>
                   <Typography variant="caption" sx={{ fontWeight: 500, color: '#6B7280' }}>
-                    {new Date(lead.createdAt).toLocaleDateString('en-IN', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {formatDate(lead.createdAt || lead.created_at)}
                   </Typography>
                 </Box>
                 <Box>
@@ -403,13 +427,7 @@ const LeadDetail = () => {
                     Last Updated
                   </Typography>
                   <Typography variant="caption" sx={{ fontWeight: 500, color: '#6B7280' }}>
-                    {new Date(lead.updatedAt).toLocaleDateString('en-IN', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {formatDate(lead.updatedAt || lead.updated_at)}
                   </Typography>
                 </Box>
               </Box>
@@ -541,7 +559,11 @@ const LeadDetail = () => {
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {[...lead.notes]
-                  .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
+                  .sort((a, b) => {
+                    const da = new Date(a.addedAt || a.added_at || a.created_at || 0);
+                    const db = new Date(b.addedAt || b.added_at || b.created_at || 0);
+                    return db - da;
+                  })
                   .map((note, i) => (
                     <Box
                       key={i}
@@ -556,13 +578,7 @@ const LeadDetail = () => {
                         {note.text}
                       </Typography>
                       <Typography variant="caption" sx={{ color: '#9CA3AF', mt: 0.5, display: 'block' }}>
-                        {new Date(note.addedAt).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {formatDate(note.addedAt || note.added_at || note.created_at)}
                       </Typography>
                     </Box>
                   ))}
@@ -647,13 +663,7 @@ const LeadDetail = () => {
                         </Typography>
                       )}
                       <Typography variant="caption" sx={{ color: '#9CA3AF', mt: 0.25, display: 'block' }}>
-                        {new Date(event.date).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {formatDate(event.date)}
                       </Typography>
                     </Box>
                   </Box>

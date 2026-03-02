@@ -288,7 +288,11 @@ export const leadService = {
 
   getById: async (id) => {
     const response = await apiClient.get(`/admin/leads/${id}`);
-    return response.data;
+    const data = response.data;
+    // Handle both direct object and Laravel-wrapped { data: {...} } responses
+    return data?.data && typeof data.data === "object" && !Array.isArray(data.data)
+      ? data.data
+      : data;
   },
 
   create: async (data) => {
@@ -479,12 +483,19 @@ export const articleService = {
 export const siteSettingsService = {
   get: async () => {
     const response = await apiClient.get("/settings");
-    return response.data;
+    const data = response.data;
+    // Handle both direct object and Laravel-wrapped { data: {...} } responses
+    return data?.data && typeof data.data === "object" && !Array.isArray(data.data)
+      ? data.data
+      : data;
   },
 
   update: async (data) => {
     const response = await apiClient.put("/admin/settings", data);
-    return response.data;
+    const result = response.data;
+    return result?.data && typeof result.data === "object" && !Array.isArray(result.data)
+      ? result.data
+      : result;
   },
 };
 
