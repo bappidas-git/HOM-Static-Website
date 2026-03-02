@@ -18,6 +18,36 @@ import { siteSettingsService } from '../../services/api';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import UserManagement from '../../components/admin/UserManagement';
 
+// Default settings structure — ensures every field exists so inputs are
+// always controlled and no value is ever silently dropped.
+const DEFAULT_SETTINGS = {
+  companyName: '',
+  tagline: '',
+  companySubtitle: '',
+  companyDescription: '',
+  contactInfo: { email: '', phone: '', address: '' },
+  heroText: { title: '', subtitle: '', backgroundMedia: '', backgroundImage: '' },
+  socialLinks: { instagram: '', facebook: '', twitter: '', linkedin: '', youtube: '' },
+  newsletterText: '',
+  newsletterSubtitle: '',
+  footerGallery: [],
+  footerLinkGroups: [],
+};
+
+// Deep-merge API data into defaults so no field is ever undefined.
+const mergeWithDefaults = (data) => {
+  if (!data || typeof data !== 'object') return { ...DEFAULT_SETTINGS };
+  return {
+    ...DEFAULT_SETTINGS,
+    ...data,
+    contactInfo: { ...DEFAULT_SETTINGS.contactInfo, ...(data.contactInfo || {}) },
+    heroText: { ...DEFAULT_SETTINGS.heroText, ...(data.heroText || {}) },
+    socialLinks: { ...DEFAULT_SETTINGS.socialLinks, ...(data.socialLinks || {}) },
+    footerGallery: Array.isArray(data.footerGallery) ? data.footerGallery : [],
+    footerLinkGroups: Array.isArray(data.footerLinkGroups) ? data.footerLinkGroups : [],
+  };
+};
+
 const TabPanel = ({ children, value, index }) => (
   <Box role="tabpanel" hidden={value !== index} sx={{ pt: 3 }}>
     {value === index && children}
@@ -37,7 +67,7 @@ const AdminSettings = () => {
   const { role } = useAdminAuth();
   const isAdmin = role === 'admin';
 
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -53,7 +83,7 @@ const AdminSettings = () => {
       setLoading(true);
       try {
         const data = await siteSettingsService.get();
-        if (!cancelled) setSettings(data);
+        if (!cancelled) setSettings(mergeWithDefaults(data));
       } catch {
         if (!cancelled) setSnackbar({ open: true, message: 'Failed to load settings', severity: 'error' });
       } finally {
@@ -64,22 +94,40 @@ const AdminSettings = () => {
     return () => { cancelled = true; };
   }, []);
 
+  // Immutable field updater — uses spread operators instead of
+  // JSON.parse(JSON.stringify()) to avoid dropping undefined values
+  // and to follow the standard React immutable-update pattern.
+  //
   // Supports both direct values and updater callbacks:
   //   updateField('companyName', 'New Name')
   //   updateField('footerGallery', prev => [...prev, ''])
   const updateField = useCallback((path, valueOrFn) => {
     setSettings((prev) => {
-      const updated = JSON.parse(JSON.stringify(prev || {}));
+      if (!prev) return prev;
       const keys = path.split('.');
+
+      if (keys.length === 1) {
+        const key = keys[0];
+        const newValue = typeof valueOrFn === 'function' ? valueOrFn(prev[key]) : valueOrFn;
+        return { ...prev, [key]: newValue };
+      }
+
+      if (keys.length === 2) {
+        const [parent, child] = keys;
+        const parentObj = prev[parent] || {};
+        const newValue = typeof valueOrFn === 'function' ? valueOrFn(parentObj[child]) : valueOrFn;
+        return { ...prev, [parent]: { ...parentObj, [child]: newValue } };
+      }
+
+      // Fallback for 3+ levels (not used in current UI, but kept for safety)
+      const updated = JSON.parse(JSON.stringify(prev));
       let obj = updated;
       for (let i = 0; i < keys.length - 1; i++) {
-        if (!obj[keys[i]]) obj[keys[i]] = {};
+        if (!obj[keys[i]] || typeof obj[keys[i]] !== 'object') obj[keys[i]] = {};
         obj = obj[keys[i]];
       }
       const lastKey = keys[keys.length - 1];
-      obj[lastKey] = typeof valueOrFn === 'function'
-        ? valueOrFn(obj[lastKey])
-        : valueOrFn;
+      obj[lastKey] = typeof valueOrFn === 'function' ? valueOrFn(obj[lastKey]) : valueOrFn;
       return updated;
     });
     setHasChanges(true);
@@ -89,12 +137,11 @@ const AdminSettings = () => {
     setSaving(true);
     try {
       const saved = await siteSettingsService.update(settings);
-      // Only replace local state if response contains valid settings data
-      // (has at least one known settings key). This prevents wiping local
-      // state when the API returns a simple success message.
+      // Merge API response with defaults so no field is lost.
+      // Only replace local state if response contains valid settings data.
       const knownKeys = ['companyName', 'tagline', 'contactInfo', 'heroText', 'socialLinks', 'footerGallery'];
       if (saved && typeof saved === 'object' && knownKeys.some(key => key in saved)) {
-        setSettings(saved);
+        setSettings(mergeWithDefaults(saved));
       }
       setSnackbar({ open: true, message: 'Settings saved successfully', severity: 'success' });
       setHasChanges(false);
@@ -188,7 +235,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.companyName ?? ''}
+                value={settings.companyName}
                 onChange={(e) => updateField('companyName', e.target.value)}
                 placeholder="Company name..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -199,7 +246,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.tagline ?? ''}
+                value={settings.tagline}
                 onChange={(e) => updateField('tagline', e.target.value)}
                 placeholder="Company tagline..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -210,7 +257,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.companySubtitle ?? ''}
+                value={settings.companySubtitle}
                 onChange={(e) => updateField('companySubtitle', e.target.value)}
                 placeholder="Company subtitle..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -228,7 +275,7 @@ const AdminSettings = () => {
                 fullWidth
                 size="small"
                 type="email"
-                value={settings?.contactInfo?.email ?? ''}
+                value={settings.contactInfo.email}
                 onChange={(e) => updateField('contactInfo.email', e.target.value)}
                 placeholder="info@company.com"
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -239,7 +286,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.contactInfo?.phone ?? ''}
+                value={settings.contactInfo.phone}
                 onChange={(e) => updateField('contactInfo.phone', e.target.value)}
                 placeholder="(555) 123-4567"
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -252,7 +299,7 @@ const AdminSettings = () => {
                 size="small"
                 multiline
                 rows={2}
-                value={settings?.contactInfo?.address ?? ''}
+                value={settings.contactInfo.address}
                 onChange={(e) => updateField('contactInfo.address', e.target.value)}
                 placeholder="Full business address..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -266,7 +313,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.title ?? ''}
+                value={settings.heroText.title}
                 onChange={(e) => updateField('heroText.title', e.target.value)}
                 placeholder="Main hero heading text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -277,7 +324,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.subtitle ?? ''}
+                value={settings.heroText.subtitle}
                 onChange={(e) => updateField('heroText.subtitle', e.target.value)}
                 placeholder="Hero subtitle text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -294,7 +341,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.backgroundMedia ?? ''}
+                value={settings.heroText.backgroundMedia}
                 onChange={(e) => updateField('heroText.backgroundMedia', e.target.value)}
                 placeholder="https://example.com/hero-bg.jpg or .mp4"
                 helperText="Supports images (.jpg, .png, .webp) and videos (.mp4, .webm). Type is auto-detected from URL."
@@ -303,7 +350,7 @@ const AdminSettings = () => {
             </FieldGroup>
 
             {(() => {
-              const mediaUrl = settings?.heroText?.backgroundMedia || settings?.heroText?.backgroundImage || '';
+              const mediaUrl = settings.heroText.backgroundMedia || settings.heroText.backgroundImage || '';
               const isVideo = mediaUrl && ['.mp4', '.webm', '.ogg', '.mov'].some((ext) => mediaUrl.toLowerCase().includes(ext));
               if (!mediaUrl) return null;
               return (
@@ -320,7 +367,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.backgroundImage ?? ''}
+                value={settings.heroText.backgroundImage}
                 onChange={(e) => updateField('heroText.backgroundImage', e.target.value)}
                 placeholder="https://example.com/hero-fallback.jpg"
                 helperText="Used as fallback if the primary media URL fails to load."
@@ -330,7 +377,7 @@ const AdminSettings = () => {
 
             {/* Preview */}
             {(() => {
-              const mediaUrl = settings?.heroText?.backgroundMedia || settings?.heroText?.backgroundImage || '';
+              const mediaUrl = settings.heroText.backgroundMedia || settings.heroText.backgroundImage || '';
               const isVideo = mediaUrl && ['.mp4', '.webm', '.ogg', '.mov'].some((ext) => mediaUrl.toLowerCase().includes(ext));
               return (
                 <Paper
@@ -378,10 +425,10 @@ const AdminSettings = () => {
                       Hero Preview
                     </Typography>
                     <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', mb: 0.5 }}>
-                      {settings?.heroText?.title || 'Hero Title'}
+                      {settings.heroText.title || 'Hero Title'}
                     </Typography>
                     <Typography sx={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
-                      {settings?.heroText?.subtitle || 'Hero subtitle text'}
+                      {settings.heroText.subtitle || 'Hero subtitle text'}
                     </Typography>
                   </Box>
                 </Paper>
@@ -395,7 +442,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.instagram ?? ''}
+                value={settings.socialLinks.instagram}
                 onChange={(e) => updateField('socialLinks.instagram', e.target.value)}
                 placeholder="https://instagram.com/..."
                 InputProps={{
@@ -413,7 +460,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.facebook ?? ''}
+                value={settings.socialLinks.facebook}
                 onChange={(e) => updateField('socialLinks.facebook', e.target.value)}
                 placeholder="https://facebook.com/..."
                 InputProps={{
@@ -431,7 +478,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.twitter ?? ''}
+                value={settings.socialLinks.twitter}
                 onChange={(e) => updateField('socialLinks.twitter', e.target.value)}
                 placeholder="https://twitter.com/..."
                 InputProps={{
@@ -449,7 +496,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.linkedin ?? ''}
+                value={settings.socialLinks.linkedin}
                 onChange={(e) => updateField('socialLinks.linkedin', e.target.value)}
                 placeholder="https://linkedin.com/company/..."
                 InputProps={{
@@ -467,7 +514,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.youtube ?? ''}
+                value={settings.socialLinks.youtube}
                 onChange={(e) => updateField('socialLinks.youtube', e.target.value)}
                 placeholder="https://youtube.com/..."
                 InputProps={{
@@ -488,7 +535,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.newsletterText ?? ''}
+                value={settings.newsletterText}
                 onChange={(e) => updateField('newsletterText', e.target.value)}
                 placeholder="Newsletter heading text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -499,7 +546,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.newsletterSubtitle ?? ''}
+                value={settings.newsletterSubtitle}
                 onChange={(e) => updateField('newsletterSubtitle', e.target.value)}
                 placeholder="Newsletter subtitle text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -515,10 +562,10 @@ const AdminSettings = () => {
                 Newsletter Section Preview
               </Typography>
               <Typography sx={{ fontSize: '1.125rem', fontWeight: 600, color: '#1B2A4A', mb: 0.5 }}>
-                {settings?.newsletterText || 'Newsletter Heading'}
+                {settings.newsletterText || 'Newsletter Heading'}
               </Typography>
               <Typography sx={{ fontSize: '0.8125rem', color: '#6B7280' }}>
-                {settings?.newsletterSubtitle || 'Subscribe to stay updated'}
+                {settings.newsletterSubtitle || 'Subscribe to stay updated'}
               </Typography>
               <Box sx={{ mt: 2, display: 'flex', gap: 1, justifyContent: 'center', maxWidth: 400, mx: 'auto' }}>
                 <Box
@@ -562,7 +609,7 @@ const AdminSettings = () => {
                 size="small"
                 multiline
                 rows={3}
-                value={settings?.companyDescription ?? ''}
+                value={settings.companyDescription}
                 onChange={(e) => updateField('companyDescription', e.target.value)}
                 placeholder="Company description for footer..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -573,7 +620,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.tagline ?? ''}
+                value={settings.tagline}
                 onChange={(e) => updateField('tagline', e.target.value)}
                 placeholder="Footer tagline text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -589,7 +636,7 @@ const AdminSettings = () => {
               Add image URLs for the footer image collage. Recommended: 6 images for best layout.
             </Typography>
 
-            {(settings?.footerGallery || []).map((url, idx) => (
+            {(settings.footerGallery || []).map((url, idx) => (
               <Box key={idx} sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'flex-start' }}>
                 <TextField
                   fullWidth
@@ -618,7 +665,7 @@ const AdminSettings = () => {
                 </IconButton>
               </Box>
             ))}
-            {(settings?.footerGallery || []).length < 6 && (
+            {(settings.footerGallery || []).length < 6 && (
               <Button
                 size="small"
                 startIcon={<Icon icon="mdi:plus" />}
@@ -627,7 +674,7 @@ const AdminSettings = () => {
                 }}
                 sx={{ textTransform: 'none', mt: 1, color: '#1B2A4A' }}
               >
-                Add Image ({6 - (settings?.footerGallery || []).length} remaining)
+                Add Image ({6 - (settings.footerGallery || []).length} remaining)
               </Button>
             )}
 
@@ -640,7 +687,7 @@ const AdminSettings = () => {
               Manage the link columns shown in the footer. Each group has a title and a set of links.
             </Typography>
 
-            {(settings?.footerLinkGroups || []).map((group, gIdx) => (
+            {(settings.footerLinkGroups || []).map((group, gIdx) => (
               <Paper key={gIdx} variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
                 <Box sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
                   <TextField
@@ -754,13 +801,13 @@ const AdminSettings = () => {
                 Footer Preview
               </Typography>
               <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: '#C9A86C', mb: 0.5 }}>
-                {settings?.companyName || 'Company Name'}
+                {settings.companyName || 'Company Name'}
               </Typography>
               <Typography sx={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.5)', mb: 1.5, letterSpacing: 1 }}>
-                {settings?.tagline || 'TAGLINE'}
+                {settings.tagline || 'TAGLINE'}
               </Typography>
               <Typography sx={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.7)', maxWidth: 300 }}>
-                {settings?.companyDescription || 'Company description text goes here'}
+                {settings.companyDescription || 'Company description text goes here'}
               </Typography>
             </Paper>
           </TabPanel>
