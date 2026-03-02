@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -47,14 +47,7 @@ const AdminSettings = () => {
   // Tab index for User Management (last tab, admin-only)
   const USER_MGMT_TAB = 5;
 
-  const hasFetchedRef = useRef(false);
-
   useEffect(() => {
-    // Only fetch once on mount — prevents React StrictMode double-fetch
-    // and useEffect re-triggering from overwriting local edits
-    if (hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-
     let cancelled = false;
     const fetchSettings = async () => {
       setLoading(true);
@@ -71,9 +64,11 @@ const AdminSettings = () => {
     return () => { cancelled = true; };
   }, []);
 
-  const updateField = (path, value) => {
+  // Supports both direct values and updater callbacks:
+  //   updateField('companyName', 'New Name')
+  //   updateField('footerGallery', prev => [...prev, ''])
+  const updateField = useCallback((path, valueOrFn) => {
     setSettings((prev) => {
-      // Guard: if prev is null/undefined, start with empty object
       const updated = JSON.parse(JSON.stringify(prev || {}));
       const keys = path.split('.');
       let obj = updated;
@@ -81,18 +76,24 @@ const AdminSettings = () => {
         if (!obj[keys[i]]) obj[keys[i]] = {};
         obj = obj[keys[i]];
       }
-      obj[keys[keys.length - 1]] = value;
+      const lastKey = keys[keys.length - 1];
+      obj[lastKey] = typeof valueOrFn === 'function'
+        ? valueOrFn(obj[lastKey])
+        : valueOrFn;
       return updated;
     });
     setHasChanges(true);
-  };
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
     try {
       const saved = await siteSettingsService.update(settings);
-      // Update local state from server response to stay in sync
-      if (saved && typeof saved === 'object') {
+      // Only replace local state if response contains valid settings data
+      // (has at least one known settings key). This prevents wiping local
+      // state when the API returns a simple success message.
+      const knownKeys = ['companyName', 'tagline', 'contactInfo', 'heroText', 'socialLinks', 'footerGallery'];
+      if (saved && typeof saved === 'object' && knownKeys.some(key => key in saved)) {
         setSettings(saved);
       }
       setSnackbar({ open: true, message: 'Settings saved successfully', severity: 'success' });
@@ -187,7 +188,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.companyName || ''}
+                value={settings?.companyName ?? ''}
                 onChange={(e) => updateField('companyName', e.target.value)}
                 placeholder="Company name..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -198,7 +199,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.tagline || ''}
+                value={settings?.tagline ?? ''}
                 onChange={(e) => updateField('tagline', e.target.value)}
                 placeholder="Company tagline..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -209,7 +210,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.companySubtitle || ''}
+                value={settings?.companySubtitle ?? ''}
                 onChange={(e) => updateField('companySubtitle', e.target.value)}
                 placeholder="Company subtitle..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -227,7 +228,7 @@ const AdminSettings = () => {
                 fullWidth
                 size="small"
                 type="email"
-                value={settings?.contactInfo?.email || ''}
+                value={settings?.contactInfo?.email ?? ''}
                 onChange={(e) => updateField('contactInfo.email', e.target.value)}
                 placeholder="info@company.com"
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -238,7 +239,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.contactInfo?.phone || ''}
+                value={settings?.contactInfo?.phone ?? ''}
                 onChange={(e) => updateField('contactInfo.phone', e.target.value)}
                 placeholder="(555) 123-4567"
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -251,7 +252,7 @@ const AdminSettings = () => {
                 size="small"
                 multiline
                 rows={2}
-                value={settings?.contactInfo?.address || ''}
+                value={settings?.contactInfo?.address ?? ''}
                 onChange={(e) => updateField('contactInfo.address', e.target.value)}
                 placeholder="Full business address..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -265,7 +266,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.title || ''}
+                value={settings?.heroText?.title ?? ''}
                 onChange={(e) => updateField('heroText.title', e.target.value)}
                 placeholder="Main hero heading text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -276,7 +277,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.subtitle || ''}
+                value={settings?.heroText?.subtitle ?? ''}
                 onChange={(e) => updateField('heroText.subtitle', e.target.value)}
                 placeholder="Hero subtitle text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -293,7 +294,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.backgroundMedia || ''}
+                value={settings?.heroText?.backgroundMedia ?? ''}
                 onChange={(e) => updateField('heroText.backgroundMedia', e.target.value)}
                 placeholder="https://example.com/hero-bg.jpg or .mp4"
                 helperText="Supports images (.jpg, .png, .webp) and videos (.mp4, .webm). Type is auto-detected from URL."
@@ -319,7 +320,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.heroText?.backgroundImage || ''}
+                value={settings?.heroText?.backgroundImage ?? ''}
                 onChange={(e) => updateField('heroText.backgroundImage', e.target.value)}
                 placeholder="https://example.com/hero-fallback.jpg"
                 helperText="Used as fallback if the primary media URL fails to load."
@@ -394,7 +395,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.instagram || ''}
+                value={settings?.socialLinks?.instagram ?? ''}
                 onChange={(e) => updateField('socialLinks.instagram', e.target.value)}
                 placeholder="https://instagram.com/..."
                 InputProps={{
@@ -412,7 +413,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.facebook || ''}
+                value={settings?.socialLinks?.facebook ?? ''}
                 onChange={(e) => updateField('socialLinks.facebook', e.target.value)}
                 placeholder="https://facebook.com/..."
                 InputProps={{
@@ -430,7 +431,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.twitter || ''}
+                value={settings?.socialLinks?.twitter ?? ''}
                 onChange={(e) => updateField('socialLinks.twitter', e.target.value)}
                 placeholder="https://twitter.com/..."
                 InputProps={{
@@ -448,7 +449,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.linkedin || ''}
+                value={settings?.socialLinks?.linkedin ?? ''}
                 onChange={(e) => updateField('socialLinks.linkedin', e.target.value)}
                 placeholder="https://linkedin.com/company/..."
                 InputProps={{
@@ -466,7 +467,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.socialLinks?.youtube || ''}
+                value={settings?.socialLinks?.youtube ?? ''}
                 onChange={(e) => updateField('socialLinks.youtube', e.target.value)}
                 placeholder="https://youtube.com/..."
                 InputProps={{
@@ -487,7 +488,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.newsletterText || ''}
+                value={settings?.newsletterText ?? ''}
                 onChange={(e) => updateField('newsletterText', e.target.value)}
                 placeholder="Newsletter heading text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -498,7 +499,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.newsletterSubtitle || ''}
+                value={settings?.newsletterSubtitle ?? ''}
                 onChange={(e) => updateField('newsletterSubtitle', e.target.value)}
                 placeholder="Newsletter subtitle text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -561,7 +562,7 @@ const AdminSettings = () => {
                 size="small"
                 multiline
                 rows={3}
-                value={settings?.companyDescription || ''}
+                value={settings?.companyDescription ?? ''}
                 onChange={(e) => updateField('companyDescription', e.target.value)}
                 placeholder="Company description for footer..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -572,7 +573,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings?.tagline || ''}
+                value={settings?.tagline ?? ''}
                 onChange={(e) => updateField('tagline', e.target.value)}
                 placeholder="Footer tagline text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -595,9 +596,12 @@ const AdminSettings = () => {
                   size="small"
                   value={url}
                   onChange={(e) => {
-                    const updated = [...(settings?.footerGallery || [])];
-                    updated[idx] = e.target.value;
-                    updateField('footerGallery', updated);
+                    const val = e.target.value;
+                    updateField('footerGallery', (gallery) => {
+                      const updated = [...(gallery || [])];
+                      updated[idx] = val;
+                      return updated;
+                    });
                   }}
                   placeholder={`Image URL ${idx + 1}`}
                   helperText="Aspect ratio: 4:3 (e.g. 400×300px). Min resolution: 400×300px."
@@ -606,8 +610,7 @@ const AdminSettings = () => {
                 <IconButton
                   size="small"
                   onClick={() => {
-                    const updated = (settings?.footerGallery || []).filter((_, i) => i !== idx);
-                    updateField('footerGallery', updated);
+                    updateField('footerGallery', (gallery) => (gallery || []).filter((_, i) => i !== idx));
                   }}
                   sx={{ color: '#EF4444', mt: 0.5 }}
                 >
@@ -620,8 +623,7 @@ const AdminSettings = () => {
                 size="small"
                 startIcon={<Icon icon="mdi:plus" />}
                 onClick={() => {
-                  const updated = [...(settings?.footerGallery || []), ''];
-                  updateField('footerGallery', updated);
+                  updateField('footerGallery', (gallery) => [...(gallery || []), '']);
                 }}
                 sx={{ textTransform: 'none', mt: 1, color: '#1B2A4A' }}
               >
@@ -646,17 +648,19 @@ const AdminSettings = () => {
                     label="Group Title"
                     value={group.title || ''}
                     onChange={(e) => {
-                      const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
-                      updated[gIdx].title = e.target.value;
-                      updateField('footerLinkGroups', updated);
+                      const val = e.target.value;
+                      updateField('footerLinkGroups', (groups) => {
+                        const updated = JSON.parse(JSON.stringify(groups || []));
+                        updated[gIdx].title = val;
+                        return updated;
+                      });
                     }}
                     sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                   <IconButton
                     size="small"
                     onClick={() => {
-                      const updated = (settings?.footerLinkGroups || []).filter((_, i) => i !== gIdx);
-                      updateField('footerLinkGroups', updated);
+                      updateField('footerLinkGroups', (groups) => (groups || []).filter((_, i) => i !== gIdx));
                     }}
                     sx={{ color: '#EF4444' }}
                   >
@@ -670,9 +674,12 @@ const AdminSettings = () => {
                       label="Label"
                       value={link.label || ''}
                       onChange={(e) => {
-                        const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
-                        updated[gIdx].links[lIdx].label = e.target.value;
-                        updateField('footerLinkGroups', updated);
+                        const val = e.target.value;
+                        updateField('footerLinkGroups', (groups) => {
+                          const updated = JSON.parse(JSON.stringify(groups || []));
+                          updated[gIdx].links[lIdx].label = val;
+                          return updated;
+                        });
                       }}
                       sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     />
@@ -681,18 +688,23 @@ const AdminSettings = () => {
                       label="Path"
                       value={link.path || ''}
                       onChange={(e) => {
-                        const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
-                        updated[gIdx].links[lIdx].path = e.target.value;
-                        updateField('footerLinkGroups', updated);
+                        const val = e.target.value;
+                        updateField('footerLinkGroups', (groups) => {
+                          const updated = JSON.parse(JSON.stringify(groups || []));
+                          updated[gIdx].links[lIdx].path = val;
+                          return updated;
+                        });
                       }}
                       sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                     />
                     <IconButton
                       size="small"
                       onClick={() => {
-                        const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
-                        updated[gIdx].links = updated[gIdx].links.filter((_, i) => i !== lIdx);
-                        updateField('footerLinkGroups', updated);
+                        updateField('footerLinkGroups', (groups) => {
+                          const updated = JSON.parse(JSON.stringify(groups || []));
+                          updated[gIdx].links = updated[gIdx].links.filter((_, i) => i !== lIdx);
+                          return updated;
+                        });
                       }}
                       sx={{ color: '#EF4444' }}
                     >
@@ -704,9 +716,11 @@ const AdminSettings = () => {
                   size="small"
                   startIcon={<Icon icon="mdi:plus" />}
                   onClick={() => {
-                    const updated = JSON.parse(JSON.stringify(settings?.footerLinkGroups || []));
-                    updated[gIdx].links = [...(updated[gIdx].links || []), { label: '', path: '/' }];
-                    updateField('footerLinkGroups', updated);
+                    updateField('footerLinkGroups', (groups) => {
+                      const updated = JSON.parse(JSON.stringify(groups || []));
+                      updated[gIdx].links = [...(updated[gIdx].links || []), { label: '', path: '/' }];
+                      return updated;
+                    });
                   }}
                   sx={{ textTransform: 'none', ml: 2, mt: 0.5, fontSize: '0.75rem' }}
                 >
@@ -718,8 +732,7 @@ const AdminSettings = () => {
               size="small"
               startIcon={<Icon icon="mdi:plus" />}
               onClick={() => {
-                const updated = [...(settings?.footerLinkGroups || []), { title: '', links: [] }];
-                updateField('footerLinkGroups', updated);
+                updateField('footerLinkGroups', (groups) => [...(groups || []), { title: '', links: [] }]);
               }}
               sx={{ textTransform: 'none', color: '#1B2A4A' }}
             >

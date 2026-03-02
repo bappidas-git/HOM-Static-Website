@@ -95,6 +95,7 @@ const transformPropertyPayload = (data) => {
   if (data.slug !== undefined) payload.slug = data.slug;
   if (data.type !== undefined) payload.type = data.type;
   if (data.propertyType !== undefined) payload.property_type = data.propertyType;
+  if (data.property_type !== undefined) payload.property_type = data.property_type;
   if (data.category !== undefined) payload.category = data.category;
   if (data.status !== undefined) payload.status = data.status;
   if (data.price !== undefined) payload.price = data.price;

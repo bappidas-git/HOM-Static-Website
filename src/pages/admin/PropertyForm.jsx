@@ -107,8 +107,8 @@ const PropertyForm = ({ propertyId = null }) => {
         setFormData({
           title: property.title || "",
           slug: property.slug || "",
-          type: property.property_type || "sale",
-          propertyType: property.propertyType || "apartment",
+          type: property.type || "sale",
+          propertyType: property.propertyType || property.property_type || "apartment",
           category: property.category || property.propertyType || "apartment",
           status: property.status || "pre-launch",
           sections: { ...getDefaultSections(), ...(property.sections || {}) },
