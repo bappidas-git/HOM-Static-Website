@@ -37,12 +37,21 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { leadService, propertyService } from '../../services/api';
+import useDebounce from '../../hooks/useDebounce';
 import {
   LEAD_STATUS_CONFIG as statusConfig,
   LEAD_STATUS_OPTIONS as statusOptions,
   LEAD_SOURCE_OPTIONS as sourceOptions,
   formatLeadSource as formatSource,
 } from '../../config/adminConstants';
+
+// Safe date formatting — never shows "Invalid Date"
+const formatDate = (dateStr, options) => {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '-';
+  return d.toLocaleDateString('en-IN', options || { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 const AdminLeads = () => {
   const navigate = useNavigate();
@@ -52,7 +61,6 @@ const AdminLeads = () => {
   // Data state
   const [leads, setLeads] = useState([]);
   const [properties, setProperties] = useState([]);
-  const [filteredLeads, setFilteredLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -62,6 +70,9 @@ const AdminLeads = () => {
   const [sourceFilter, setSourceFilter] = useState('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+
+  // Debounce search input for API calls
+  const debouncedSearch = useDebounce(searchQuery, 400);
 
   // Table state
   const [page, setPage] = useState(0);
@@ -80,22 +91,50 @@ const AdminLeads = () => {
   // Mobile expanded card
   const [expandedCard, setExpandedCard] = useState(null);
 
+  // Export loading state
+  const [exporting, setExporting] = useState(false);
+
   // Polling ref for new lead count
   const lastLeadCountRef = useRef(0);
 
-  // Fetch all data
-  const fetchData = useCallback(async () => {
+  // Build filter params object for API calls
+  const buildFilterParams = useCallback(() => {
+    const params = {};
+    if (debouncedSearch) params.search = debouncedSearch;
+    if (statusFilter !== 'all') params.status = statusFilter;
+    if (sourceFilter !== 'all') params.source = sourceFilter;
+    if (dateFrom) params.from = dateFrom;
+    if (dateTo) params.to = dateTo;
+    return params;
+  }, [debouncedSearch, statusFilter, sourceFilter, dateFrom, dateTo]);
+
+  // Fetch properties once on mount (separate from leads)
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const propsData = await propertyService.getAll();
+        setProperties(propsData);
+      } catch {
+        // Properties are optional for display — silent fail
+      }
+    };
+    fetchProperties();
+  }, []);
+
+  // Fetch leads with API-driven filters
+  const fetchLeads = useCallback(async () => {
     try {
       setLoading(true);
-      const [leadsData, propsData] = await Promise.all([
-        leadService.getAll(),
-        propertyService.getAll(),
-      ]);
+      const params = buildFilterParams();
+      const leadsData = await leadService.getAll(params);
       const sorted = [...leadsData].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        (a, b) => {
+          const da = new Date(a.createdAt || a.created_at || 0);
+          const db = new Date(b.createdAt || b.created_at || 0);
+          return db - da;
+        }
       );
       setLeads(sorted);
-      setProperties(propsData);
       lastLeadCountRef.current = sorted.length;
       setError(null);
     } catch (err) {
@@ -103,24 +142,25 @@ const AdminLeads = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [buildFilterParams]);
 
+  // Re-fetch leads when filters change
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchLeads();
+    setPage(0);
+  }, [fetchLeads]);
 
   // Polling for new leads every 30 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const leadsData = await leadService.getAll();
-        if (leadsData.length > lastLeadCountRef.current) {
-          const newCount = leadsData.length - lastLeadCountRef.current;
-          const sorted = [...leadsData].sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
-          setLeads(sorted);
-          lastLeadCountRef.current = leadsData.length;
+        // Poll without filters to detect any new leads across the system
+        const allLeads = await leadService.getAll();
+        if (allLeads.length > lastLeadCountRef.current) {
+          const newCount = allLeads.length - lastLeadCountRef.current;
+          lastLeadCountRef.current = allLeads.length;
+          // Re-fetch with current filters to update the display
+          fetchLeads();
           setSnackbar({
             open: true,
             message: `${newCount} new lead${newCount > 1 ? 's' : ''} received`,
@@ -132,44 +172,7 @@ const AdminLeads = () => {
       }
     }, 30000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Apply filters
-  useEffect(() => {
-    let result = [...leads];
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (l) =>
-          l.name?.toLowerCase().includes(q) ||
-          l.email?.toLowerCase().includes(q) ||
-          l.phone?.includes(q)
-      );
-    }
-
-    if (statusFilter !== 'all') {
-      result = result.filter((l) => l.status === statusFilter);
-    }
-
-    if (sourceFilter !== 'all') {
-      result = result.filter((l) => l.source === sourceFilter);
-    }
-
-    if (dateFrom) {
-      const from = new Date(dateFrom);
-      result = result.filter((l) => new Date(l.createdAt) >= from);
-    }
-
-    if (dateTo) {
-      const to = new Date(dateTo);
-      to.setHours(23, 59, 59, 999);
-      result = result.filter((l) => new Date(l.createdAt) <= to);
-    }
-
-    setFilteredLeads(result);
-    setPage(0);
-  }, [leads, searchQuery, statusFilter, sourceFilter, dateFrom, dateTo]);
+  }, [fetchLeads]);
 
   // Get property title by id
   const getPropertyTitle = (propertyId) => {
@@ -211,38 +214,49 @@ const AdminLeads = () => {
     }
   };
 
-  // Export to CSV
-  const handleExportCSV = () => {
-    const headers = ['Name', 'Email', 'Phone', 'Source', 'Property', 'Status', 'Message', 'Date'];
-    const rows = filteredLeads.map((l) => [
-      l.name || '',
-      l.email || '',
-      l.phone || '',
-      formatSource(l.source),
-      l.propertyId ? (getPropertyTitle(l.propertyId) || '') : '',
-      statusConfig[l.status]?.label || l.status,
-      (l.message || '').replace(/"/g, '""'),
-      new Date(l.createdAt).toLocaleDateString('en-IN'),
-    ]);
+  // Export to CSV — fetches fresh filtered data from API
+  const handleExportCSV = async () => {
+    setExporting(true);
+    try {
+      // Fetch filtered leads from API (not from local state)
+      const params = buildFilterParams();
+      const exportData = await leadService.getAll(params);
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
-    ].join('\n');
+      const headers = ['Name', 'Email', 'Phone', 'Source', 'Property', 'Status', 'Message', 'Date'];
+      const rows = exportData.map((l) => [
+        l.name || '',
+        l.email || '',
+        l.phone || '',
+        formatSource(l.source),
+        l.propertyId ? (getPropertyTitle(l.propertyId) || '') : '',
+        statusConfig[l.status]?.label || l.status,
+        (l.message || '').replace(/"/g, '""'),
+        formatDate(l.createdAt || l.created_at),
+      ]);
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `leads-export-${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+      const csvContent = [
+        headers.join(','),
+        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `leads-export-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setSnackbar({ open: true, message: 'Failed to export CSV', severity: 'error' });
+    } finally {
+      setExporting(false);
+    }
   };
 
   // Count new leads
   const newLeadCount = leads.filter((l) => l.status === 'new').length;
 
-  const currentPageData = filteredLeads.slice(
+  const currentPageData = leads.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -270,7 +284,7 @@ const AdminLeads = () => {
             </Typography>
             <Chip
               size="small"
-              label={`${filteredLeads.length} total`}
+              label={`${leads.length} total`}
               sx={{ height: 24, fontSize: '0.75rem', fontWeight: 600, bgcolor: '#F3F4F6', color: '#6B7280' }}
             />
             {newLeadCount > 0 && (
@@ -291,9 +305,9 @@ const AdminLeads = () => {
           startIcon={<Icon icon="mdi:download-outline" />}
           onClick={handleExportCSV}
           sx={{ borderRadius: 2 }}
-          disabled={filteredLeads.length === 0}
+          disabled={leads.length === 0 || exporting}
         >
-          Export to CSV
+          {exporting ? 'Exporting...' : 'Export to CSV'}
         </Button>
       </Box>
 
@@ -448,10 +462,7 @@ const AdminLeads = () => {
                         </Typography>
                         <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
                           {formatSource(lead.source)} &middot;{' '}
-                          {new Date(lead.createdAt).toLocaleDateString('en-IN', {
-                            day: 'numeric',
-                            month: 'short',
-                          })}
+                          {formatDate(lead.createdAt || lead.created_at, { day: 'numeric', month: 'short' })}
                         </Typography>
                       </Box>
                       <Chip
@@ -659,11 +670,7 @@ const AdminLeads = () => {
                             variant="body2"
                             sx={{ color: '#9CA3AF', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
                           >
-                            {new Date(lead.createdAt).toLocaleDateString('en-IN', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
+                            {formatDate(lead.createdAt || lead.created_at)}
                           </Typography>
                         </TableCell>
 
@@ -718,10 +725,10 @@ const AdminLeads = () => {
       )}
 
       {/* Pagination */}
-      {!loading && filteredLeads.length > 0 && (
+      {!loading && leads.length > 0 && (
         <TablePagination
           component="div"
-          count={filteredLeads.length}
+          count={leads.length}
           page={page}
           onPageChange={(e, newPage) => setPage(newPage)}
           rowsPerPage={rowsPerPage}
