@@ -82,7 +82,8 @@ const PropertyFilters = ({
     if (!properties || !properties.length) return [];
     const areas = new Set();
     properties.forEach((p) => {
-      if (p.location?.area) areas.add(p.location.area);
+      const area = p.location?.area || p.location_area;
+      if (area) areas.add(area);
     });
     return Array.from(areas).sort();
   }, [properties]);
