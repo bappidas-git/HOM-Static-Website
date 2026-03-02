@@ -1,12 +1,29 @@
-import React, { useState } from 'react';
-import { newsletterService, leadService } from '../../services/api';
+import React, { useState, useEffect } from 'react';
+import { newsletterService, leadService, siteSettingsService } from '../../services/api';
 import { useToast } from './ToastProvider';
 import styles from './NewsletterSection.module.css';
+
+const DEFAULT_HEADING = 'Get latest real estate updates in your inbox';
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [heading, setHeading] = useState(DEFAULT_HEADING);
+  const [subtitle, setSubtitle] = useState('');
   const toast = useToast();
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await siteSettingsService.get();
+        if (data?.newsletterText) setHeading(data.newsletterText);
+        if (data?.newsletterSubtitle) setSubtitle(data.newsletterSubtitle);
+      } catch {
+        // Silently fall back to defaults
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +52,8 @@ const NewsletterSection = () => {
   return (
     <section className={styles.newsletter}>
       <div className={styles.inner}>
-        <h2 className={styles.heading}>Get latest real estate updates in your inbox</h2>
+        <h2 className={styles.heading}>{heading}</h2>
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.inputWrapper}>
