@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { authService } from '../services/api';
 import { hasRouteAccess, getDefaultRoute } from '../config/rbac';
 
@@ -72,16 +72,24 @@ export const AdminAuthProvider = ({ children }) => {
     [user]
   );
 
-  const value = {
-    user,
-    loading,
-    login,
-    logout,
-    isAuthenticated: !!user,
-    role: user?.role || null,
-    canAccess,
-    getDefaultRoute: () => getDefaultRoute(user?.role),
-  };
+  const getDefaultRouteForUser = useCallback(
+    () => getDefaultRoute(user?.role),
+    [user]
+  );
+
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      login,
+      logout,
+      isAuthenticated: !!user,
+      role: user?.role || null,
+      canAccess,
+      getDefaultRoute: getDefaultRouteForUser,
+    }),
+    [user, loading, login, logout, canAccess, getDefaultRouteForUser]
+  );
 
   return (
     <AdminAuthContext.Provider value={value}>
