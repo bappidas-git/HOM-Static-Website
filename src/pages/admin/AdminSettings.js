@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -34,17 +34,46 @@ const DEFAULT_SETTINGS = {
   footerLinkGroups: [],
 };
 
-// Deep-merge API data into defaults so no field is ever undefined.
+// Coerce a value to a string — prevents null / undefined from reaching
+// MUI TextField `value` props, which would flip them to uncontrolled mode.
+const str = (val) => (val != null ? String(val) : '');
+
+// Build a complete settings object from (possibly partial / nullable) API data.
+// Every field is explicitly mapped so that null values from the API never
+// override the empty-string defaults and never reach TextField `value` props.
 const mergeWithDefaults = (data) => {
   if (!data || typeof data !== 'object') return { ...DEFAULT_SETTINGS };
   return {
-    ...DEFAULT_SETTINGS,
-    ...data,
-    contactInfo: { ...DEFAULT_SETTINGS.contactInfo, ...(data.contactInfo || {}) },
-    heroText: { ...DEFAULT_SETTINGS.heroText, ...(data.heroText || {}) },
-    socialLinks: { ...DEFAULT_SETTINGS.socialLinks, ...(data.socialLinks || {}) },
-    footerGallery: Array.isArray(data.footerGallery) ? data.footerGallery : [],
-    footerLinkGroups: Array.isArray(data.footerLinkGroups) ? data.footerLinkGroups : [],
+    companyName: str(data.companyName),
+    tagline: str(data.tagline),
+    companySubtitle: str(data.companySubtitle),
+    companyDescription: str(data.companyDescription),
+    contactInfo: {
+      email: str(data.contactInfo?.email),
+      phone: str(data.contactInfo?.phone),
+      address: str(data.contactInfo?.address),
+    },
+    heroText: {
+      title: str(data.heroText?.title),
+      subtitle: str(data.heroText?.subtitle),
+      backgroundMedia: str(data.heroText?.backgroundMedia),
+      backgroundImage: str(data.heroText?.backgroundImage),
+    },
+    socialLinks: {
+      instagram: str(data.socialLinks?.instagram),
+      facebook: str(data.socialLinks?.facebook),
+      twitter: str(data.socialLinks?.twitter),
+      linkedin: str(data.socialLinks?.linkedin),
+      youtube: str(data.socialLinks?.youtube),
+    },
+    newsletterText: str(data.newsletterText),
+    newsletterSubtitle: str(data.newsletterSubtitle),
+    footerGallery: Array.isArray(data.footerGallery)
+      ? data.footerGallery.map((v) => str(v))
+      : [],
+    footerLinkGroups: Array.isArray(data.footerLinkGroups)
+      ? data.footerLinkGroups
+      : [],
   };
 };
 
@@ -133,16 +162,19 @@ const AdminSettings = () => {
     setHasChanges(true);
   }, []);
 
-  const handleSave = async () => {
+  // Keep a ref that always points at the latest settings so the save
+  // handler can read the most-recent value even across async boundaries.
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+
+  const handleSave = useCallback(async () => {
     setSaving(true);
     try {
-      const saved = await siteSettingsService.update(settings);
-      // Merge API response with defaults so no field is lost.
-      // Only replace local state if response contains valid settings data.
-      const knownKeys = ['companyName', 'tagline', 'contactInfo', 'heroText', 'socialLinks', 'footerGallery'];
-      if (saved && typeof saved === 'object' && knownKeys.some(key => key in saved)) {
-        setSettings(mergeWithDefaults(saved));
-      }
+      await siteSettingsService.update(settingsRef.current);
+      // Do NOT overwrite local state with the API response — the local
+      // state is the source of truth.  Replacing it would discard any
+      // keystrokes the user made while the save request was in-flight and
+      // could re-introduce null values from the server.
       setSnackbar({ open: true, message: 'Settings saved successfully', severity: 'success' });
       setHasChanges(false);
     } catch {
@@ -150,7 +182,7 @@ const AdminSettings = () => {
     } finally {
       setSaving(false);
     }
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -235,7 +267,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.companyName}
+                value={settings.companyName || ''}
                 onChange={(e) => updateField('companyName', e.target.value)}
                 placeholder="Company name..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -246,7 +278,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.tagline}
+                value={settings.tagline || ''}
                 onChange={(e) => updateField('tagline', e.target.value)}
                 placeholder="Company tagline..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -257,7 +289,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.companySubtitle}
+                value={settings.companySubtitle || ''}
                 onChange={(e) => updateField('companySubtitle', e.target.value)}
                 placeholder="Company subtitle..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -275,7 +307,7 @@ const AdminSettings = () => {
                 fullWidth
                 size="small"
                 type="email"
-                value={settings.contactInfo.email}
+                value={settings.contactInfo?.email || ''}
                 onChange={(e) => updateField('contactInfo.email', e.target.value)}
                 placeholder="info@company.com"
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -286,7 +318,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.contactInfo.phone}
+                value={settings.contactInfo?.phone || ''}
                 onChange={(e) => updateField('contactInfo.phone', e.target.value)}
                 placeholder="(555) 123-4567"
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -299,7 +331,7 @@ const AdminSettings = () => {
                 size="small"
                 multiline
                 rows={2}
-                value={settings.contactInfo.address}
+                value={settings.contactInfo?.address || ''}
                 onChange={(e) => updateField('contactInfo.address', e.target.value)}
                 placeholder="Full business address..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -313,7 +345,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.heroText.title}
+                value={settings.heroText?.title || ''}
                 onChange={(e) => updateField('heroText.title', e.target.value)}
                 placeholder="Main hero heading text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -324,7 +356,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.heroText.subtitle}
+                value={settings.heroText?.subtitle || ''}
                 onChange={(e) => updateField('heroText.subtitle', e.target.value)}
                 placeholder="Hero subtitle text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -341,7 +373,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.heroText.backgroundMedia}
+                value={settings.heroText?.backgroundMedia || ''}
                 onChange={(e) => updateField('heroText.backgroundMedia', e.target.value)}
                 placeholder="https://example.com/hero-bg.jpg or .mp4"
                 helperText="Supports images (.jpg, .png, .webp) and videos (.mp4, .webm). Type is auto-detected from URL."
@@ -350,7 +382,7 @@ const AdminSettings = () => {
             </FieldGroup>
 
             {(() => {
-              const mediaUrl = settings.heroText.backgroundMedia || settings.heroText.backgroundImage || '';
+              const mediaUrl = settings.heroText?.backgroundMedia || settings.heroText?.backgroundImage || '';
               const isVideo = mediaUrl && ['.mp4', '.webm', '.ogg', '.mov'].some((ext) => mediaUrl.toLowerCase().includes(ext));
               if (!mediaUrl) return null;
               return (
@@ -367,7 +399,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.heroText.backgroundImage}
+                value={settings.heroText?.backgroundImage || ''}
                 onChange={(e) => updateField('heroText.backgroundImage', e.target.value)}
                 placeholder="https://example.com/hero-fallback.jpg"
                 helperText="Used as fallback if the primary media URL fails to load."
@@ -377,7 +409,7 @@ const AdminSettings = () => {
 
             {/* Preview */}
             {(() => {
-              const mediaUrl = settings.heroText.backgroundMedia || settings.heroText.backgroundImage || '';
+              const mediaUrl = settings.heroText?.backgroundMedia || settings.heroText?.backgroundImage || '';
               const isVideo = mediaUrl && ['.mp4', '.webm', '.ogg', '.mov'].some((ext) => mediaUrl.toLowerCase().includes(ext));
               return (
                 <Paper
@@ -425,10 +457,10 @@ const AdminSettings = () => {
                       Hero Preview
                     </Typography>
                     <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', mb: 0.5 }}>
-                      {settings.heroText.title || 'Hero Title'}
+                      {settings.heroText?.title || 'Hero Title'}
                     </Typography>
                     <Typography sx={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
-                      {settings.heroText.subtitle || 'Hero subtitle text'}
+                      {settings.heroText?.subtitle || 'Hero subtitle text'}
                     </Typography>
                   </Box>
                 </Paper>
@@ -442,7 +474,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.socialLinks.instagram}
+                value={settings.socialLinks?.instagram || ''}
                 onChange={(e) => updateField('socialLinks.instagram', e.target.value)}
                 placeholder="https://instagram.com/..."
                 InputProps={{
@@ -460,7 +492,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.socialLinks.facebook}
+                value={settings.socialLinks?.facebook || ''}
                 onChange={(e) => updateField('socialLinks.facebook', e.target.value)}
                 placeholder="https://facebook.com/..."
                 InputProps={{
@@ -478,7 +510,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.socialLinks.twitter}
+                value={settings.socialLinks?.twitter || ''}
                 onChange={(e) => updateField('socialLinks.twitter', e.target.value)}
                 placeholder="https://twitter.com/..."
                 InputProps={{
@@ -496,7 +528,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.socialLinks.linkedin}
+                value={settings.socialLinks?.linkedin || ''}
                 onChange={(e) => updateField('socialLinks.linkedin', e.target.value)}
                 placeholder="https://linkedin.com/company/..."
                 InputProps={{
@@ -514,7 +546,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.socialLinks.youtube}
+                value={settings.socialLinks?.youtube || ''}
                 onChange={(e) => updateField('socialLinks.youtube', e.target.value)}
                 placeholder="https://youtube.com/..."
                 InputProps={{
@@ -535,7 +567,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.newsletterText}
+                value={settings.newsletterText || ''}
                 onChange={(e) => updateField('newsletterText', e.target.value)}
                 placeholder="Newsletter heading text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -546,7 +578,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.newsletterSubtitle}
+                value={settings.newsletterSubtitle || ''}
                 onChange={(e) => updateField('newsletterSubtitle', e.target.value)}
                 placeholder="Newsletter subtitle text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -609,7 +641,7 @@ const AdminSettings = () => {
                 size="small"
                 multiline
                 rows={3}
-                value={settings.companyDescription}
+                value={settings.companyDescription || ''}
                 onChange={(e) => updateField('companyDescription', e.target.value)}
                 placeholder="Company description for footer..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -620,7 +652,7 @@ const AdminSettings = () => {
               <TextField
                 fullWidth
                 size="small"
-                value={settings.tagline}
+                value={settings.tagline || ''}
                 onChange={(e) => updateField('tagline', e.target.value)}
                 placeholder="Footer tagline text..."
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
@@ -641,7 +673,7 @@ const AdminSettings = () => {
                 <TextField
                   fullWidth
                   size="small"
-                  value={url}
+                  value={url || ''}
                   onChange={(e) => {
                     const val = e.target.value;
                     updateField('footerGallery', (gallery) => {
