@@ -79,7 +79,7 @@ const HeroSection = () => {
         if (cancelled) return;
 
         const results = (Array.isArray(data) ? data : [])
-          .filter((p) => p.isActive !== false)
+          .filter((p) => p.isActive === true || p.is_active === true)
           .slice(0, MAX_SUGGESTIONS);
 
         setSuggestions(results);

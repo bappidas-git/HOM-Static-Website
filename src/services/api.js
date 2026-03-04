@@ -293,10 +293,12 @@ export const propertyService = {
 
   getByStatus: async (status, params = {}) => {
     const response = await apiClient.get("/properties", {
-      params: { status, ...params },
+      params: { status, is_active: true, ...params },
     });
     const items = normalizeListResponse(response.data);
-    return items.map(normalizePropertyResponse);
+    return items.map(normalizePropertyResponse).filter(
+      (p) => (p.isActive === true || p.is_active === true) && p.status === status
+    );
   },
 
   getByType: async (type, params = {}) => {
