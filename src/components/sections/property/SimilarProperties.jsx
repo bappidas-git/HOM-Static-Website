@@ -37,8 +37,8 @@ const SimilarProperties = ({ currentProperty }) => {
       try {
         const data = await propertyService.getAll({
           type: currentProperty.type,
-          isActive: true,
-          _limit: 6,
+          is_active: true,
+          per_page: 6,
         });
         const filtered = Array.isArray(data) ? data : [];
         setProperties(filtered.filter((p) => p.id !== currentProperty.id).slice(0, 4));
