@@ -43,7 +43,7 @@ const SimilarProperties = ({ currentProperty }) => {
         const filtered = Array.isArray(data) ? data : [];
         setProperties(
           filtered
-            .filter((p) => p.id !== currentProperty.id && (p.isActive === true || p.is_active === true))
+            .filter((p) => p.id !== currentProperty.id && !!p.isActive && p.publishStatus !== 'draft')
             .slice(0, 4)
         );
       } catch {

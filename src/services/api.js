@@ -219,7 +219,7 @@ const normalizePropertyResponse = (data) => {
     propertyType: data.propertyType || data.property_type,
     publishStatus: data.publishStatus || data.publish_status,
     priceUnit: data.priceUnit || data.price_unit,
-    isActive: data.isActive ?? data.is_active,
+    isActive: !!(data.isActive ?? data.is_active),
     brochureUrl: data.brochureUrl || data.brochure_url || "",
     floorPlanPdfUrl: data.floorPlanPdfUrl || data.floor_plan_pdf_url || "",
     schemaMarkup: data.schemaMarkup || data.schema_markup || "",
@@ -297,7 +297,7 @@ export const propertyService = {
     });
     const items = normalizeListResponse(response.data);
     return items.map(normalizePropertyResponse).filter(
-      (p) => (p.isActive === true || p.is_active === true) && p.status === status
+      (p) => !!p.isActive && p.status === status && p.publishStatus !== "draft"
     );
   },
 
