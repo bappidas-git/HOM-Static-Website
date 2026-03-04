@@ -71,7 +71,11 @@ const PropertyForm = ({ propertyId = null }) => {
     const loadProperty = async () => {
       try {
         setLoading(true);
-        const property = await propertyService.getById(propertyId);
+        // Fetch property and SEO data in parallel (SEO may be stored separately)
+        const [property, seoData] = await Promise.all([
+          propertyService.getById(propertyId),
+          propertyService.getSeo(propertyId).catch(() => null),
+        ]);
         if (!property) {
           setSnackbar({
             open: true,
@@ -80,6 +84,30 @@ const PropertyForm = ({ propertyId = null }) => {
           });
           navigate("/admin/properties");
           return;
+        }
+
+        // Merge SEO data from the separate /seo/property endpoint if the
+        // main property response didn't include it.
+        if (seoData) {
+          if (!property.seoTitle) property.seoTitle = seoData.meta_title || seoData.title || seoData.seo_title || "";
+          if (!property.seoDescription) property.seoDescription = seoData.meta_description || seoData.description || seoData.seo_description || "";
+          if (!property.seoKeywords || !property.seoKeywords.length) {
+            const kw = seoData.keywords || seoData.seo_keywords;
+            property.seoKeywords = Array.isArray(kw) ? kw
+              : typeof kw === "string" && kw.trim() ? kw.split(",").map((k) => k.trim()).filter(Boolean)
+              : [];
+          }
+          if (!property.canonicalUrl) property.canonicalUrl = seoData.canonical_url || "";
+          if (!property.ogTitle) property.ogTitle = seoData.og_title || "";
+          if (!property.ogDescription) property.ogDescription = seoData.og_description || "";
+          if (!property.ogImage) property.ogImage = seoData.og_image || "";
+          if (!property.twitterCard || property.twitterCard === "summary_large_image") {
+            property.twitterCard = seoData.twitter_card || property.twitterCard || "summary_large_image";
+          }
+          if (!property.schemaMarkup) {
+            const sm = seoData.schema_markup;
+            property.schemaMarkup = typeof sm === "string" ? sm : sm ? JSON.stringify(sm) : "";
+          }
         }
 
         // Map specifications: support both object and array formats
@@ -163,12 +191,12 @@ const PropertyForm = ({ propertyId = null }) => {
           amenities: property.amenities || [],
           floorPlans: floorPlansData.length
             ? floorPlansData.map((fp) => ({
-                config: fp.config || fp.configuration || "",
-                area: fp.area || "",
-                price: fp.price || "",
-                image: fp.image || fp.image_url || "",
-                bedrooms: fp.bedrooms || "",
-                bathrooms: fp.bathrooms || "",
+                config: fp.config || fp.configuration || fp.name || "",
+                area: fp.area != null ? String(fp.area) : "",
+                price: fp.price != null ? String(fp.price) : "",
+                image: fp.image || fp.image_url || fp.floor_image || "",
+                bedrooms: fp.bedrooms != null ? String(fp.bedrooms) : "",
+                bathrooms: fp.bathrooms != null ? String(fp.bathrooms) : "",
               }))
             : [
                 {
@@ -434,14 +462,15 @@ const PropertyForm = ({ propertyId = null }) => {
   // Nested relation arrays (amenities, floorPlans, etc.) are kept
   // in camelCase as the API documentation specifies.
   const buildPayload = () => {
-    // Convert specifications array to object for backward compatibility
-    const specsObj = {};
-    formData.specifications.forEach((s) => {
-      if (s.key.trim()) {
-        const val = isNaN(Number(s.value)) ? s.value : Number(s.value);
-        specsObj[s.key.trim()] = val;
-      }
-    });
+    // Send specifications as array to preserve icons; also include
+    // an object-format copy for backward-compatible backends.
+    const specsArray = formData.specifications
+      .filter((s) => s.key.trim())
+      .map((s) => ({
+        key: s.key.trim(),
+        value: isNaN(Number(s.value)) ? s.value : Number(s.value),
+        icon: s.icon || "",
+      }));
 
     // Filter empty FAQs
     const validFaqs = formData.faqs.filter(
@@ -500,7 +529,7 @@ const PropertyForm = ({ propertyId = null }) => {
         : null,
       dimension_unit: formData.dimensionRange.unit,
       possession: formData.possession,
-      specifications: specsObj,
+      specifications: specsArray,
       amenities: formData.amenities,
       floorPlans: formData.floorPlans.filter((fp) => fp.config.trim()),
       gallery: formData.gallery.filter((g) => g.trim()),
@@ -554,7 +583,23 @@ const PropertyForm = ({ propertyId = null }) => {
       payload.is_active = publish;
 
       if (isEdit) {
-        await propertyService.update(propertyId, payload);
+        // Update property and sync SEO data to the dedicated endpoint
+        const seoPayload = {
+          meta_title: payload.meta_title,
+          meta_description: payload.meta_description,
+          keywords: payload.keywords,
+          og_title: payload.og_title,
+          og_description: payload.og_description,
+          og_image: payload.og_image,
+          twitter_card: payload.twitter_card,
+          canonical_url: payload.canonical_url,
+          schema_markup: payload.schema_markup,
+        };
+        await Promise.all([
+          propertyService.update(propertyId, payload),
+          // Also push to the dedicated SEO endpoint (fire-and-forget)
+          propertyService.updateSeo(propertyId, seoPayload).catch(() => {}),
+        ]);
         setSnackbar({
           open: true,
           message: "Property updated successfully",
