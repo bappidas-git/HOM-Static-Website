@@ -222,7 +222,12 @@ const normalizePropertyResponse = (data) => {
     isActive: !!(data.isActive ?? data.is_active),
     brochureUrl: data.brochureUrl || data.brochure_url || "",
     floorPlanPdfUrl: data.floorPlanPdfUrl || data.floor_plan_pdf_url || "",
-    schemaMarkup: data.schemaMarkup || data.schema_markup || "",
+    schemaMarkup: (() => {
+      const sm = data.schemaMarkup || data.schema_markup;
+      if (!sm) return "";
+      if (typeof sm === "string") return sm;
+      return JSON.stringify(sm);
+    })(),
     // SEO fields: handle both camelCase and snake_case from backend
     seoTitle: data.seoTitle || data.meta_title || data.seo_title || "",
     seoDescription: data.seoDescription || data.meta_description || data.seo_description || "",
