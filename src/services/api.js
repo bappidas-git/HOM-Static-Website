@@ -162,15 +162,23 @@ const transformPropertyPayload = (data) => {
   if (data.faqs !== undefined) payload.faqs = data.faqs;
   if (data.similarPropertyIds !== undefined) payload.similarPropertyIds = data.similarPropertyIds;
 
-  // SEO fields
-  if (data.seoTitle !== undefined) payload.seoTitle = data.seoTitle;
-  if (data.seoDescription !== undefined) payload.seoDescription = data.seoDescription;
-  if (data.seoKeywords !== undefined) payload.seoKeywords = data.seoKeywords;
-  if (data.ogTitle !== undefined) payload.ogTitle = data.ogTitle;
-  if (data.ogDescription !== undefined) payload.ogDescription = data.ogDescription;
-  if (data.ogImage !== undefined) payload.ogImage = data.ogImage;
-  if (data.twitterCard !== undefined) payload.twitterCard = data.twitterCard;
-  if (data.canonicalUrl !== undefined) payload.canonicalUrl = data.canonicalUrl;
+  // SEO fields — use snake_case to match backend conventions
+  if (data.seoTitle !== undefined) payload.meta_title = data.seoTitle;
+  if (data.meta_title !== undefined) payload.meta_title = data.meta_title;
+  if (data.seoDescription !== undefined) payload.meta_description = data.seoDescription;
+  if (data.meta_description !== undefined) payload.meta_description = data.meta_description;
+  if (data.seoKeywords !== undefined) payload.keywords = data.seoKeywords;
+  if (data.keywords !== undefined) payload.keywords = data.keywords;
+  if (data.ogTitle !== undefined) payload.og_title = data.ogTitle;
+  if (data.og_title !== undefined) payload.og_title = data.og_title;
+  if (data.ogDescription !== undefined) payload.og_description = data.ogDescription;
+  if (data.og_description !== undefined) payload.og_description = data.og_description;
+  if (data.ogImage !== undefined) payload.og_image = data.ogImage;
+  if (data.og_image !== undefined) payload.og_image = data.og_image;
+  if (data.twitterCard !== undefined) payload.twitter_card = data.twitterCard;
+  if (data.twitter_card !== undefined) payload.twitter_card = data.twitter_card;
+  if (data.canonicalUrl !== undefined) payload.canonical_url = data.canonicalUrl;
+  if (data.canonical_url !== undefined) payload.canonical_url = data.canonical_url;
   if (data.schemaMarkup !== undefined) payload.schema_markup = data.schemaMarkup;
   if (data.schema_markup !== undefined) payload.schema_markup = data.schema_markup;
 
@@ -180,6 +188,32 @@ const transformPropertyPayload = (data) => {
 // Normalize property response: ensure consistent camelCase format for frontend
 const normalizePropertyResponse = (data) => {
   if (!data) return data;
+
+  // Guard: ensure location is always a proper object (backend may return string or null)
+  const rawLocation = data.location;
+  const location =
+    rawLocation && typeof rawLocation === "object" && !Array.isArray(rawLocation)
+      ? rawLocation
+      : {
+          area: data.location_area || "",
+          city: data.location_city || "",
+          state: data.location_state || "",
+          lat: data.location_lat || null,
+          lng: data.location_lng || null,
+          address: data.location_address || "",
+        };
+
+  // Guard: ensure dimensionRange is always a proper object
+  const rawDimension = data.dimensionRange || data.dimension_range;
+  const dimensionRange =
+    rawDimension && typeof rawDimension === "object" && !Array.isArray(rawDimension)
+      ? rawDimension
+      : {
+          min: data.dimension_min || null,
+          max: data.dimension_max || null,
+          unit: data.dimension_unit || "sqft",
+        };
+
   return {
     ...data,
     propertyType: data.propertyType || data.property_type,
@@ -189,21 +223,22 @@ const normalizePropertyResponse = (data) => {
     brochureUrl: data.brochureUrl || data.brochure_url || "",
     floorPlanPdfUrl: data.floorPlanPdfUrl || data.floor_plan_pdf_url || "",
     schemaMarkup: data.schemaMarkup || data.schema_markup || "",
-    // Ensure nested location object
-    location: data.location || {
-      area: data.location_area || "",
-      city: data.location_city || "",
-      state: data.location_state || "",
-      lat: data.location_lat || null,
-      lng: data.location_lng || null,
-      address: data.location_address || "",
-    },
-    // Ensure nested dimensionRange object
-    dimensionRange: data.dimensionRange || data.dimension_range || {
-      min: data.dimension_min || null,
-      max: data.dimension_max || null,
-      unit: data.dimension_unit || "sqft",
-    },
+    // SEO fields: handle both camelCase and snake_case from backend
+    seoTitle: data.seoTitle || data.meta_title || data.seo_title || "",
+    seoDescription: data.seoDescription || data.meta_description || data.seo_description || "",
+    seoKeywords: (() => {
+      const kw = data.seoKeywords || data.keywords || data.seo_keywords;
+      if (Array.isArray(kw)) return kw;
+      if (typeof kw === "string" && kw.trim()) return kw.split(",").map((k) => k.trim()).filter(Boolean);
+      return [];
+    })(),
+    canonicalUrl: data.canonicalUrl || data.canonical_url || "",
+    ogTitle: data.ogTitle || data.og_title || "",
+    ogDescription: data.ogDescription || data.og_description || "",
+    ogImage: data.ogImage || data.og_image || "",
+    twitterCard: data.twitterCard || data.twitter_card || "summary_large_image",
+    location,
+    dimensionRange,
     createdAt: data.createdAt || data.created_at,
     updatedAt: data.updatedAt || data.updated_at,
   };
@@ -219,23 +254,41 @@ export const propertyService = {
 
   getById: async (id) => {
     const response = await apiClient.get(`/properties/${id}`);
-    return normalizePropertyResponse(response.data);
+    const data = response.data;
+    // Handle both wrapped { data: {...} } and direct object responses
+    const property = data?.data && typeof data.data === "object" && !Array.isArray(data.data)
+      ? data.data
+      : data;
+    return normalizePropertyResponse(property);
   },
 
   getBySlug: async (slug) => {
     const response = await apiClient.get(`/properties/slug/${slug}`);
     const data = response.data;
     // Handle both wrapped { data: {...} } and direct object responses
-    const property = data?.data || data || null;
+    const property = data?.data && typeof data.data === "object" && !Array.isArray(data.data)
+      ? data.data
+      : data || null;
     return normalizePropertyResponse(property);
   },
 
   getFeatured: async () => {
     const response = await apiClient.get("/properties", {
-      params: { featured: true },
+      params: { featured: true, is_active: true },
     });
     const items = normalizeListResponse(response.data);
-    return items.map(normalizePropertyResponse);
+    const normalized = items.map(normalizePropertyResponse);
+    // Client-side safety net: if backend doesn't filter by featured param,
+    // ensure only properties with "featured" tag are returned
+    const hasNonFeatured = normalized.some(
+      (p) => !Array.isArray(p.tags) || !p.tags.includes("featured"),
+    );
+    if (hasNonFeatured && normalized.length > 0) {
+      return normalized.filter(
+        (p) => Array.isArray(p.tags) && p.tags.includes("featured"),
+      );
+    }
+    return normalized;
   },
 
   getByStatus: async (status, params = {}) => {

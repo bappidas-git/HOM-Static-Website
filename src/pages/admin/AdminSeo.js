@@ -301,10 +301,11 @@ const AdminSeo = () => {
     if (!editProperty) return;
     setSaving(true);
     try {
-      await seoService.updatePropertySeo(editProperty.id, editForm);
+      const propertyId = editProperty.propertyId || editProperty.id;
+      await seoService.updatePropertySeo(propertyId, editForm);
       setProperties((prev) =>
         prev.map((p) =>
-          p.id === editProperty.id ? { ...p, ...editForm } : p
+          (p.propertyId || p.id) === propertyId ? { ...p, ...editForm } : p
         )
       );
       setSnackbar({ open: true, message: 'SEO data saved successfully', severity: 'success' });

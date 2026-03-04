@@ -12,11 +12,14 @@ import apiClient from './api';
  *   POST   /seo/auto-generate       → SeoController@autoGenerate
  */
 
-// Helper: normalize list response
+// Helper: normalize list response (handles array, paginated, and wrapped formats)
 const normalizeListResponse = (data) => {
   if (Array.isArray(data)) return data;
   if (data && Array.isArray(data.data)) return data.data;
   if (data && Array.isArray(data.items)) return data.items;
+  if (data && Array.isArray(data.properties)) return data.properties;
+  // Handle single-object response (wrap in array for consistent processing)
+  if (data && typeof data === 'object' && data.id) return [data];
   return [];
 };
 
@@ -27,16 +30,33 @@ const mapBackendToFrontend = (item) => {
   // Get the property data (may be nested under 'property' or inline)
   const property = item.property || {};
 
+  // Guard: ensure location is always a proper object
+  const rawLocation = property.location || item.location;
+  const location =
+    rawLocation && typeof rawLocation === 'object' && !Array.isArray(rawLocation)
+      ? rawLocation
+      : {
+          area: property.location_area || item.location_area || '',
+          city: property.location_city || item.location_city || '',
+          state: property.location_state || item.location_state || '',
+        };
+
+  // Guard: normalize keywords (may come as array, comma-separated string, or null)
+  const rawKeywords = item.keywords || item.seo_keywords || item.seoKeywords;
+  const seoKeywords = (() => {
+    if (Array.isArray(rawKeywords)) return rawKeywords;
+    if (typeof rawKeywords === 'string' && rawKeywords.trim()) {
+      return rawKeywords.split(',').map((k) => k.trim()).filter(Boolean);
+    }
+    return [];
+  })();
+
   return {
     id: item.property_id || item.id,
     propertyId: item.property_id || item.id,
     title: property.title || item.title || '',
     slug: property.slug || item.slug || '',
-    location: property.location || item.location || {
-      area: property.location_area || item.location_area || '',
-      city: property.location_city || item.location_city || '',
-      state: property.location_state || item.location_state || '',
-    },
+    location,
     developer: property.developer || item.developer,
     configuration: property.configuration || item.configuration,
     dimensionRange: property.dimensionRange || item.dimensionRange || item.dimension_range,
@@ -51,16 +71,16 @@ const mapBackendToFrontend = (item) => {
     highlights: property.highlights || item.highlights,
     amenities: property.amenities || item.amenities,
     tags: property.tags || item.tags || [],
-    // SEO-specific fields: backend uses snake_case, frontend uses camelCase
-    seoTitle: item.meta_title || item.seoTitle || '',
-    seoDescription: item.meta_description || item.seoDescription || '',
-    seoKeywords: item.keywords || item.seoKeywords || [],
+    // SEO-specific fields: backend may use meta_title, seo_title, or seoTitle
+    seoTitle: item.meta_title || item.seo_title || item.seoTitle || '',
+    seoDescription: item.meta_description || item.seo_description || item.seoDescription || '',
+    seoKeywords,
     canonicalUrl: item.canonical_url || item.canonicalUrl || '',
     ogTitle: item.og_title || item.ogTitle || '',
     ogDescription: item.og_description || item.ogDescription || '',
     ogImage: item.og_image || item.ogImage || '',
     twitterCard: item.twitter_card || item.twitterCard || 'summary_large_image',
-    schemaMarkup: item.schema_json || item.schemaMarkup || '',
+    schemaMarkup: item.schema_json || item.schema_markup || item.schemaMarkup || '',
     seoScore: item.seo_score ?? item.seoScore ?? 0,
   };
 };
@@ -75,7 +95,7 @@ const mapFrontendToBackend = (seoData) => ({
   og_description: seoData.ogDescription ?? seoData.og_description ?? '',
   og_image: seoData.ogImage ?? seoData.og_image ?? '',
   twitter_card: seoData.twitterCard ?? seoData.twitter_card ?? 'summary_large_image',
-  schema_json: seoData.schemaMarkup ?? seoData.schema_json ?? '',
+  schema_json: seoData.schemaMarkup ?? seoData.schema_json ?? seoData.schema_markup ?? '',
 });
 
 const seoService = {
@@ -95,7 +115,12 @@ const seoService = {
    */
   getPropertySeo: async (id) => {
     const response = await apiClient.get(`/seo/property/${id}`);
-    return mapBackendToFrontend(response.data);
+    const data = response.data;
+    // Handle both wrapped { data: {...} } and direct object responses
+    const seoData = data?.data && typeof data.data === 'object' && !Array.isArray(data.data)
+      ? data.data
+      : data;
+    return mapBackendToFrontend(seoData);
   },
 
   /**
@@ -105,7 +130,11 @@ const seoService = {
   updatePropertySeo: async (id, seoData) => {
     const payload = mapFrontendToBackend(seoData);
     const response = await apiClient.put(`/seo/property/${id}`, payload);
-    return mapBackendToFrontend(response.data);
+    const data = response.data;
+    const result = data?.data && typeof data.data === 'object' && !Array.isArray(data.data)
+      ? data.data
+      : data;
+    return mapBackendToFrontend(result);
   },
 
   /**
@@ -116,7 +145,11 @@ const seoService = {
     const response = await apiClient.post('/seo/auto-generate', {
       property_id: propertyId,
     });
-    return mapBackendToFrontend(response.data);
+    const data = response.data;
+    const result = data?.data && typeof data.data === 'object' && !Array.isArray(data.data)
+      ? data.data
+      : data;
+    return mapBackendToFrontend(result);
   },
 
   /**

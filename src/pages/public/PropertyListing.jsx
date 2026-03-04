@@ -113,9 +113,9 @@ const PropertyListing = ({ routePath }) => {
       setLoading(true);
       setError(null);
 
-      const params = { isActive: true };
+      const params = { is_active: true };
 
-      // Apply pre-filters as API params
+      // Apply pre-filters as API params (use snake_case for Laravel backend)
       if (config.preFilters.type) {
         params.type = config.preFilters.type;
       }
@@ -123,7 +123,7 @@ const PropertyListing = ({ routePath }) => {
         params.status = config.preFilters.status;
       }
       if (config.preFilters.propertyType) {
-        params.propertyType = config.preFilters.propertyType;
+        params.property_type = config.preFilters.propertyType;
       }
 
       // Apply type filter from URL param (used by category cards on homepage)
