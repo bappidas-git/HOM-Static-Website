@@ -104,12 +104,28 @@ const PropertyForm = ({ propertyId = null }) => {
           specs = [{ key: "", value: "", icon: "" }];
         }
 
+        // Build form data from normalized API response
+        // The normalizePropertyResponse in api.js already converts snake_case
+        // to camelCase, but we add fallbacks for safety.
+        const floorPlansData = property.floorPlans || property.floor_plans || [];
+        const nearbyPlacesData = property.nearbyPlaces || property.nearby_places || [];
+        const cSpecs = property.constructionSpecs || property.construction_specs || {};
+        const cTimeline = property.constructionTimeline || property.construction_timeline || [];
+        const devInfo = property.developerInfo || property.developer_info || null;
+        const simIds = property.similarPropertyIds || property.similar_property_ids || [];
+        const specialitiesData = property.specialities || property.specialties || [];
+
+        // Normalize gallery: ensure items are strings (API may return objects)
+        const galleryData = (property.gallery || []).map((item) =>
+          typeof item === "object" && item !== null ? item.url || item.image || "" : (item || "")
+        );
+
         setFormData({
           title: property.title || "",
           slug: property.slug || "",
           type: property.type || "sale",
           propertyType: property.propertyType || property.property_type || "apartment",
-          category: property.category || property.propertyType || "apartment",
+          category: property.category || property.propertyType || property.property_type || "apartment",
           status: property.status || "pre-launch",
           sections: { ...getDefaultSections(), ...(property.sections || {}) },
           publishStatus:
@@ -145,8 +161,15 @@ const PropertyForm = ({ propertyId = null }) => {
           possession: property.possession || "",
           specifications: specs,
           amenities: property.amenities || [],
-          floorPlans: property.floorPlans?.length
-            ? property.floorPlans
+          floorPlans: floorPlansData.length
+            ? floorPlansData.map((fp) => ({
+                config: fp.config || fp.configuration || "",
+                area: fp.area || "",
+                price: fp.price || "",
+                image: fp.image || fp.image_url || "",
+                bedrooms: fp.bedrooms || "",
+                bathrooms: fp.bathrooms || "",
+              }))
             : [
                 {
                   config: "",
@@ -157,41 +180,57 @@ const PropertyForm = ({ propertyId = null }) => {
                   bathrooms: "",
                 },
               ],
-          gallery: property.gallery?.length ? property.gallery : [""],
-          nearbyPlaces: property.nearbyPlaces?.length
-            ? property.nearbyPlaces
+          gallery: galleryData.length ? galleryData : [""],
+          nearbyPlaces: nearbyPlacesData.length
+            ? nearbyPlacesData.map((np) => ({
+                name: np.name || "",
+                distance: np.distance || "",
+                type: np.type || "school",
+              }))
             : [{ name: "", distance: "", type: "school" }],
           brochureUrl: property.brochureUrl || property.brochure_url || "",
           floorPlanPdfUrl:
             property.floorPlanPdfUrl || property.floor_plan_pdf_url || "",
-          specialities: property.specialities?.length
-            ? property.specialities
+          specialities: specialitiesData.length
+            ? specialitiesData.map((s) => ({
+                icon: s.icon || "",
+                name: s.name || "",
+                description: s.description || "",
+              }))
             : [{ icon: "", name: "", description: "" }],
-          documents: property.documents?.length
-            ? property.documents.map((d) => ({ ...d, url: d.url || "" }))
+          documents: (property.documents || []).length
+            ? property.documents.map((d) => ({
+                name: d.name || "",
+                icon: d.icon || "mdi:file-document",
+                url: d.url || "",
+              }))
             : [{ name: "", icon: "mdi:file-document", url: "" }],
           constructionSpecs: {
-            flooring: property.constructionSpecs?.flooring?.length
-              ? property.constructionSpecs.flooring
+            flooring: cSpecs.flooring?.length
+              ? cSpecs.flooring
               : [{ area: "", spec: "" }],
-            doors: property.constructionSpecs?.doors?.length
-              ? property.constructionSpecs.doors
+            doors: cSpecs.doors?.length
+              ? cSpecs.doors
               : [{ area: "", spec: "" }],
-            structure: property.constructionSpecs?.structure?.length
-              ? property.constructionSpecs.structure
+            structure: cSpecs.structure?.length
+              ? cSpecs.structure
               : [{ area: "", spec: "" }],
-            electrical: property.constructionSpecs?.electrical?.length
-              ? property.constructionSpecs.electrical
+            electrical: cSpecs.electrical?.length
+              ? cSpecs.electrical
               : [{ area: "", spec: "" }],
-            ...(property.constructionSpecs?.plumbing?.length
-              ? { plumbing: property.constructionSpecs.plumbing }
+            ...(cSpecs.plumbing?.length
+              ? { plumbing: cSpecs.plumbing }
               : {}),
-            ...(property.constructionSpecs?.others?.length
-              ? { others: property.constructionSpecs.others }
+            ...(cSpecs.others?.length
+              ? { others: cSpecs.others }
               : {}),
           },
-          constructionTimeline: property.constructionTimeline?.length
-            ? property.constructionTimeline
+          constructionTimeline: cTimeline.length
+            ? cTimeline.map((t) => ({
+                label: t.label || "",
+                status: t.status || "pending",
+                icon: t.icon || "mdi:progress-clock",
+              }))
             : [
                 { label: "Foundation", status: "pending", icon: "mdi:shovel" },
                 { label: "Structure", status: "pending", icon: "mdi:crane" },
@@ -206,29 +245,59 @@ const PropertyForm = ({ propertyId = null }) => {
                   icon: "mdi:key-variant",
                 },
               ],
-          developerInfo: property.developerInfo || {
-            name: property.developer || "",
-            description: "",
-            logo: "",
-            stats: [
-              {
-                value: "",
-                suffix: "+",
-                label: "Years Experience",
-                icon: "mdi:calendar-star",
+          developerInfo: devInfo && (devInfo.name || devInfo.description || devInfo.logo)
+            ? {
+                name: devInfo.name || property.developer || "",
+                description: devInfo.description || "",
+                logo: devInfo.logo || "",
+                stats: Array.isArray(devInfo.stats) && devInfo.stats.length
+                  ? devInfo.stats.map((s) => ({
+                      value: s.value ?? "",
+                      suffix: s.suffix || "+",
+                      label: s.label || "",
+                      icon: s.icon || "mdi:chart-line",
+                    }))
+                  : [
+                      {
+                        value: "",
+                        suffix: "+",
+                        label: "Years Experience",
+                        icon: "mdi:calendar-star",
+                      },
+                      {
+                        value: "",
+                        suffix: "+",
+                        label: "Projects Completed",
+                        icon: "mdi:office-building",
+                      },
+                    ],
+              }
+            : {
+                name: property.developer || "",
+                description: "",
+                logo: "",
+                stats: [
+                  {
+                    value: "",
+                    suffix: "+",
+                    label: "Years Experience",
+                    icon: "mdi:calendar-star",
+                  },
+                  {
+                    value: "",
+                    suffix: "+",
+                    label: "Projects Completed",
+                    icon: "mdi:office-building",
+                  },
+                ],
               },
-              {
-                value: "",
-                suffix: "+",
-                label: "Projects Completed",
-                icon: "mdi:office-building",
-              },
-            ],
-          },
-          faqs: property.faqs?.length
-            ? property.faqs
+          faqs: (property.faqs || []).length
+            ? property.faqs.map((f) => ({
+                question: f.question || "",
+                answer: f.answer || "",
+              }))
             : [{ question: "", answer: "" }],
-          similarPropertyIds: property.similarPropertyIds || [],
+          similarPropertyIds: simIds,
           seoTitle: property.seoTitle || "",
           seoDescription: property.seoDescription || "",
           seoKeywords: property.seoKeywords || [],
@@ -238,7 +307,7 @@ const PropertyForm = ({ propertyId = null }) => {
           twitterCard: property.twitterCard || "summary_large_image",
           canonicalUrl: property.canonicalUrl || "",
           schemaMarkup: property.schemaMarkup || property.schema_markup || "",
-          tags: property.tags || [],
+          tags: Array.isArray(property.tags) ? property.tags : [],
           isActive:
             property.isActive !== undefined
               ? property.isActive

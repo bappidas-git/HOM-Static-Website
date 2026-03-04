@@ -214,6 +214,57 @@ const normalizePropertyResponse = (data) => {
           unit: data.dimension_unit || "sqft",
         };
 
+  // Normalize gallery: handle both string arrays and object arrays from backend
+  const rawGallery = data.gallery;
+  const gallery = Array.isArray(rawGallery)
+    ? rawGallery.map((item) =>
+        typeof item === "object" && item !== null ? item.url || item.image || "" : item
+      )
+    : [];
+
+  // Normalize amenities: handle both string arrays and object arrays from backend
+  const rawAmenities = data.amenities;
+  const amenities = Array.isArray(rawAmenities) ? rawAmenities : [];
+
+  // Normalize floorPlans: handle snake_case key from backend
+  const floorPlans = data.floorPlans || data.floor_plans || [];
+
+  // Normalize nearbyPlaces: handle snake_case key from backend
+  const nearbyPlaces = data.nearbyPlaces || data.nearby_places || [];
+
+  // Normalize constructionSpecs: handle snake_case key from backend
+  const constructionSpecs = data.constructionSpecs || data.construction_specs || {};
+
+  // Normalize constructionTimeline: handle snake_case key from backend
+  const constructionTimeline = data.constructionTimeline || data.construction_timeline || [];
+
+  // Normalize developerInfo: handle snake_case key from backend
+  const developerInfo = data.developerInfo || data.developer_info || null;
+
+  // Normalize similarPropertyIds: handle snake_case key from backend
+  const similarPropertyIds = data.similarPropertyIds || data.similar_property_ids || [];
+
+  // Normalize specialities: handle alternate spelling "specialties"
+  const specialities = data.specialities || data.specialties || [];
+
+  // Normalize documents
+  const documents = data.documents || [];
+
+  // Normalize highlights
+  const highlights = data.highlights || [];
+
+  // Normalize configuration
+  const configuration = data.configuration || [];
+
+  // Normalize faqs
+  const faqs = data.faqs || [];
+
+  // Normalize tags
+  const tags = Array.isArray(data.tags) ? data.tags : [];
+
+  // Normalize sections
+  const sections = data.sections || {};
+
   return {
     ...data,
     propertyType: data.propertyType || data.property_type,
@@ -244,6 +295,22 @@ const normalizePropertyResponse = (data) => {
     twitterCard: data.twitterCard || data.twitter_card || "summary_large_image",
     location,
     dimensionRange,
+    gallery,
+    amenities,
+    floorPlans,
+    nearbyPlaces,
+    constructionSpecs,
+    constructionTimeline,
+    developerInfo,
+    similarPropertyIds,
+    specialities,
+    documents,
+    highlights,
+    configuration,
+    faqs,
+    tags,
+    sections,
+    possession: data.possession || "",
     createdAt: data.createdAt || data.created_at,
     updatedAt: data.updatedAt || data.updated_at,
   };
