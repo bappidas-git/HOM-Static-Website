@@ -265,6 +265,9 @@ const normalizePropertyResponse = (data) => {
   // Normalize sections
   const sections = data.sections || {};
 
+  // Handle nested seo object from backend (some APIs nest SEO data under a seo key)
+  const seoObj = data.seo && typeof data.seo === "object" && !Array.isArray(data.seo) ? data.seo : {};
+
   return {
     ...data,
     propertyType: data.propertyType || data.property_type,
@@ -274,25 +277,25 @@ const normalizePropertyResponse = (data) => {
     brochureUrl: data.brochureUrl || data.brochure_url || "",
     floorPlanPdfUrl: data.floorPlanPdfUrl || data.floor_plan_pdf_url || "",
     schemaMarkup: (() => {
-      const sm = data.schemaMarkup || data.schema_markup;
+      const sm = data.schemaMarkup || data.schema_markup || seoObj.schema_markup;
       if (!sm) return "";
       if (typeof sm === "string") return sm;
       return JSON.stringify(sm);
     })(),
-    // SEO fields: handle both camelCase and snake_case from backend
-    seoTitle: data.seoTitle || data.meta_title || data.seo_title || "",
-    seoDescription: data.seoDescription || data.meta_description || data.seo_description || "",
+    // SEO fields: handle camelCase, snake_case, and nested seo object from backend
+    seoTitle: data.seoTitle || data.meta_title || data.seo_title || seoObj.meta_title || seoObj.title || "",
+    seoDescription: data.seoDescription || data.meta_description || data.seo_description || seoObj.meta_description || seoObj.description || "",
     seoKeywords: (() => {
-      const kw = data.seoKeywords || data.keywords || data.seo_keywords;
+      const kw = data.seoKeywords || data.keywords || data.seo_keywords || seoObj.keywords || seoObj.seo_keywords;
       if (Array.isArray(kw)) return kw;
       if (typeof kw === "string" && kw.trim()) return kw.split(",").map((k) => k.trim()).filter(Boolean);
       return [];
     })(),
-    canonicalUrl: data.canonicalUrl || data.canonical_url || "",
-    ogTitle: data.ogTitle || data.og_title || "",
-    ogDescription: data.ogDescription || data.og_description || "",
-    ogImage: data.ogImage || data.og_image || "",
-    twitterCard: data.twitterCard || data.twitter_card || "summary_large_image",
+    canonicalUrl: data.canonicalUrl || data.canonical_url || seoObj.canonical_url || "",
+    ogTitle: data.ogTitle || data.og_title || seoObj.og_title || "",
+    ogDescription: data.ogDescription || data.og_description || seoObj.og_description || "",
+    ogImage: data.ogImage || data.og_image || seoObj.og_image || "",
+    twitterCard: data.twitterCard || data.twitter_card || seoObj.twitter_card || "summary_large_image",
     location,
     dimensionRange,
     gallery,
@@ -404,6 +407,29 @@ export const propertyService = {
   delete: async (id) => {
     const response = await apiClient.delete(`/admin/properties/${id}`);
     return response.data;
+  },
+
+  getSeo: async (id) => {
+    try {
+      const response = await apiClient.get(`/seo/property/${id}`);
+      const data = response.data;
+      return data?.data && typeof data.data === "object" && !Array.isArray(data.data)
+        ? data.data
+        : data || null;
+    } catch {
+      // SEO endpoint may not exist or property may not have SEO data yet
+      return null;
+    }
+  },
+
+  updateSeo: async (id, data) => {
+    try {
+      const response = await apiClient.put(`/seo/property/${id}`, data);
+      return response.data;
+    } catch {
+      // SEO endpoint may not exist; silently fail
+      return null;
+    }
   },
 };
 
