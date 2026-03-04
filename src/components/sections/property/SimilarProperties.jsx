@@ -41,7 +41,11 @@ const SimilarProperties = ({ currentProperty }) => {
           per_page: 6,
         });
         const filtered = Array.isArray(data) ? data : [];
-        setProperties(filtered.filter((p) => p.id !== currentProperty.id).slice(0, 4));
+        setProperties(
+          filtered
+            .filter((p) => p.id !== currentProperty.id && (p.isActive === true || p.is_active === true))
+            .slice(0, 4)
+        );
       } catch {
         setProperties([]);
       } finally {

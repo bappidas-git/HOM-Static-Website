@@ -164,6 +164,26 @@ const PropertyListing = ({ routePath }) => {
   const filteredProperties = useMemo(() => {
     let result = [...allProperties];
 
+    // Safety filter: always exclude inactive properties regardless of backend response
+    result = result.filter((p) => p.isActive === true || p.is_active === true);
+
+    // Safety filter: enforce status pre-filter even if backend didn't filter
+    if (config.preFilters.status) {
+      result = result.filter((p) => p.status === config.preFilters.status);
+    }
+
+    // Safety filter: enforce propertyType pre-filter even if backend didn't filter
+    if (config.preFilters.propertyType) {
+      result = result.filter(
+        (p) => (p.propertyType || p.property_type) === config.preFilters.propertyType
+      );
+    }
+
+    // Safety filter: enforce type pre-filter even if backend didn't filter
+    if (config.preFilters.type) {
+      result = result.filter((p) => p.type === config.preFilters.type);
+    }
+
     // Area filter from URL (from neighborhood links) — client-side for backend-agnostic compatibility
     const area = searchParams.get('area');
     if (area) {

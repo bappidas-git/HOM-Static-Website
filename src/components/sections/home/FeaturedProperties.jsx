@@ -32,7 +32,10 @@ const FeaturedProperties = () => {
     const fetchProperties = async () => {
       try {
         const data = await propertyService.getFeatured();
-        setProperties(data);
+        // Safety filter: ensure only active properties are displayed
+        setProperties(
+          (Array.isArray(data) ? data : []).filter((p) => p.isActive === true || p.is_active === true)
+        );
       } catch {
         setProperties([]);
       } finally {
