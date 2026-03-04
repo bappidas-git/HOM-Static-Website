@@ -164,8 +164,8 @@ const PropertyListing = ({ routePath }) => {
   const filteredProperties = useMemo(() => {
     let result = [...allProperties];
 
-    // Safety filter: always exclude inactive properties regardless of backend response
-    result = result.filter((p) => p.isActive === true || p.is_active === true);
+    // Safety filter: always exclude inactive and non-published properties regardless of backend response
+    result = result.filter((p) => !!p.isActive && p.publishStatus !== 'draft');
 
     // Safety filter: enforce status pre-filter even if backend didn't filter
     if (config.preFilters.status) {
