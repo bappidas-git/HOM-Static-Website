@@ -185,6 +185,30 @@ const transformPropertyPayload = (data) => {
   return payload;
 };
 
+// Normalize a single specification item to ensure consistent {key, value, icon} shape
+const normalizeSpecificationItem = (item) => {
+  if (!item || typeof item !== "object") return null;
+  const key = item.key || item.label || item.name || "";
+  const value = item.value != null ? String(item.value) : "";
+  // Handle various icon field names from different backend formats
+  const icon = item.icon || item.icon_name || item.iconify || item.spec_icon || "";
+  if (!key && !value) return null;
+  return { key, value, icon };
+};
+
+// Normalize a single floor plan item to ensure consistent shape
+const normalizeFloorPlanItem = (fp) => {
+  if (!fp || typeof fp !== "object") return null;
+  return {
+    config: fp.config || fp.configuration || fp.name || fp.title || fp.type || "",
+    area: fp.area != null ? String(fp.area) : fp.carpet_area != null ? String(fp.carpet_area) : fp.super_area != null ? String(fp.super_area) : "",
+    price: fp.price != null ? String(fp.price) : fp.base_price != null ? String(fp.base_price) : fp.total_price != null ? String(fp.total_price) : "",
+    image: fp.image || fp.image_url || fp.floor_image || fp.plan_image || "",
+    bedrooms: fp.bedrooms != null ? String(fp.bedrooms) : fp.bed_count != null ? String(fp.bed_count) : fp.bhk != null ? String(fp.bhk) : "",
+    bathrooms: fp.bathrooms != null ? String(fp.bathrooms) : fp.bath_count != null ? String(fp.bath_count) : "",
+  };
+};
+
 // Normalize property response: ensure consistent camelCase format for frontend
 const normalizePropertyResponse = (data) => {
   if (!data) return data;
@@ -226,8 +250,31 @@ const normalizePropertyResponse = (data) => {
   const rawAmenities = data.amenities;
   const amenities = Array.isArray(rawAmenities) ? rawAmenities : [];
 
-  // Normalize floorPlans: handle snake_case key from backend
-  const floorPlans = data.floorPlans || data.floor_plans || [];
+  // Normalize specifications: handle "details", "specifications", "property_details" keys,
+  // and both array and object formats from backend
+  const rawSpecs = data.specifications || data.details || data.property_details || data.specs;
+  let specifications;
+  if (Array.isArray(rawSpecs)) {
+    specifications = rawSpecs.map(normalizeSpecificationItem).filter(Boolean);
+  } else if (rawSpecs && typeof rawSpecs === "object") {
+    // Object format: { "RERA ID": "PRM/KA/..." } — convert to array (icons lost in this format)
+    specifications = Object.entries(rawSpecs)
+      .map(([key, val]) => {
+        // Value might be a primitive or an object with value+icon
+        if (val && typeof val === "object") {
+          return normalizeSpecificationItem({ key, ...val });
+        }
+        return { key, value: String(val ?? ""), icon: "" };
+      })
+      .filter((s) => s.key || s.value);
+  } else {
+    specifications = [];
+  }
+
+  // Normalize floorPlans: handle snake_case key from backend and normalize items
+  const rawFloorPlans = data.floorPlans || data.floor_plans || data.floorPlan || data.floor_plan || [];
+  const floorPlansArray = Array.isArray(rawFloorPlans) ? rawFloorPlans : [rawFloorPlans];
+  const floorPlans = floorPlansArray.map(normalizeFloorPlanItem).filter(Boolean);
 
   // Normalize nearbyPlaces: handle snake_case key from backend
   const nearbyPlaces = data.nearbyPlaces || data.nearby_places || [];
@@ -300,6 +347,7 @@ const normalizePropertyResponse = (data) => {
     dimensionRange,
     gallery,
     amenities,
+    specifications,
     floorPlans,
     nearbyPlaces,
     constructionSpecs,

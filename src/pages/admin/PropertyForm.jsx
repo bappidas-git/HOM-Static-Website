@@ -87,114 +87,131 @@ const PropertyForm = ({ propertyId = null }) => {
         }
 
         // Merge SEO data from the separate /seo/property endpoint if the
-        // main property response didn't include it.
+        // main property response didn't include it. Use empty-string-aware
+        // checks so that "" from normalization doesn't block the merge.
         if (seoData) {
-          if (!property.seoTitle) property.seoTitle = seoData.meta_title || seoData.title || seoData.seo_title || "";
-          if (!property.seoDescription) property.seoDescription = seoData.meta_description || seoData.description || seoData.seo_description || "";
+          console.log("[EditProperty] SEO endpoint data:", seoData);
+          const seoNested = seoData.data && typeof seoData.data === "object" ? seoData.data : seoData;
+          if (!property.seoTitle) {
+            property.seoTitle = seoNested.meta_title || seoNested.title || seoNested.seo_title || seoNested.seoTitle || "";
+          }
+          if (!property.seoDescription) {
+            property.seoDescription = seoNested.meta_description || seoNested.description || seoNested.seo_description || seoNested.seoDescription || "";
+          }
           if (!property.seoKeywords || !property.seoKeywords.length) {
-            const kw = seoData.keywords || seoData.seo_keywords;
+            const kw = seoNested.keywords || seoNested.seo_keywords || seoNested.seoKeywords;
             property.seoKeywords = Array.isArray(kw) ? kw
               : typeof kw === "string" && kw.trim() ? kw.split(",").map((k) => k.trim()).filter(Boolean)
               : [];
           }
-          if (!property.canonicalUrl) property.canonicalUrl = seoData.canonical_url || "";
-          if (!property.ogTitle) property.ogTitle = seoData.og_title || "";
-          if (!property.ogDescription) property.ogDescription = seoData.og_description || "";
-          if (!property.ogImage) property.ogImage = seoData.og_image || "";
+          if (!property.canonicalUrl) {
+            property.canonicalUrl = seoNested.canonical_url || seoNested.canonicalUrl || "";
+          }
+          if (!property.ogTitle) {
+            property.ogTitle = seoNested.og_title || seoNested.ogTitle || "";
+          }
+          if (!property.ogDescription) {
+            property.ogDescription = seoNested.og_description || seoNested.ogDescription || "";
+          }
+          if (!property.ogImage) {
+            property.ogImage = seoNested.og_image || seoNested.ogImage || "";
+          }
           if (!property.twitterCard || property.twitterCard === "summary_large_image") {
-            property.twitterCard = seoData.twitter_card || property.twitterCard || "summary_large_image";
+            property.twitterCard = seoNested.twitter_card || seoNested.twitterCard || property.twitterCard || "summary_large_image";
           }
           if (!property.schemaMarkup) {
-            const sm = seoData.schema_markup;
+            const sm = seoNested.schema_markup || seoNested.schemaMarkup;
             property.schemaMarkup = typeof sm === "string" ? sm : sm ? JSON.stringify(sm) : "";
           }
         }
 
-        // Map specifications: support both object and array formats
-        let specs;
-        if (Array.isArray(property.specifications)) {
-          specs = property.specifications.length
-            ? property.specifications
-            : [{ key: "", value: "", icon: "" }];
-        } else if (
-          property.specifications &&
-          typeof property.specifications === "object"
-        ) {
-          specs = Object.entries(property.specifications).map(
-            ([key, value]) => ({
-              key,
-              value: String(value),
-              icon: "",
-            }),
-          );
-          if (specs.length === 0) specs = [{ key: "", value: "", icon: "" }];
-        } else {
-          specs = [{ key: "", value: "", icon: "" }];
-        }
+        // normalizePropertyResponse already handles specifications normalization
+        // (array/object formats, field name variants). Ensure at least one empty entry for UI.
+        const specs = Array.isArray(property.specifications) && property.specifications.length
+          ? property.specifications.map((s) => ({
+              key: s.key || "",
+              value: s.value != null ? String(s.value) : "",
+              icon: s.icon || "",
+            }))
+          : [{ key: "", value: "", icon: "" }];
 
-        // Build form data from normalized API response
-        // The normalizePropertyResponse in api.js already converts snake_case
-        // to camelCase, but we add fallbacks for safety.
-        const floorPlansData = property.floorPlans || property.floor_plans || [];
-        const nearbyPlacesData = property.nearbyPlaces || property.nearby_places || [];
-        const cSpecs = property.constructionSpecs || property.construction_specs || {};
-        const cTimeline = property.constructionTimeline || property.construction_timeline || [];
-        const devInfo = property.developerInfo || property.developer_info || null;
-        const simIds = property.similarPropertyIds || property.similar_property_ids || [];
-        const specialitiesData = property.specialities || property.specialties || [];
+        // normalizePropertyResponse already normalizes floor plan items.
+        // Ensure at least one empty entry for UI.
+        const floorPlansData = Array.isArray(property.floorPlans) ? property.floorPlans : [];
+        const nearbyPlacesData = Array.isArray(property.nearbyPlaces) ? property.nearbyPlaces : [];
+        const cSpecs = property.constructionSpecs || {};
+        const cTimeline = Array.isArray(property.constructionTimeline) ? property.constructionTimeline : [];
+        const devInfo = property.developerInfo || null;
+        const simIds = Array.isArray(property.similarPropertyIds) ? property.similarPropertyIds : [];
+        const specialitiesData = Array.isArray(property.specialities) ? property.specialities : [];
 
-        // Normalize gallery: ensure items are strings (API may return objects)
-        const galleryData = (property.gallery || []).map((item) =>
+        // Gallery is already normalized to string[] by normalizePropertyResponse
+        const galleryData = Array.isArray(property.gallery) ? property.gallery.map((item) =>
           typeof item === "object" && item !== null ? item.url || item.image || "" : (item || "")
-        );
+        ) : [];
 
+        // Debug: log API response and mapped data for troubleshooting hydration issues
+        console.log("[EditProperty] API response (normalized):", property);
+        console.log("[EditProperty] Specs:", specs);
+        console.log("[EditProperty] FloorPlans:", floorPlansData);
+        console.log("[EditProperty] SEO:", {
+          seoTitle: property.seoTitle,
+          seoDescription: property.seoDescription,
+          seoKeywords: property.seoKeywords,
+          ogTitle: property.ogTitle,
+          canonicalUrl: property.canonicalUrl,
+        });
+
+        // Set slugManuallyEdited BEFORE formData to prevent the auto-slug
+        // effect from overwriting the loaded slug (avoids race condition
+        // in React 17 where async state updates aren't batched).
+        setSlugManuallyEdited(true);
+
+        // Build form data from normalized API response.
+        // Start with defaults to ensure every field has a value, then overlay
+        // loaded data. This prevents undefined fields if the API response
+        // is missing any keys.
+        const defaults = getDefaultFormData();
         setFormData({
+          ...defaults,
           title: property.title || "",
           slug: property.slug || "",
           type: property.type || "sale",
-          propertyType: property.propertyType || property.property_type || "apartment",
-          category: property.category || property.propertyType || property.property_type || "apartment",
+          propertyType: property.propertyType || "apartment",
+          category: property.category || property.propertyType || "apartment",
           status: property.status || "pre-launch",
           sections: { ...getDefaultSections(), ...(property.sections || {}) },
           publishStatus:
             property.publishStatus ||
-            property.publish_status ||
-            (property.isActive || property.is_active ? "published" : "draft"),
+            (property.isActive ? "published" : "draft"),
           price: property.price || "",
-          priceUnit: property.priceUnit || property.price_unit || "onwards",
+          priceUnit: property.priceUnit || "onwards",
           developer: property.developer || "",
           description: property.description || "",
           highlights: property.highlights?.length ? property.highlights : [""],
           location: {
-            area: property.location?.area || property.location_area || "",
-            city: property.location?.city || property.location_city || "",
-            state: property.location?.state || property.location_state || "",
-            lat: property.location?.lat || property.location_lat || "",
-            lng: property.location?.lng || property.location_lng || "",
-            address:
-              property.location?.address ||
-              property.location_address ||
-              property.address ||
-              "",
+            area: property.location?.area || "",
+            city: property.location?.city || "",
+            state: property.location?.state || "",
+            lat: property.location?.lat || "",
+            lng: property.location?.lng || "",
+            address: property.location?.address || property.address || "",
           },
           configuration: property.configuration || [],
           dimensionRange: {
-            min: property.dimensionRange?.min || property.dimension_min || "",
-            max: property.dimensionRange?.max || property.dimension_max || "",
-            unit:
-              property.dimensionRange?.unit ||
-              property.dimension_unit ||
-              "sqft",
+            min: property.dimensionRange?.min || "",
+            max: property.dimensionRange?.max || "",
+            unit: property.dimensionRange?.unit || "sqft",
           },
           possession: property.possession || "",
           specifications: specs,
           amenities: property.amenities || [],
           floorPlans: floorPlansData.length
             ? floorPlansData.map((fp) => ({
-                config: fp.config || fp.configuration || fp.name || "",
+                config: fp.config || "",
                 area: fp.area != null ? String(fp.area) : "",
                 price: fp.price != null ? String(fp.price) : "",
-                image: fp.image || fp.image_url || fp.floor_image || "",
+                image: fp.image || "",
                 bedrooms: fp.bedrooms != null ? String(fp.bedrooms) : "",
                 bathrooms: fp.bathrooms != null ? String(fp.bathrooms) : "",
               }))
@@ -216,9 +233,8 @@ const PropertyForm = ({ propertyId = null }) => {
                 type: np.type || "school",
               }))
             : [{ name: "", distance: "", type: "school" }],
-          brochureUrl: property.brochureUrl || property.brochure_url || "",
-          floorPlanPdfUrl:
-            property.floorPlanPdfUrl || property.floor_plan_pdf_url || "",
+          brochureUrl: property.brochureUrl || "",
+          floorPlanPdfUrl: property.floorPlanPdfUrl || "",
           specialities: specialitiesData.length
             ? specialitiesData.map((s) => ({
                 icon: s.icon || "",
@@ -328,22 +344,19 @@ const PropertyForm = ({ propertyId = null }) => {
           similarPropertyIds: simIds,
           seoTitle: property.seoTitle || "",
           seoDescription: property.seoDescription || "",
-          seoKeywords: property.seoKeywords || [],
+          seoKeywords: Array.isArray(property.seoKeywords) ? property.seoKeywords : [],
           ogTitle: property.ogTitle || "",
           ogDescription: property.ogDescription || "",
           ogImage: property.ogImage || "",
           twitterCard: property.twitterCard || "summary_large_image",
           canonicalUrl: property.canonicalUrl || "",
-          schemaMarkup: property.schemaMarkup || property.schema_markup || "",
+          schemaMarkup: property.schemaMarkup || "",
           tags: Array.isArray(property.tags) ? property.tags : [],
           isActive:
             property.isActive !== undefined
               ? property.isActive
-              : property.is_active !== undefined
-                ? property.is_active
-                : true,
+              : true,
         });
-        setSlugManuallyEdited(true);
       } catch (err) {
         setSnackbar({
           open: true,
@@ -581,6 +594,10 @@ const PropertyForm = ({ propertyId = null }) => {
       const payload = buildPayload();
       payload.publish_status = publish ? "published" : "draft";
       payload.is_active = publish;
+
+      // Debug: log form state and submit payload for troubleshooting
+      console.log("[EditProperty] FORM STATE at submit:", formData);
+      console.log("[EditProperty] SUBMIT PAYLOAD:", payload);
 
       if (isEdit) {
         // Update property and sync SEO data to the dedicated endpoint
