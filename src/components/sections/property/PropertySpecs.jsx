@@ -17,10 +17,19 @@ const PropertySpecs = ({ specifications = {}, specificationsArray, propertyType 
     return d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
   };
 
-  // Support both new array format (specificationsArray) and legacy object format
+  // Support:
+  // 1. specificationsArray prop (explicit array prop)
+  // 2. specifications prop passed as an array (most common — API returns array)
+  // 3. specifications prop as a legacy object (old format fallback)
+  const specsSource = Array.isArray(specificationsArray) && specificationsArray.length > 0
+    ? specificationsArray
+    : Array.isArray(specifications) && specifications.length > 0
+      ? specifications
+      : null;
+
   let specs;
-  if (Array.isArray(specificationsArray) && specificationsArray.length > 0) {
-    specs = specificationsArray
+  if (specsSource) {
+    specs = specsSource
       .filter((s) => s.key && s.value)
       .map((s) => ({
         icon: s.icon || 'mdi:information-outline',
